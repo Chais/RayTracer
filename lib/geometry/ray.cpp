@@ -4,7 +4,7 @@
 
 #include "ray.h"
 
-ray::ray(const vec3 &origin, const vec3 &direction) : origin(origin), direction(normalise(direction)) { }
+ray::ray(const vec3 &origin, const vec3 &direction) : origin(origin), direction(normalise(direction)), color(vec3()) { }
 
 ray::ray(const vec3 &origin, const vec3 &direction, const vec3 &color) : origin(origin),
 																		 direction(normalise(direction)),
