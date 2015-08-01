@@ -5,6 +5,7 @@
 #include <iostream>
 #include "lib/math/vec3.h"
 #include "lib/math/mat4.h"
+#include "lib/camera/camera.h"
 
 using namespace std;
 
@@ -39,4 +40,9 @@ int main(int argc, char *argv[]) {
 	cout << "mat4 tests:" << endl;
 	cout << "m=" << m << endl;
 	cout << "invert(m)=" << invert(m) << endl;
+	cout << "Camera tests:" << endl;
+	camera cam = camera();
+	auto start = cam.begin();
+	auto stop = cam.end();
+	cout << "start==stop: " << (start == stop) << endl;
 }

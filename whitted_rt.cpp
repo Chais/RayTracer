@@ -11,5 +11,6 @@ vec3 whitted_rt::cast_ray(ray r) {
 }
 
 void whitted_rt::render() {
-	for (ray r : cam) r.setColor(r.getDirection());
+	for (ray &r : cam)
+		r.setColor(r.getDirection());
 }
