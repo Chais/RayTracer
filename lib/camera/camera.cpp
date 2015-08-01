@@ -30,8 +30,7 @@ camera::camera(const vec3 &position, const vec3 &direction, const vec3 &down, co
 				 this->down*((resolution[1]-1)/2.0)*stepwidth;
 	for (int i = 0; i < resolution[1]; i++)
 		for (int j = 0; j < resolution[0]; j++)
-			rays[i*resolution[0]+j] = ray(this->position,
-												start+this->down*(stepwidth*i)+this->right*(stepwidth*j));
+			rays.push_back(ray(this->position, start+this->down*(stepwidth*i)+this->right*(stepwidth*j)));
 }
 
 ray &camera::operator[](const int i) {
