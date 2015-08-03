@@ -9,7 +9,8 @@
 
 class ray {
 private:
-	vec3 origin, direction, color;
+	vec3 origin, direction;
+	vec3 *color;
 
 public:
 	/**
@@ -25,6 +26,12 @@ public:
 	ray(const vec3 &origin, const vec3 &direction, const vec3 &color);
 
 	/**
+	 * @brief Destructor
+	 * Deallocates the memory for the color vector
+	 */
+	virtual ~ray();
+
+/**
 	 * @brief output operator
 	 * Puts the ray's origin and direction on the out stream
 	 */
@@ -43,7 +50,7 @@ public:
 	/**
 	 * @brief returns a copy of the color vector
 	 */
-	vec3 getColor() const;
+	vec3 *getColor() const;
 
 	/**
 	 * @brief sets the color
