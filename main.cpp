@@ -15,7 +15,7 @@ int main() {
 	for (int y = 0; y < 768; y++) {
 		pPtr = &img[y][0];
 		for (int x = 0; x < 1024; x++) {
-			vec3 tmp = to_color(rIt->getColor());
+			vec3 tmp = to_color(*rIt->getColor());
 			(*pPtr).red = int(tmp[0]);
 			(*pPtr).green = int(tmp[1]);
 			(*pPtr).blue = int(tmp[2]);
