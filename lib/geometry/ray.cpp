@@ -4,15 +4,17 @@
 
 #include "ray.h"
 
-ray::ray(const vec3 &origin, const vec3 &direction) : origin(origin), direction(normalise(direction)), color(nullptr) { }
+ray::ray(const vec3 &origin, const vec3 &direction) : origin(origin), direction(normalise(direction)),
+													  color(nullptr) { }
 
 ray::ray(const vec3 &origin, const vec3 &direction, const vec3 &color) : origin(origin),
 																		 direction(normalise(direction)),
 																		 color(new vec3(color)) { }
 
-ray::~ray() {
-	delete(this->color);
-}
+/*ray::~ray() {
+	if (this->color != nullptr)
+		delete(this->color);
+}*/
 
 std::ostream &operator<<(std::ostream &out, const ray &a) {
 	out << "origin: " << a.origin << " direction: " << a.direction;

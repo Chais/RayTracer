@@ -121,19 +121,67 @@ mat4 operator*(const mat4 &a, const double n);
 
 /**
  * @brief Matrix-vector multiplication
- * Multiplies the matrix with a vector
- * @param &b the right operand
+ * Multiplies the matrix a with the vector b
+ *
+ * @param &a the lhs matrix
+ *
+ * @param &b the rhs vector
+ *
  * @return the new resulting vector
  */
 vec4 operator*(const mat4 &a, const vec4 &b);
 
 /**
+ * @brief Matrix-vector multiplication
+ * Multiplies the matrix a with the vec3 b as if b was a vec4 with its homogenous coordinate set to 1
+ *
+ * @param &a the lhs matrix
+ *
+ * @param &b the rhs vector
+ *
+ * @return the new resulting vector
+ */
+vec3 operator*(const mat4 &a, const vec3 &b);
+
+/**
+ * @brief Vector-Matrix multiplication
+ * Multiplies the vector a with the matrix b
+ *
+ * @param &a the lhs vector
+ *
+ * @param &b the rhs matrix
+ *
+ * @return the new resulting vector
+ */
+vec4 operator*(const vec4 &a, const mat4 &b);
+
+/**
  * @brief Matrix-matrix multiplication
  * Multiplies the 4x4 matrix with another 4x4 matrix
+ * @param &a the left operand
  * @param &b the right operand
  * @return the new resulting matrix
  */
 mat4 operator*(const mat4 &a, const mat4 &b);
+
+/**
+ * @brief Multiplication assignment
+ * Equivalent to a=a*b where a and b are matrices
+ * @parameter &a the left operand
+ * @param &b the right operand
+ * @return the updated left operand
+ */
+mat4 &operator*=(mat4 &a, const mat4 &b);
+
+/**
+ * /**
+ * @brief Multiplication assignment
+ * Equivalent to a=a*n where a is a matrix and n is a scalar
+ * @parameter &a the left operand
+ * @param n the right operand
+ * @return the updated left operand
+ */
+mat4 &operator*=(mat4 &a, const double n);
 
 /**
  * @brief Matrix inversion

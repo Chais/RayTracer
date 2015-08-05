@@ -1,11 +1,12 @@
 #include "camera.h"
+#include "../math/helper.h"
 
-camera::camera() : position(vec3()), direction(vec3(0, 0, -1)), down(vec3(0, 1, 0)), right(vec3(1, 0, 0)),
+camera::camera() : position(vec3()), direction(vec3(0, 0, -1)), down(vec3(0, -1, 0)), right(vec3(1, 0, 0)),
 				   fov(45),
 				   maxbounces(100) {
 	int resolution[] = {1024, 768};
 	rays.reserve(static_cast<unsigned long>(resolution[0]*resolution[1]));
-	double stepwidth = tan((this->fov*M_PI)/180)/(resolution[0]/2);
+	double stepwidth = tan(helper::toRadians(this->fov))/(resolution[0]/2);
 	vec3 start = direction-this->right*((resolution[0]-1)/2.0)*stepwidth-
 				 this->down*((resolution[1]-1)/2.0)*stepwidth;
 	for (int i = 0; i < resolution[1]; i++)
@@ -25,7 +26,7 @@ camera::camera(const vec3 &position, const vec3 &direction, const vec3 &down, co
 		this->maxbounces = maxbounces;
 	else throw new camera_exception("maxBounces has to be greater than zero.");
 	rays.reserve(static_cast<unsigned long>(resolution[0]*resolution[1]));
-	double stepwidth = tan((this->fov*M_PI)/180)/(resolution[0]/2);
+	double stepwidth = tan(helper::toRadians(this->fov))/(resolution[0]/2);
 	vec3 start = this->direction-this->right*((resolution[0]-1)/2.0)*stepwidth-
 				 this->down*((resolution[1]-1)/2.0)*stepwidth;
 	for (int i = 0; i < resolution[1]; i++)

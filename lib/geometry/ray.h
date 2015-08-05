@@ -29,7 +29,7 @@ public:
 	 * @brief Destructor
 	 * Deallocates the memory for the color vector
 	 */
-	virtual ~ray();
+	//virtual ~ray();
 
 /**
 	 * @brief output operator

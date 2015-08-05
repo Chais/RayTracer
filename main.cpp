@@ -1,5 +1,6 @@
 #include <iostream>
-#include "whitted_rt.h"
+#include "lib/whitted_rt.h"
+#include "lib/geometry/sphere.h"
 #include <png++/png.hpp>
 
 using namespace std;
@@ -7,7 +8,12 @@ using namespace std;
 int main() {
 	camera cam = camera();
 	vec3 bgcolor = vec3();
-	whitted_rt rt = whitted_rt(bgcolor, cam);
+	std::vector<shape*> scene;
+	scene.push_back(new sphere(1.0));
+	scene[0]->translate(vec3{0, 1, -5});
+	double sf[] = {2, 1, 1};
+	scene[0]->scale(sf);
+	whitted_rt rt = whitted_rt(bgcolor, cam, scene);
 	rt.render();
 	png::image<png::rgb_pixel> img(1024, 768);
 	png::rgb_pixel *pPtr;

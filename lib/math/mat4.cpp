@@ -134,12 +134,41 @@ vec4 operator*(const mat4 &a, const vec4 &b) {
 	return vec4(tmp);
 }
 
+vec3 operator*(const mat4 &a, const vec3 &b) {
+	double tmp[3];
+	for (int i = 0; i < 3; i++)
+		tmp[i] = a[i*4]*b[0]+a[i*4+1]*b[1]+a[i*4+2]*b[2]+a[i*4+3];
+	return vec3(tmp);
+}
+
+vec4 operator*(const vec4 &a, const mat4 &b) {
+	double tmp[4];
+	for (int i = 0; i < 4; i++)
+		tmp[i] = a[0]*b[i]+a[1]*b[i+4]+a[2]*b[i+8]+a[3]*b[i+12];
+	return vec4(tmp);
+}
+
 mat4 operator*(const mat4 &a, const mat4 &b) {
 	double tmp[16];
 	for (int i = 0; i < 4; i++)
 		for (int j = 0; j < 4; j++)
 			tmp[i*4+j] = a[i*4]*b[j*4]+a[i*4+1]*b[j*4+1]+a[i*4+2]*b[j*4+2]+a[i*4+3]*b[j*4+3];
 	return mat4(tmp);
+}
+
+mat4 &operator*=(mat4 &a, const mat4 &b) {
+	a = a*b;
+	return a;
+}
+
+mat4 &operator*=(mat4 &a, const double n) {
+	for (int i = 0; i < 16; i += 4) {
+		a[i] *= n;
+		a[i+1] *= n;
+		a[i+2] *= n;
+		a[i+3] *= n;
+	}
+	return a;
 }
 
 mat4 invert(const mat4 &a) {
