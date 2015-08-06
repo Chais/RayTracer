@@ -4,7 +4,7 @@
 
 #include "sphere.h"
 
-sphere::sphere(double radius) : radius(radius) {
+sphere::sphere(double radius, material *matrl) : radius(radius), shape(matrl) {
 	if (radius <= 0)
 		throw new geometry_exception("The radius has to be greater than zero.");
 }
@@ -32,12 +32,20 @@ ray sphere::intersect(ray r) {
 		x = transform(m, x);
 		vec3 dir = x-this->getPosition();
 		dir = transform(im, dir);
-		vec3 col{1, 1, 1};
+		double local_len = length(x-this->getPosition());
+		vec3 col = this->getColor(x[0]/local_len, x[1]/local_len);
 		return ray(x, dir, col);
 	}
 	throw geometry_exception("No intersection");
 }
 
 bool sphere::getShadow(vec3 origin, vec3 direction) {
-	return false;
+	vec3 c = this->getPosition()-origin;
+	double a = dot(direction, c);
+	double b = std::sqrt(std::pow(length(c), 2)-std::pow(a, 2));
+	return (a > 0 && b < this->radius);
+}
+
+vec3 sphere::getColor(double u, double v) {
+	return this->getMaterial()->getColor(u, v);
 }

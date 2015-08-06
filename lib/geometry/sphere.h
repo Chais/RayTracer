@@ -12,13 +12,15 @@ class sphere : public shape {
 private:
 	double radius;
 public:
-	sphere(double radius);
+	sphere(double radius, material *matrl);
 
 	friend std::ostream &operator<<(std::ostream &out, const sphere &a);
 
 	virtual ray intersect(ray r) override;
 
 	virtual bool getShadow(vec3 origin, vec3 direction) override;
+
+	virtual vec3 getColor(double u, double v);
 };
 
 #endif //RAY_TRACER_SPHERE_H

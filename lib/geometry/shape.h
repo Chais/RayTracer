@@ -7,14 +7,18 @@
 
 #include "../math/mat4.h"
 #include "ray.h"
+#include "material/material.h"
 
 class shape {
 protected:
 	mat4 transforms;
 	mat4 inv_trans;
+	material *matrl;
 
 public:
-	shape();
+	shape(material *matrl);
+
+	material *getMaterial() const;
 
 	vec3 getPosition();
 
@@ -35,6 +39,8 @@ public:
 	virtual ray intersect(ray r) = 0;
 
 	virtual bool getShadow(vec3 origin, vec3 direction) = 0;
+
+	virtual vec3 getColor(double u, double v)=0;
 };
 
 #endif //RAY_TRACER_GEOMETRY_H

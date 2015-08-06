@@ -3,9 +3,12 @@
 //
 
 #include <iostream>
+#include <typeinfo>
 #include "lib/math/vec3.h"
 #include "lib/math/mat4.h"
 #include "lib/camera/camera.h"
+#include "lib/light/ambient_light.h"
+#include "lib/light/parallel_light.h"
 
 using namespace std;
 
@@ -45,4 +48,9 @@ int main(int argc, char *argv[]) {
 	auto start = cam.begin();
 	auto stop = cam.end();
 	cout << "start==stop: " << (start == stop) << endl;
+	ambient_light *l1 = new ambient_light(vec3{1, 1, 1});
+	ambient_light *l2 = new parallel_light(vec3{1, 1, 1}, vec3{0, -1, 0});
+	cout << "typeid(*l1) == typeid(*l2): " << (typeid(*l1) == typeid(*l2)) << endl;
+	cout << "typeid(*l2)== typeid(parallel_light): " << (typeid(*l2)== typeid(parallel_light)) << endl;
+	cout << dynamic_cast<ambient_light*>(l2) << endl;
 }

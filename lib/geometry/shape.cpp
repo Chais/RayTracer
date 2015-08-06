@@ -5,10 +5,14 @@
 #include "shape.h"
 #include "../math/helper.h"
 
-shape::shape() : transforms(mat4()), inv_trans(mat4()) { }
+shape::shape(material *matrl) : transforms(mat4()), inv_trans(mat4()), matrl(matrl) { }
 
 vec3 shape::getPosition() {
 	return vec3(this->transforms[3], this->transforms[7], this->transforms[11]);
+}
+
+material *shape::getMaterial() const {
+	return this->matrl;
 }
 
 const mat4 &shape::getTransforms() const {

@@ -9,7 +9,6 @@
 #define RAY_TRACER_VEC3_H
 
 #include <ostream>
-#include <cmath>
 #include <algorithm>
 #include <stdexcept>
 
@@ -29,7 +28,7 @@ public:
 	 */
 	vec3();
 
-	/**
+/**
 	 * @brief Explicit constructor
 	 * Creates a new vector with the values x, y and z
 	 * @param x the x value
@@ -157,9 +156,7 @@ vec3 cross(const vec3 &a, const vec3 &b);
 /**
  * @brief Scales the vector component-wise
  * Multiplies every component of this vector with its own scaling factor
- * @param fx the scaling factor in x direction
- * @param fy the scaling factor in y direction
- * @param fz the scaling factor in z direction
+ * @param *f the array of scaling factors
  */
 vec3 scale(const vec3 &a, const double *f);
 
@@ -178,7 +175,9 @@ vec3 normalise(const vec3 &a);
 
 /**
  * @brief Converts the coordinates to color
+ *
  * Makes a normalised copy fo the vector and converts the values to a scale 0 - 255
+ *
  * @return an int array of values from 0 - 255
  */
 vec3 to_color(const vec3 &a);

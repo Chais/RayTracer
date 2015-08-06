@@ -136,7 +136,7 @@ vec3 scale(const vec3 &a, const double *f) {
 }
 
 double length(const vec3 &a) {
-	return sqrt(a[0]*a[0]+a[1]*a[1]+a[2]*a[2]);
+	return std::sqrt(a[0]*a[0]+a[1]*a[1]+a[2]*a[2]);
 }
 
 vec3 normalise(const vec3 &a) {
@@ -150,9 +150,12 @@ vec3 normalise(const vec3 &a) {
 }
 
 vec3 to_color(const vec3 &a) {
-	vec3 out = normalise(a)*0.5;
-	vec3 tmp{0.5, 0.5, 0.5};
-	out = (out+tmp)*255;
+	vec3 out = a;
+	for (int i = 0; i < 3; i++) {
+		out[i]=out[i]>1?1:out[i];
+		out[i]=out[i]<0?0:out[i];
+	}
+	out = out*255;
 	out[0] = round(out[0]);
 	out[1] = round(out[1]);
 	out[2] = round(out[2]);
