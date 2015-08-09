@@ -205,12 +205,4 @@ vec3 transform(const mat4 &a, const vec3 &b);
  */
 mat4 transpose(const mat4 &a);
 
-/**
- * @brief Matrix translation
- * 'Moves' the matrix by a vector. The vector is added to the upper rightmost 3:1 column vector of the matrix.
- * @param &b the vector to translate by
- * @return the new resulting matrix
- */
-mat4 translate(const mat4 &a, const vec3 &b);
-
 #endif //RAY_TRACER_MAT4_H

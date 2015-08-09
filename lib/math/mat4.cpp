@@ -152,7 +152,7 @@ mat4 operator*(const mat4 &a, const mat4 &b) {
 	double tmp[16];
 	for (int i = 0; i < 4; i++)
 		for (int j = 0; j < 4; j++)
-			tmp[i*4+j] = a[i*4]*b[j*4]+a[i*4+1]*b[j*4+1]+a[i*4+2]*b[j*4+2]+a[i*4+3]*b[j*4+3];
+			tmp[i*4+j] = a[i*4]*b[j]+a[i*4+1]*b[4+j]+a[i*4+2]*b[8+j]+a[i*4+3]*b[12+j];
 	return mat4(tmp);
 }
 
@@ -241,19 +241,5 @@ mat4 transpose(const mat4 &a) {
 	for (int i = 0; i < 4; i++)
 		for (int j = 0; j < 4; j++)
 			tmp[j*4+i] = a[i*4+j];
-	return mat4(tmp);
-}
-
-mat4 translate(const mat4 &a, const vec3 &b) {
-	double tmp[16];
-	for (int i = 0; i < 16; i += 4) {
-		tmp[i] = a[i];
-		tmp[i+1] = a[i+1];
-		tmp[i+2] = a[i+2];
-		tmp[i+3] = a[i+3];
-	}
-	tmp[3] += b[0];
-	tmp[7] += b[1];
-	tmp[11] += b[2];
 	return mat4(tmp);
 }

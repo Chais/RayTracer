@@ -17,10 +17,13 @@ int main() {
 	solid_material *red_lack = new solid_material(vec3{1, 0, 0}, lack, 0, 0, 0);
 	std::vector<shape*> scene;
 	scene.push_back(new sphere(1.0, red_lack));
-	scene[0]->translate(vec3{0, 1, -5});
-	double sf[] = {2, 1, 1};
-	scene[0]->scale(sf);
-	scene[0]->rotateZ(20);
+	scene[0]->translate(vec3{2, 0, -3});
+	scene[0]->rotateZ(90);
+	//scene[0]->scale(sf);
+	scene.push_back(new sphere(1.0, red_lack));
+	scene[1]->translate(vec3{0, -1, -1.5});
+	double sf[] = {10, 0.1, 10};
+	scene[1]->scale(sf);
 	whitted_rt rt = whitted_rt(bgcolor, cam, lights, scene);
 	rt.render();
 	png::image<png::rgb_pixel> img(1024, 768);
