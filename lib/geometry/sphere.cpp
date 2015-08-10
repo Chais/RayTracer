@@ -40,8 +40,10 @@ ray sphere::intersect(ray r) {
 }
 
 bool sphere::getShadow(vec3 origin, vec3 direction) {
-	vec3 c = this->getPosition()-origin;
-	double a = dot(direction, c);
+	mat4 im = this->getInvTransforms();
+	ray tr = ray(im*origin, transform(im, direction));
+	vec3 c = this->getPosition()-tr.getOrigin();
+	double a = dot(tr.getDirection(), c);
 	double b = std::sqrt(std::pow(length(c), 2)-std::pow(a, 2));
 	return (a > 0 && b < this->radius);
 }

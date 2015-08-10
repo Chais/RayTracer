@@ -36,7 +36,7 @@ void shape::translate(vec3 t) {
 			0, 0, 1, -t[2],
 			0, 0, 0, 1
 	};
-	this->transforms *= mat4(tmp);
+	this->transforms = this->transforms*mat4(tmp);
 	this->inv_trans = mat4(itmp)*this->inv_trans;
 }
 
@@ -53,7 +53,7 @@ void shape::scale(vec3 sf) {
 			0, 0, 1/sf[2], 0,
 			0, 0, 0, 1
 	};
-	this->transforms *= mat4(tmp);
+	this->transforms = this->transforms*mat4(tmp);
 	this->inv_trans = mat4(itmp)*this->inv_trans;
 }
 
@@ -71,7 +71,7 @@ void shape::rotateX(double angle) {
 			0, sin(-angle), cos(-angle), 0,
 			0, 0, 0, 1
 	};
-	this->transforms *= mat4(tmp);
+	this->transforms = this->transforms*mat4(tmp);
 	this->inv_trans = mat4(itmp)*this->inv_trans;
 }
 
@@ -89,7 +89,7 @@ void shape::rotateY(double angle) {
 			-sin(-angle), 0, cos(-angle), 0,
 			0, 0, 0, 1
 	};
-	this->transforms *= mat4(tmp);
+	this->transforms = this->transforms*mat4(tmp);
 	this->inv_trans = mat4(itmp)*this->inv_trans;
 }
 
@@ -107,6 +107,6 @@ void shape::rotateZ(double angle) {
 			0, 0, 1, 0,
 			0, 0, 0, 1
 	};
-	this->transforms *= mat4(tmp);
+	this->transforms = this->transforms*mat4(tmp);
 	this->inv_trans = mat4(itmp)*this->inv_trans;
 }
