@@ -81,10 +81,12 @@ int main(int argc, char *argv[]) {
 	sphere1.rotateZ(90);
 	cout << "Transforms: " << sphere1.getTransforms() << endl;
 	cout << "Inv. Transforms: " << sphere1.getInvTransforms() << endl;
-	cout << "Scale" << endl;
+	/*cout << "Scale" << endl;
 	sf[0] = 2;
 	sf[1] = 1;
 	sphere1.scale(sf);
 	cout << "Transforms: " << sphere1.getTransforms() << endl;
-	cout << "Inv. Transforms: " << sphere1.getInvTransforms() << endl;
+	cout << "Inv. Transforms: " << sphere1.getInvTransforms() << endl;*/
+	cout << "M*[0 0 0]'=" << sphere1.getInvTransforms()*vec3{0, 0, 0} << endl;
+	cout << "M*[0 -0.2 -1]'=" << transform(sphere1.getInvTransforms(), normalise(vec3{0, -0.2, -1})) << endl;
 }

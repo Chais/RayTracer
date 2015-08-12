@@ -19,7 +19,7 @@ ray sphere::intersect(ray r) {
 	mat4 m = this->getTransforms();
 	mat4 im = this->getInvTransforms();
 	ray tr = ray(im*r.getOrigin(), transform(im, r.getDirection()));
-	vec3 c = this->getPosition()-tr.getOrigin();
+	vec3 c = -tr.getOrigin();
 	double a = std::max(0.0, dot(tr.getDirection(), c));
 	double b = std::sqrt(std::pow(length(c), 2)-std::pow(a, 2));
 	if (b < this->radius-1E-12) {
@@ -29,11 +29,11 @@ ray sphere::intersect(ray r) {
 			x = tr.getOrigin()+tr.getDirection()*(a-d);
 		else
 			x = tr.getOrigin()+tr.getDirection()*(a+d);
-		vec3 dir = x-this->getPosition();
+		vec3 dir = x;
+		double local_len = length(x);
+		vec3 col = this->getColor(x[0]/local_len, x[1]/local_len);
 		x = m*x;
 		dir = transform(transpose(im), dir);
-		double local_len = length(x-this->getPosition());
-		vec3 col = this->getColor(x[0]/local_len, x[1]/local_len);
 		return ray(x, dir, col);
 	}
 	throw geometry_exception("No intersection");
@@ -42,7 +42,7 @@ ray sphere::intersect(ray r) {
 bool sphere::getShadow(vec3 origin, vec3 direction) {
 	mat4 im = this->getInvTransforms();
 	ray tr = ray(im*origin, transform(im, direction));
-	vec3 c = this->getPosition()-tr.getOrigin();
+	vec3 c = -tr.getOrigin();
 	double a = dot(tr.getDirection(), c);
 	double b = std::sqrt(std::pow(length(c), 2)-std::pow(a, 2));
 	return (a > 0 && b < this->radius);
