@@ -29,7 +29,7 @@ public:
 	 * @brief Puts a description of the camera on the stream
 	 * Puts the names of all variables followed by their values on the stream, one variable per line
 	 */
-	friend std::ostream &operator<<(std::ostream &out, camera &cam);
+	friend std::ostream &operator<<(std::ostream &out, const camera &cam);
 
 	/**
 	 * @brief Grants easy access to the camera's rays
