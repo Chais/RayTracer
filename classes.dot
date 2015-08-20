@@ -1,4 +1,4 @@
-digraph G {
+digraph Classes {
 	rankdir = "TB"
 	fontname = "Bitstream Vera Sans"
     fontsize = 8
@@ -13,66 +13,56 @@ digraph G {
     ]
     whitted_rt [
 		label = "{whitted_rt|
-				- backgroundColor : color\l
+				- bg_color : color\l
 				- cam : camera\l
-				- lights : std::vector\<ambient_light *\>\l
-				- scene : std::vector\<shape *\>\l|
-				+ whitted_rt(backgroundColor : color &,
+				- lights : std::vector\<light *\>\l
+				- scene : std::vector\<shape *\>\l
+				- max_bounces : int\l|
+				+ whitted_rt(bg_color : color &,
 						 cam : camera &,
-						 lights : std::vector\<ambient_light *\> &,
-						 scene : std::vector\<shape *\> &)\l
+						 lights : std::vector\<light *\> &,
+						 scene : std::vector\<shape *\> &,
+						 max_bounces : int)\l
 				+ render() : void\l
 				- cast_ray(r : ray, step : int, internal : bool) : color\l
 				- cast_shadow(r : ray) : bool\l
-				- find_nearest(r : ray) : intersect\l
+				- find_nearest(r : ray) : intersection\l
 		}"
     ]
-	intersect [
-		label = "{intersect|
+	intersection [
+		label = "{intersection|
 				+ object : shape *\l
-				+ normal : ray\l
+				+ dir : normal *\l
+				+ pos : point *\l
+				+ local_pos : vec2 *\l
 		}"
 	]
 	camera [
 		label = "{camera|
-				- position : point\l
-				- dir : direction\l
-				- down : direction\l
-				- right : direction\l
-				- fov : float\l
-				- resolution : int *\l
-				- maxbounces : int\l
-				- rays : std::vector\<ray\>\l|
-				+ camera()\l
-				+ camera(position : point &,
-						 dir : direction &,
-						 down : direction &,
-						 right : direction &,
+				# transforms : transform\l
+				# resolution : int[][]\l
+				# data : std::vector\<color\>|
+				- camera()\l
+				+ getRay(x : int, y : int) : ray &\l
+				+ getPixel(x : int, y : int) : color\l
+		}"
+	]
+	perspective_camera [
+		label = "{perspective_camera|
+				# fov : float\l|
+				+ perspective_camera()\l
+				+ perspective_camera(position : point &,
+						 look_at : point &,
+						 up : direction &,
+						 left : direction &,
 						 fov : float,
-						 resolution : int *,
-						 maxbounces : int)\l
-				+ operator[](i : int) : ray &\l
-				+ getPosition() : point &\l
-				+ getDirection() : direction &\l
-				+ getDown() : direction &\l
-				+ getRight() : direction &\l
-				+ getFov() : float\l
-				+ getMaxbounces() : int\l
-				+ begin() : std::vector\<ray\>::iterator\l
-				+ end() : std::vector\<ray\>::iterator\l
+						 resolution : int *)\l
 		}"
 	]
 	ray [
 		label = "{ray|
-				- origin : point\l
-				- dir : direction\l
-				- col : color *\l|
-				+ ray(origin : point &, dir : direction &)\l
-				+ ray(origin : point &, dir : direction &, col : color &)\l
-				+ getOrigin() : point\l
-				+ getDirection() : direction\l
-				+ getColor() : color *\l
-				+ setColor(col : color &) : void\l
+				+ o : point\l
+				+ d : direction\l
 		}"
 	]
 	shape_ [
@@ -81,12 +71,9 @@ digraph G {
 			- transforms : transform\l
 			- matrl : material *\l|
 			+ shape(matrl : material *)\l
-			+ getMaterial() : material *\l
-			+ getPosition() : point\l
-			+ getTransforms() : transform &\l
-			+ intersect(r : ray) : ray\l
-			+ cast_shadow(r : ray) : bool\l
-			+ getColor(p : vec2) : color\l
+			+ intersect_full(r : ray) : intersection\l
+			+ intersect_shadow(r : ray) : bool\l
+			+ shade(l : direction, n : normal, v : direction, pos : vec2) : color\l
 		}"
 	]
 	sphere [
@@ -97,54 +84,60 @@ digraph G {
 	]
 	material [
 		label ="{
-			material|
-			- phong_params : phong\l
-			- reflectance : float\l
-			- transmittance : float\l
-			- refraction : float\l|
-			+ material(phong_params : phong &,
-					 reflectance : float,
-					 transmittance : float,
-					 refraction : float)\l
-			+ getPhong_params()  : phong &\l
-			+ getReflectance() : float\l
-			+ getTransmittance() : float\l
-			+ getRefraction() : float\l
-			+ getColor(pos : vec2) : color\l
-		}"
-	]
-	phong [
-		label = "{
-			phong|
-			+ ambient : float\l
-			+ diffuse : float\l
-			+ specular : float\l
-			+ exponent : int\l
+			material||
+			- material()\l
+			+ shade(l : direction, n : normal, v : direction, pos : vec2) : color\l
 		}"
 	]
 	solid_material [
 		label = "{
 			solid_material|
 			# col : color\l|
-			+ solid_material(col : color,
-					 phong_params : phong &,
-					 reflectance : float,
-					 transmittance : float,
-					 refraction : float)\l
+			- solid_material()\l
+		}"
+	]
+	lambertian_material [
+		label = "{
+			lambertian_material|
+			- ambient : float\l
+			- diffuse : float\l|
+			+ lambertian_material(col : color,
+					 ambient : float,
+					 diffuse : float)
+		}"
+	]
+	phong_material [
+		label = "{
+			phong_material|
+			- ambient : float\l
+			- diffuse : float\l
+			- specular : float\l
+			- exponent : float\l|
+			+ phong_material(col : color,
+					 ambient : float,
+					 diffuse : float,
+					 specular : float,
+					 exponent : float)
+		}"
+	]
+	light [
+		label = "{
+			light|
+			# col : color\l|
+			- light(col : color &)\l
+			+ emit(dir : direction *) : color\l
 		}"
 	]
 	ambient_light [
 		label = "{
-			ambient_light|
-			# col : color\l|
-			+ ambient_light(col : color &)\l
-			+ getColor() : color &\l
+			ambient_light||
+			+ ambient_light(col : color)\l
 		}"
 	]
 	parallel_light [
 		label = "{
 			parallel_light|
-			# dir ; direction\l|
+			- transforms : transform\l|
 			+ parallel_light(col : color, dir : direction &)\l
 			+ getDirection() : direction &\l
 		}"
@@ -154,12 +147,14 @@ digraph G {
 			transform|
 			- trans : mat4\l
 			- inv_trans : mat4\l|
-			+ transform(trans : mat4, inv_trans : mat4)\l
-			+ operator()(t : transform)\l
-			+ operator()(p : point)\l
-			+ operator()(v : direction)\l
-			+ translate(translation : vec3) : void\l
-			+ scale(sf : vec3) : void\l
+			+ transform(trans : mat4 *, inv_trans : mat4 *)\l
+			+ transform(in : transform *)\l
+			+ operator()(t : transform *)\l
+			+ operator()(p : point *)\l
+			+ operator()(v : direction *)\l
+			+ operator()(n : normal *)\l
+			+ translate(translation : direction) : void\l
+			+ scale(sf : float[]) : void\l
 			+ rotateX(angle : float) : void\l
 			+ rotateY(angle : float) : void\l
 			+ rotateZ(angle : float) : void\l
@@ -178,10 +173,8 @@ digraph G {
 	]
 	point_ [
 		label = "{
-			point|
-			- v : vec4\<float\>\l|
+			point||
 			+ point()\l
-			+ point(v : vec3 &)\l
 			+ point(v : vec4 &)\l
 			+ point(in : float[])\l
 			+ point(in : point)\l
@@ -190,166 +183,199 @@ digraph G {
 	]
 	direction [
 		label = "{
-			direction|
-			- v : vec4\<float\>\l|
+			direction||
 			+ direction()\l
-			+ direction(v : vec3 &)\l
 			+ direction(v : vec4 &)\l
 			+ direction(in : float[])\l
 			+ direction(in : direction)\l
 			+ operator[](i : int) : float\l
 		}"
 	]
+	normal [
+		label = "{
+			normal||
+			+ normal()\l
+			+ normal(v : vec4 &)\l
+			+ normal(in : float[])\l
+			+ normal(in : normal)\l
+			+ operator[](i : int) : float\l
+		}"
+	]
 	color_ [
 		label = "{
-			color
+			color|
+			- v : float[]\l|
+			+ color(r : float, g : float, b : float)\l
+			+ color(in : color *)\l
+			+ operator[](i : int) : float\l
 		}"
 	]
 	vec2 [
 		label = "{
-			vec2\<T\>|
-			- v : T[]\l|
+			vec2|
+			- v : float[]\l|
 			+ vec2()\l
-			+ vec2(x : T, y : T, z : T)\l
-			+ vec2(in : T *)\l
-			+ vec2(in : vec2\<T\> &)\l
-			+ operator=(in : vec2\<T\> &)\l
-			+ operator[](i : int)\l
-		}"
-	]
-	vec3 [
-		label = "{
-			vec3\<T\>|
-			- v : T[]\l|
-			+ vec3()\l
-			+ vec3(x : T, y : T, z : T)\l
-			+ vec3(in : T *)\l
-			+ vec3(in : vec3\<T\> &)\l
-			+ operator=(in : vec3\<T\> &)\l
+			+ vec2(u : float, v : float)\l
+			+ vec2(in : float *)\l
+			+ vec2(in : vec2 &)\l
+			+ operator=(in : vec2 &)\l
 			+ operator[](i : int)\l
 		}"
 	]
 	vec4 [
 		label = "{
-			vec4\<T\>|
-			- v : T[]\l|
+			vec4|
+			- v : float[]\l|
 			+ vec4()\l
-			+ vec4(x : T, y : T, z : T)\l
-			+ vec4(in : T *)\l
-			+ vec4(in : vec4\<T\> &)\l
-			+ operator=(in : vec4\<T\> &)\l
+			+ vec4(x : float, y : float, z : float, w : float)\l
+			+ vec4(in : float *)\l
+			+ vec4(in : vec4 &)\l
+			+ operator=(in : vec4 &)\l
 			+ operator[](i : int)\l
 		}"
 	]
-	intersect -> whitted_rt [
-		arrowhead = "none"
+	color_ -> whitted_rt [
+		arrowhead = "diamond"
 	]
 	camera -> whitted_rt [
 		arrowhead = "diamond"
 	]
-	ray -> camera [
+	light -> whitted_rt [
 		arrowhead = "diamond"
 	]
-	ray -> intersect [
+	shape_ -> whitted_rt [
 		arrowhead = "diamond"
 	]
 	ray -> whitted_rt [
 		arrowhead = "open"
 		style = "dashed"
 	]
-	ray -> shape_ [
+	intersection -> whitted_rt [
 		arrowhead = "open"
 		style = "dashed"
 	]
-	shape_ -> whitted_rt [
+	ambient_light -> light [
+		arrowhead = "empty"
+	]
+	parallel_light -> light [
+		arrowhead = "empty"
+	]
+	color_ -> light [
 		arrowhead = "diamond"
 	]
-	shape_ -> intersect [
+	direction -> light [
+		arrowhead = "open"
+		style = "dashed"
+	]
+	transform -> camera [
+		arrowhead = "diamond"
+	]
+	color_ -> camera [
 		arrowhead = "odiamond"
 	]
-	sphere -> shape_ [
+	ray -> camera [
+		arrowhead = "open"
+		style = "dashed"
+	]
+	perspective_camera -> camera [
 		arrowhead = "empty"
 	]
-	material -> shape_ [
-		arrowhead = "diamond"
-	]
-	phong -> material [
-		arrowhead = "diamond"
-	]
-	solid_material -> material [
-		arrowhead = "empty"
-	]
-	ambient_light -> whitted_rt [
-		arrowhead = "diamond"
-	]
-	parallel_light -> ambient_light [
-		arrowhead = "empty"
-	]
-	transform -> shape_ [
-		arrowhead = "diamond"
-	]
-	mat4 -> transform [
-		arrowhead = "diamond"
-	]
-	vec2 -> shape_ [
+	point_ -> perspective_camera [
 		arrowhead = "open"
 		style = "dashed"
 	]
-	vec3 -> transform [
+	direction -> perspective_camera [
 		arrowhead = "open"
 		style = "dashed"
 	]
-	vec3 -> point_ [
-		arrowhead = "open"
-		style = "dashed"
-	]
-	vec3 -> direction [
-		arrowhead = "open"
-		style = "dashed"
-	]
-	vec4 -> point_ [
-		arrowhead = "diamond"
-	]
-	vec4 -> direction [
-		arrowhead = "diamond"
-	]
-	direction -> camera [
+	point_ -> ray [
 		arrowhead = "diamond"
 	]
 	direction -> ray [
 		arrowhead = "diamond"
 	]
-	direction -> transform [
+	transform -> shape_ [
+		arrowhead = "diamond"
+	]
+	material -> shape_ [
+		arrowhead = "diamond"
+	]
+	intersection -> shape_ [
 		arrowhead = "open"
 		style = "dashed"
 	]
-	direction -> parallel_light [
+	normal -> shape_ [
+		arrowhead = "open"
+		style = "dashed"
+	]
+	direction -> shape_ [
+		arrowhead = "open"
+		style = "dashed"
+	]
+	vec2 -> shape_ [
+		arrowhead = "open"
+		style = "dashed"
+	]
+	sphere -> shape_ [
+		arrowhead = "empty"
+	]
+	normal -> material [
+		arrowhead = "open"
+		style = "dashed"
+	]
+	direction -> material [
+		arrowhead = "open"
+		style = "dashed"
+	]
+	vec2 -> material [
+		arrowhead = "open"
+		style = "dashed"
+	]
+	solid_material -> material [
+		arrowhead = "empty"
+	]
+	color_ -> solid_material [
 		arrowhead = "diamond"
 	]
-	point_ -> camera [
-		arrowhead = "diamond"
+	lambertian_material -> solid_material [
+		arrowhead = "empty"
 	]
-	point_ -> ray [
+	phong_material -> solid_material [
+		arrowhead = "empty"
+	]
+	shape_ -> intersection [
+		arrowhead = "odiamond"
+	]
+	normal -> intersection [
+		arrowhead = "odiamond"
+	]
+	point_ -> intersection [
+		arrowhead = "odiamond"
+	]
+	vec2 -> intersection [
+		arrowhead = "odiamond"
+	]
+	vec4 -> direction [
+		arrowhead = "empty"
+	]
+	vec4 -> point_ [
+		arrowhead = "empty"
+	]
+	direction -> normal [
+		arrowhead = "empty"
+	]
+	mat4 -> transform [
 		arrowhead = "diamond"
 	]
 	point_ -> transform [
 		arrowhead = "open"
 		style = "dashed"
 	]
-	point_ -> shape_ [
+	direction -> transform [
 		arrowhead = "open"
 		style = "dashed"
 	]
-	color_ -> whitted_rt [
-		arrowhead = "diamond"
-	]
-	color_ -> ray [
-		arrowhead = "diamond"
-	]
-	color_ -> ambient_light [
-		arrowhead = "diamond"
-	]
-	color_ -> shape_ [
+	normal -> transform [
 		arrowhead = "open"
 		style = "dashed"
 	]
