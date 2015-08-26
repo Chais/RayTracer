@@ -8,12 +8,12 @@
 using namespace std;
 
 int main() {
-	camera cam = camera();
+	perspective_camera cam = perspective_camera();
 	vec3 bgcolor = vec3();
-	std::vector<ambient_light*> lights;
-	lights.push_back(new ambient_light(vec3{1, 1, 1}));
+	std::vector<light *> lights;
+	lights.push_back(new light(vec3{1, 1, 1}));
 	lights.push_back(new parallel_light(vec3{1, 1, 1}, vec3{0, -1, 0}));
-	phong lack = phong(0.1, 0.6, 0.7, 200);
+	phong_material lack = phong_material(0.1, 0.6, 0.7, 200);
 	solid_material *red_lack = new solid_material(vec3{1, 0, 0}, lack, 0, 0, 0);
 	std::vector<shape*> scene;
 	scene.push_back(new sphere(1.0, red_lack));

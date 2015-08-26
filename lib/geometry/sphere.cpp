@@ -39,7 +39,7 @@ ray sphere::intersect(ray r) {
 	throw geometry_exception("No intersection");
 }
 
-bool sphere::getShadow(vec3 origin, vec3 direction) {
+bool sphere::intersect_shadow(vec3 origin, vec3 direction) {
 	mat4 im = this->getInvTransforms();
 	ray tr = ray(im*origin, transform(im, direction));
 	vec3 c = -tr.getOrigin();

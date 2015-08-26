@@ -5,17 +5,19 @@
 #ifndef RAY_TRACER_PARALLEL_LIGHT_H
 #define RAY_TRACER_PARALLEL_LIGHT_H
 
-#include "ambient_light.h"
+#include "light.h"
 
-class parallel_light : public ambient_light {
+class parallel_light : public light {
 protected:
-	vec3 direction;
+	direction dir;
 public:
-	parallel_light(const vec3 &color, const vec3 &direction);
+	parallel_light(const color &col, const direction &dir);
 
 	friend std::ostream &operator<<(std::ostream &out, const parallel_light &a);
 
-	const vec3 &getDirection() const;
+	const direction &get_direction() const;
+
+	virtual color &emit(const direction &dir) const;
 };
 
 #endif //RAY_TRACER_PARALLEL_LIGHT_H

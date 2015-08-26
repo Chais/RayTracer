@@ -1,17 +1,17 @@
 digraph Classes {
 	rankdir = "TB"
 	fontname = "Bitstream Vera Sans"
-    fontsize = 8
-    node [
-        fontname = "Bitstream Vera Sans"
-        fontsize = 8
-        shape = "record"
-    ]
-    edge [
-        fontname = "Bitstream Vera Sans"
-        fontsize = 8
-    ]
-    whitted_rt [
+	fontsize = 8
+	node [
+		fontname = "Bitstream Vera Sans"
+		fontsize = 8
+		shape = "record"
+	]
+	edge [
+		fontname = "Bitstream Vera Sans"
+		fontsize = 8
+	]
+	whitted_rt [
 		label = "{whitted_rt|
 				- bg_color : color\l
 				- cam : camera\l
@@ -28,7 +28,7 @@ digraph Classes {
 				- cast_shadow(r : ray) : bool\l
 				- find_nearest(r : ray) : intersection\l
 		}"
-    ]
+	]
 	intersection [
 		label = "{intersection|
 				+ object : shape *\l
@@ -40,11 +40,11 @@ digraph Classes {
 	camera [
 		label = "{camera|
 				# transforms : transform\l
-				# resolution : int[][]\l
-				# data : std::vector\<color\>|
+				# resolution : unsigned long[2]\l
+				# data : std::vector\<color\>\l|
 				- camera()\l
-				+ getRay(x : int, y : int) : ray &\l
-				+ getPixel(x : int, y : int) : color\l
+				+ get_ray(x : int, y : int) : ray &\l
+				+ get_pixel(x : int, y : int) : color\l
 		}"
 	]
 	perspective_camera [
@@ -54,7 +54,6 @@ digraph Classes {
 				+ perspective_camera(position : point &,
 						 look_at : point &,
 						 up : direction &,
-						 left : direction &,
 						 fov : float,
 						 resolution : int *)\l
 		}"
@@ -73,7 +72,7 @@ digraph Classes {
 			+ shape(matrl : material *)\l
 			+ intersect_full(r : ray) : intersection\l
 			+ intersect_shadow(r : ray) : bool\l
-			+ shade(l : direction, n : normal, v : direction, pos : vec2) : color\l
+			+ shade(lcol : color, l : direction, n : normal, v : direction, pos : vec2, internal : bool) : color\l
 		}"
 	]
 	sphere [
@@ -86,7 +85,7 @@ digraph Classes {
 		label ="{
 			material||
 			- material()\l
-			+ shade(l : direction, n : normal, v : direction, pos : vec2) : color\l
+			+ shade(lcol : color, l : direction, n : normal, v : direction, pos : vec2, internal : bool) : color\l
 		}"
 	]
 	solid_material [
@@ -139,7 +138,7 @@ digraph Classes {
 			parallel_light|
 			- transforms : transform\l|
 			+ parallel_light(col : color, dir : direction &)\l
-			+ getDirection() : direction &\l
+			+ get_direction() : direction &\l
 		}"
 	]
 	transform [
@@ -147,36 +146,37 @@ digraph Classes {
 			transform|
 			- trans : mat4\l
 			- inv_trans : mat4\l|
-			+ transform(trans : mat4 *, inv_trans : mat4 *)\l
-			+ transform(in : transform *)\l
-			+ operator()(t : transform *)\l
-			+ operator()(p : point *)\l
-			+ operator()(v : direction *)\l
-			+ operator()(n : normal *)\l
-			+ translate(translation : direction) : void\l
-			+ scale(sf : float[]) : void\l
-			+ rotateX(angle : float) : void\l
-			+ rotateY(angle : float) : void\l
-			+ rotateZ(angle : float) : void\l
+			+ transform()\l
+			+ transform(trans : mat4 &, inv_trans : mat4 &)\l
+			+ transform(in : transform &)\l
+			+ operator()(t : transform &) : transform\l
+			+ operator()(p : point &) : point\l
+			+ operator()(v : direction &) : direction\l
+			+ operator()(n : normal &) : normal\l
+			+ translate(t : direction &) : void\l
+			+ scale(sf : std::array\<float, 3\> &) : void\l
+			+ rotateX(angle : float &) : void\l
+			+ rotateY(angle : float &) : void\l
+			+ rotateZ(angle : float &) : void\l
 		}"
 	]
 	mat4 [
 		label = "{
 			mat4|
-			- m : float[][]\l|
+			- m : std::array\<std::array\<float, 4\>, 4\>\l|
 			+ mat4()\l
-			+ mat4(in : float[][])\l
+			+ mat4(in : std::array\<std::array\<float, 4\>, 4\> &)\l
 			+ mat4(in : mat4 &)\l
 			+ operator=(in : mat4 &) : mat4 &\l
-			+ operator[](i : int) : float *\l
+			+ operator[](i : unsigned long) : float *\l
 		}"
 	]
 	point_ [
 		label = "{
 			point||
 			+ point()\l
+			+ point(x : float &, y : float &, z : float &)\l
 			+ point(v : vec4 &)\l
-			+ point(in : float[])\l
 			+ point(in : point)\l
 			+ operator[](i : int) : float\l
 		}"
@@ -185,8 +185,8 @@ digraph Classes {
 		label = "{
 			direction||
 			+ direction()\l
+			+ direction(x : float &, y : float &, z : float &)\l
 			+ direction(v : vec4 &)\l
-			+ direction(in : float[])\l
 			+ direction(in : direction)\l
 			+ operator[](i : int) : float\l
 		}"
@@ -195,8 +195,8 @@ digraph Classes {
 		label = "{
 			normal||
 			+ normal()\l
+			+ normal(x : float &, y : float &, z : float &)\l
 			+ normal(v : vec4 &)\l
-			+ normal(in : float[])\l
 			+ normal(in : normal)\l
 			+ operator[](i : int) : float\l
 		}"
@@ -204,7 +204,8 @@ digraph Classes {
 	color_ [
 		label = "{
 			color|
-			- v : float[]\l|
+			- v : std::array\<float, 3\>\l|
+			+ color()\l
 			+ color(r : float, g : float, b : float)\l
 			+ color(in : color *)\l
 			+ operator[](i : int) : float\l
@@ -213,22 +214,22 @@ digraph Classes {
 	vec2 [
 		label = "{
 			vec2|
-			- v : float[]\l|
+			- v : std::array\<float, 2\>\l|
 			+ vec2()\l
-			+ vec2(u : float, v : float)\l
-			+ vec2(in : float *)\l
+			+ vec2(u : float &, v : float &)\l
+			+ vec2(in : std::array\<float, 2\> &)\l
 			+ vec2(in : vec2 &)\l
 			+ operator=(in : vec2 &)\l
-			+ operator[](i : int)\l
+			+ operator[](i : unsigned long)\l
 		}"
 	]
 	vec4 [
 		label = "{
 			vec4|
-			- v : float[]\l|
+			- v : std::array\<float, 4\>\l|
 			+ vec4()\l
 			+ vec4(x : float, y : float, z : float, w : float)\l
-			+ vec4(in : float *)\l
+			+ vec4(in : std::array\<float, 4\>)\l
 			+ vec4(in : vec4 &)\l
 			+ operator=(in : vec4 &)\l
 			+ operator[](i : int)\l
@@ -355,21 +356,18 @@ digraph Classes {
 	vec2 -> intersection [
 		arrowhead = "odiamond"
 	]
-	vec4 -> direction [
-		arrowhead = "empty"
-	]
-	vec4 -> point_ [
-		arrowhead = "empty"
-	]
-	direction -> normal [
-		arrowhead = "empty"
-	]
 	mat4 -> transform [
 		arrowhead = "diamond"
 	]
 	point_ -> transform [
 		arrowhead = "open"
 		style = "dashed"
+	]
+	point_ -> vec4 [
+		arrowhead = "empty"
+	]
+	direction -> vec4[
+		arrowhead = "empty"
 	]
 	direction -> transform [
 		arrowhead = "open"
@@ -378,5 +376,8 @@ digraph Classes {
 	normal -> transform [
 		arrowhead = "open"
 		style = "dashed"
+	]
+	normal -> vec4 [
+		arrowhead = "empty"
 	]
 }

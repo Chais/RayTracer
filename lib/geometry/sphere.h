@@ -18,7 +18,7 @@ public:
 
 	virtual ray intersect(ray r) override;
 
-	virtual bool getShadow(vec3 origin, vec3 direction) override;
+	virtual bool intersect_shadow(vec3 origin, vec3 direction) override;
 
 	virtual vec3 getColor(double u, double v);
 };

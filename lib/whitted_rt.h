@@ -7,33 +7,25 @@
 #ifndef RAY_TRACER_WHITTEDRT_H
 #define RAY_TRACER_WHITTEDRT_H
 
-#include "math/vec3.h"
-#include "camera/camera.h"
-#include "light/ambient_light.h"
+#include "perspective_camera.h"
+#include "light/light.h"
 #include "geometry/shape.h"
 #include <typeinfo>
 
 class whitted_rt {
 private:
-	struct intersect {
-		shape *object;
-		ray normal;
-
-		intersect() : object(nullptr), normal(vec3(), vec3()) { }
-	};
-
 	const vec3 backgroundColor;
-	camera &cam;
-	std::vector<ambient_light *> lights;
+	perspective_camera &cam;
+	std::vector<light *> lights;
 	std::vector<shape *> scene;
 
 	vec3 cast_ray(ray r, int step, bool internal);
 
-	bool getShadow(vec3 origin, vec3 direction);
-	intersect find_nearest(ray r);
+	bool cast_shadow(vec3 origin, vec3 direction);
+	intersection find_nearest(ray r);
 
 public:
-	whitted_rt(const vec3 &backgroundColor, camera &cam, const std::vector<ambient_light *> &lights,
+	whitted_rt(const vec3 &backgroundColor, perspective_camera &cam, const std::vector<light *> &lights,
 			   const std::vector<shape *> &scene);
 
 	void render();

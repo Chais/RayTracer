@@ -9,8 +9,8 @@
 #define RAY_TRACER_MAT4_H
 
 #include "vec4.h"
-#include "vec3.h"
-#include <cstring>
+#include <assert.h>
+#include <array>
 
 /**
  * @class mat4
@@ -19,54 +19,68 @@
  */
 class mat4 {
 private:
-	double a[16];
+	std::array<std::array<float, 4>, 4> m;
 
 public:
 	/**
 	 * @brief Default constructor
+	 *
 	 * Creates a 4x4 unity matrix
 	 */
 	mat4();
 
 	/**
 	 * @brief Explicit constructor
+	 *
 	 * Creates a 4x4 matrix copying the given array
-	 * @param *in the array of values
+	 *
+	 * @param &in the std::array of values
 	 */
-	mat4(const double *in);
+	mat4(const std::array<std::array<float, 4>, 4> &in);
 
 	/**
 	 * @brief Copy constructor
+	 *
 	 * Creates a 4x4 matrix from the given matrix
+	 *
 	 * @param &in the original matrix
 	 */
 	mat4(const mat4 &in);
 
 	/**
 	 * @brief Assignment
+	 *
 	 * Assigns the values of the right matrix
+	 *
 	 * @param &in the right operand
+	 *
 	 * @return the updated matrix
 	 */
 	mat4 &operator=(const mat4 &in);
 
 	/**
 	 * @brief Array subscript
+	 *
 	 * Allows access to the matrix' values
 	 */
-	double &operator[](const int i);
+	std::array<float, 4> operator[](const unsigned long i);
 
 	/**
 	 * @brief Array subscript
+	 *
 	 * Allows access to the matrix' values
 	 */
-	const double &operator[](const int i) const;
+	const std::array<const float, 4> operator[](const unsigned long i) const;
 
 	/**
 	 * @brief Stream output
+	 *
 	 * Puts the matrix on an output stream in an Octave/Matlab-compatible format
+	 *
 	 * @param &out the output stream
+	 *
 	 * @param &a the matrix
+	 *
 	 * @return the output stream
 	 */
 	friend std::ostream &operator<<(std::ostream &out, const mat4 &a);
@@ -74,133 +88,164 @@ public:
 
 /**
  * @brief Addition operator
- * Adds two 4x4 matrices component-wise
- * @param &b the right operand
+ *
+ * Adds the matrices lhs and rhs component-wise.
+ *
+ * @param &lhs the left operand
+ *
+ * @param &rhs the right operand
+ *
  * @return the resulting new matrix
  */
-mat4 operator+(const mat4 &a, const mat4 &b);
+mat4 operator+(const mat4 &lhs, const mat4 &rhs);
 
 /**
  * @brief Addition assignment
- * Adds a 4x4 matrix to this one
- * @param &b the right operand
- * @return the updated matrix
+ *
+ * Adds the matrices lhs and rhs component-wise. The result is assigned to lhs. This is equivalent to lhs=lhs+rhs.
+ *
+ * @param &lhs the left operand
+ *
+ * @param &rhs the right operand
+ *
+ * @return the updated lhs matrix
  */
-mat4 &operator+=(mat4 &a, const mat4 &b);
+mat4 &operator+=(mat4 &lhs, const mat4 &rhs);
 
 /**
  * @brief Subtraction operator
- * Component-wise subtracts the right 4x4 matrix from the left one
- * @param &b the right operand
- * @return the resulting new matrix
+ *
+ * Subtracts the matrix rhs component-wise from lhs.
+ *
+ * @param &lhs the left operand
+ *
+ * @param &rhs the right operand
+ *
+ * @return the resulting  matrix
  */
-mat4 operator-(const mat4 &a, const mat4 &b);
+mat4 operator-(const mat4 &lhs, const mat4 &rhs);
 
 /**
  * @brief Subtraction assignment
- * Subtracts a 4x4 matrix from this one
- * @param &b the right operand
- * @return the updated matrix
+ *
+ * Subtracts the matrix rhs component-wise from lhs. The result is assigned to lhs. This is equivalent to lhs=lhs-rhs.
+ *
+ * @param &lhs the left operand
+ *
+ * @param &rhs the right operand
+ *
+ * @return the updated lhs matrix
  */
-mat4 &operator-=(mat4 &a, const mat4 &b);
+mat4 &operator-=(mat4 &lhs, const mat4 &rhs);
 
 /**
- * @brief Negate operator
+ * @brief Unitary minus operator
+ *
  * Negates every value of the matrix
- * @return the resulting new matrix
+ *
+ * @param &rhs the matrix
+ *
+ * @return the resulting negated matrix
  */
-mat4 operator-(const mat4 &a);
+mat4 operator-(const mat4 &rhs);
 
 /**
- * @brief Scaling operation
- * Multiplies every value of the matrix with the given scalar
- * @param n the scaling factor
- * @return the new resulting matrix
+ * @brief Scalar multiplication
+ *
+ * Multiplies every value of the matrix with the given scalar.
+ *
+ * @param &lhs the matrix
+ *
+ * @param &rhs the scaling factor
+ *
+ * @return the scaled matrix
  */
-mat4 operator*(const mat4 &a, const double n);
+mat4 operator*(const mat4 &lhs, const float &rhs);
+
+/**
+ * @brief Scalar multiplication
+ *
+ * Multiplies every value of the matrix with the given scalar.
+ *
+ * @param &lhs the scaling factor
+ *
+ * @param &rhs the matrix
+ *
+ * @return the scaled matrix
+ */
+mat4 operator*(const float &lhs, const mat4 &rhs);
 
 /**
  * @brief Matrix-vector multiplication
- * Multiplies the matrix a with the vector b
  *
- * @param &a the lhs matrix
+ * Multiplies the matrix lhs with the column-vector rhs.
  *
- * @param &b the rhs vector
+ * @param &lhs the matrix
  *
- * @return the new resulting vector
+ * @param &rhs the vector
+ *
+ * @return the resulting row-vector
  */
-vec4 operator*(const mat4 &a, const vec4 &b);
-
-/**
- * @brief Matrix-vector multiplication
- * Multiplies the matrix a with the vec3 b as if b was a vec4 with its homogenous coordinate set to 1
- *
- * @param &a the lhs matrix
- *
- * @param &b the rhs vector
- *
- * @return the new resulting vector
- */
-vec3 operator*(const mat4 &a, const vec3 &b);
+vec4 operator*(const mat4 &lhs, const vec4 &rhs);
 
 /**
  * @brief Vector-Matrix multiplication
- * Multiplies the vector a with the matrix b
  *
- * @param &a the lhs vector
+ * Multiplies the row-vector lhs with the matrix rhs.
  *
- * @param &b the rhs matrix
+ * @param &lhs the left operand
  *
- * @return the new resulting vector
+ * @param &rhs the right operand
+ *
+ * @return the resulting column-vector
  */
 vec4 operator*(const vec4 &a, const mat4 &b);
 
 /**
  * @brief Matrix-matrix multiplication
+ *
  * Multiplies the 4x4 matrix with another 4x4 matrix
+ *
  * @param &a the left operand
+ *
  * @param &b the right operand
+ *
  * @return the new resulting matrix
  */
 mat4 operator*(const mat4 &a, const mat4 &b);
 
 /**
- * @brief Multiplication assignment
- * Equivalent to a=a*b where a and b are matrices
- * @parameter &a the left operand
- * @param &b the right operand
- * @return the updated left operand
- */
-mat4 &operator*=(mat4 &a, const mat4 &b);
-
-/**
  * /**
  * @brief Multiplication assignment
- * Equivalent to a=a*n where a is a matrix and n is a scalar
- * @parameter &a the left operand
- * @param n the right operand
- * @return the updated left operand
+ *
+ * Mulitplies the matrix lhs with the scalar rhs. The result is assigned to lhs. This is equivalent to lhs=lhs*rhs.
+ *
+ * @param &lhs the left operand
+ *
+ * @param &rhs the right operand
+ *
+ * @return the updated lhs matrix
  */
-mat4 &operator*=(mat4 &a, const double n);
+mat4 &operator*=(mat4 &lhs, const float &rhs);
 
 /**
  * @brief Matrix inversion
- * Calculates the inverse of the matrix. No checks are made, because transformation matrices are always invertible.
+ *
+ * Calculates the inverse of the matrix a. No checks are done because transformation matrices are always invertible.
+ *
+ * @param &a the matrix
+ *
  * @return the new resulting matrix
  */
 mat4 invert(const mat4 &a);
 
 /**
- * @brief Vector transformation
- * Multiplies the upper left 3x3 submatrix with the vector
- * @param &b the right operand
- * @return the new resulting vector
- */
-vec3 transform(const mat4 &a, const vec3 &b);
-
-/**
  * @brief Matrix transposition
- * Flips the matrix along its main diagonal
+ *
+ * Flips the matrix along its main diagonal.
+ *
+ * @param &a the matrix
+ *
  * @return the new resulting matrix
  */
 mat4 transpose(const mat4 &a);

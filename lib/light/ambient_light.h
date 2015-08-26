@@ -1,24 +1,19 @@
 //
-// Created by chais on 06.08.15.
+// Created by chais on 26.08.15.
 //
 
 #ifndef RAY_TRACER_AMBIENT_LIGHT_H
 #define RAY_TRACER_AMBIENT_LIGHT_H
 
-#include <ostream>
-#include "../math/vec3.h"
+#include "../geometry/color.h"
+#include "light.h"
+#include "../geometry/direction.h"
 
-class ambient_light {
-protected:
-	vec3 color;
+class ambient_light : public light {
 public:
-	ambient_light(const vec3 &color);
-
-	virtual ~ambient_light() { }
-
+	ambient_light(color col);
 	friend std::ostream &operator<<(std::ostream &out, const ambient_light &a);
-
-	const vec3 &getColor() const;
+	virtual color &emit(const direction &dir) const;
 };
 
 #endif //RAY_TRACER_AMBIENT_LIGHT_H

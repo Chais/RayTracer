@@ -6,7 +6,7 @@
 #include "geometry/geometry_exception.h"
 #include "light/parallel_light.h"
 
-whitted_rt::whitted_rt(const vec3 &backgroundColor, camera &cam, const std::vector<ambient_light *> &lights,
+whitted_rt::whitted_rt(const vec3 &backgroundColor, perspective_camera &cam, const std::vector<light *> &lights,
 					   const std::vector<shape *> &scene) : backgroundColor(backgroundColor), cam(cam), lights(lights),
 															scene(scene) { }
 
@@ -19,7 +19,7 @@ vec3 whitted_rt::cast_ray(ray r, int step, bool internal) {
 		vec3 *reflect_color = new vec3();
 		vec3 *refract_color = new vec3();
 		material *matrl = object->getMaterial();
-		phong phng = matrl->getPhong_params();
+		phong_material phng = matrl->getPhong_params();
 		double ref = matrl->getReflectance();
 		double t = matrl->getTransmittance();
 		double iof = matrl->getRefraction();
@@ -27,22 +27,22 @@ vec3 whitted_rt::cast_ray(ray r, int step, bool internal) {
 		vec3 *ac = new vec3();
 		vec3 *dc = new vec3();
 		vec3 *sc = new vec3();
-		for (ambient_light *light : lights) {
+		for (light *light : lights) {
 			if (parallel_light *l = dynamic_cast<parallel_light *>(light)) {
 				if (!internal) {
 					vec3 light_dir = -l->getDirection();
-					if (this->getShadow(normal.getOrigin(), light_dir))
+					if (this->cast_shadow(normal.getOrigin(), light_dir))
 						continue;
 					double phi = std::max(0.0, dot(normal.getDirection(), light_dir));
 					if (phi > 0) {
-						*dc += l->getColor()*(phng.diffuse*phi);
+						*dc += l->emit(<#initializer#>)*(phng.diffuse*phi);
 						vec3 reflect_dir = normal.getDirection()*(2*phi)-light_dir;
-						*sc += l->getColor()*
+						*sc += l->emit(<#initializer#>)*
 							   (std::pow(std::max(0.0, dot(view_dir, reflect_dir)), phng.exponent)*phng.specular);
 					}
 				}
 			} else {
-				*ac += light->getColor()*phng.ambient;
+				*ac += light->emit(<#initializer#>)*phng.ambient;
 			}
 		}
 		vec3 *light_weight = new vec3(*ac+*dc);
@@ -79,19 +79,19 @@ void whitted_rt::render() {
 		r.setColor(cast_ray(r, 0, false));
 }
 
-bool whitted_rt::getShadow(vec3 origin, vec3 direction) {
+bool whitted_rt::cast_shadow(vec3 origin, vec3 direction) {
 	for (shape *obstacle : this->scene)
-		if (obstacle->getShadow(origin, direction))
+		if (obstacle->intersect_shadow(origin, direction))
 			return true;
 	return false;
 }
 
-whitted_rt::intersect whitted_rt::find_nearest(ray r) {
+intersection whitted_rt::find_nearest(ray r) {
 	struct whitted_rt::intersect out;
 	double dist = std::numeric_limits<double>::max();
 	for (shape *object : scene)
 		try {
-			ray normal = object->intersect(r);
+			ray normal = object->intersect_full(r);
 			double new_dist = length(r.getOrigin()-normal.getOrigin());
 			if (new_dist < dist) {
 				dist = new_dist;

@@ -7,14 +7,16 @@
 
 #include "material.h"
 
+/**
+ * @name solid_material
+ *
+ * @brief Models solid materials
+ *
+ * All solid materials should have a color
+ */
 class solid_material : public material {
 protected:
-	vec3 color;
-public:
-	solid_material(const vec3 color, const phong &phong_params, double reflectance, double transmittance,
-				   double refraction);
-
-	virtual vec3 getColor(double u, double v);
+	color col;
 };
 
 #endif //RAY_TRACER_SOLID_MATERIAL_H

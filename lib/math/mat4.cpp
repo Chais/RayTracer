@@ -1,57 +1,43 @@
 #include "mat4.h"
 
 mat4::mat4() {
-	memset(this->a, 0, 16 * sizeof(double));
-	for (int i = 0; i < 4; i++) {
-		this->a[i * 4 + i] = 1;
-	}
+	m = {{{1, 0, 0, 0}, {0, 1, 0, 0}, {0, 0, 1, 0}, {0, 0, 0, 1}}};
 }
 
-mat4::mat4(const double *in) {
-	for (int i = 0; i < 16; i += 4) {
-		this->a[i] = in[i];
-		this->a[i + 1] = in[i + 1];
-		this->a[i + 2] = in[i + 2];
-		this->a[i + 3] = in[i + 3];
-	}
+mat4::mat4(const std::array<std::array<const float, 4>, 4> &in) {
+	for (int i = 0; i < 4; i++)
+		for (int j = 0; j < 4; j++)
+			m[i][j] = in[i][j];
 }
 
 mat4::mat4(const mat4 &in) {
-	for (int i = 0; i < 16; i += 4) {
-		this->a[i] = in[i];
-		this->a[i + 1] = in[i + 1];
-		this->a[i + 2] = in[i + 2];
-		this->a[i + 3] = in[i + 3];
-	}
+	for (int i = 0; i < 4; i++)
+		for (int j = 0; j < 4; j++)
+			m[i][j] = in[i][j];
 }
 
 mat4 &mat4::operator=(const mat4 &in) {
-	for (int i = 0; i < 16; i += 4) {
-		this->a[i] = in[i];
-		this->a[i + 1] = in[i + 1];
-		this->a[i + 2] = in[i + 2];
-		this->a[i + 3] = in[i + 3];
-	}
+	for (int i = 0; i < 4; i++)
+		for (int j = 0; j < 4; j++)
+			this->m[i][j] = in[i][j];
 	return *this;
 }
 
-double &mat4::operator[](const int i) {
-	if (i < 0 || i > 15)
-		throw std::out_of_range("Index out of range.");
-	return this->a[i];
+std::array<float, 4> mat4::operator[](const unsigned long i) {
+	assert(0 <= i <= 3);
+	return this->m[i];
 }
 
-const double &mat4::operator[](const int i) const {
-	if (i < 0 || i > 15)
-		throw std::out_of_range("Index out of range.");
-	return this->a[i];
+const std::array<const float, 4> mat4::operator[](const unsigned long i) const {
+	assert(0 <= i <= 3);
+	return this->m[i];
 }
 
 std::ostream &operator<<(std::ostream &out, const mat4 &a) {
 	out << "[";
 	for (int i = 0; i < 4; i++) {
 		for (int j = 0; j < 4; j++) {
-			out << a.a[i * 4 + j];
+			out << a.m[i][j];
 			if (j != 3)
 				out << ", ";
 		}
@@ -62,184 +48,146 @@ std::ostream &operator<<(std::ostream &out, const mat4 &a) {
 	return out;
 }
 
-mat4 operator+(const mat4 &a, const mat4 &b) {
-	double *tmp = new double[16];
-	for (int i = 0; i < 16; i += 4) {
-		tmp[i] = a[i] + b[i];
-		tmp[i + 1] = a[i + 1] + b[i + 1];
-		tmp[i + 2] = a[i + 2] + b[i + 2];
-		tmp[i + 3] = a[i + 3] + b[i + 3];
-	}
-	return mat4(tmp);
-}
-
-mat4 &operator+=(mat4 &a, const mat4 &b) {
-	for (int i = 0; i < 16; i += 4) {
-		a[i] += b[i];
-		a[i + 1] += b[i + 1];
-		a[i + 2] += b[i + 2];
-		a[i + 3] += b[i + 3];
-	}
-	return a;
-}
-
-mat4 operator-(const mat4 &a, const mat4 &b) {
-	double *tmp = new double[16];
-	for (int i = 0; i < 16; i += 4) {
-		tmp[i] = a[i] - b[i];
-		tmp[i + 1] = a[i + 1] - b[i + 1];
-		tmp[i + 2] = a[i + 2] - b[i + 2];
-		tmp[i + 3] = a[i + 3] - b[i + 3];
-	}
-	return mat4(tmp);
-}
-
-mat4 &operator-=(mat4 &a, const mat4 &b) {
-	for (int i = 0; i < 16; i += 4) {
-		a[i] -= b[i];
-		a[i + 1] -= b[i + 1];
-		a[i + 2] -= b[i + 2];
-		a[i + 3] -= b[i + 3];
-	}
-	return a;
-}
-
-mat4 operator-(const mat4 &a) {
-	double *tmp = new double[16];
-	for (int i = 0; i < 16; i += 4) {
-		tmp[i] = -a[i];
-		tmp[i + 1] = -a[i + 1];
-		tmp[i + 2] = -a[i + 2];
-		tmp[i + 3] = -a[i + 3];
-	}
-	return mat4(tmp);
-}
-
-mat4 operator*(const mat4 &a, const double n) {
-	double *tmp = new double[16];
-	for (int i = 0; i < 16; i += 4) {
-		tmp[i] = a[i] * n;
-		tmp[i + 1] = a[i + 1] * n;
-		tmp[i + 2] = a[i + 2] * n;
-		tmp[i + 3] = a[i + 3] * n;
-	}
-	return mat4(tmp);
-}
-
-vec4 operator*(const mat4 &a, const vec4 &b) {
-	double tmp[4];
+mat4 operator+(const mat4 &lhs, const mat4 &rhs) {
+	std::array<std::array<float, 4>, 4> tmp;
 	for (int i = 0; i < 4; i++)
-		tmp[i] = a[i * 4] * b[0] + a[i * 4 + 1] * b[1] + a[i * 4 + 2] * b[2] + a[i * 4 + 3] * b[3];
+		for (int j = 0; j < 4; j++)
+			tmp[i][j] = lhs[i][j]+rhs[i][j];
+	return mat4(tmp);
+}
+
+mat4 &operator+=(mat4 &lhs, const mat4 &rhs) {
+	for (int i = 0; i < 4; i++)
+		for (int j = 0; j < 4; j++)
+			lhs[i][j] += rhs[i][j];
+	return lhs;
+}
+
+mat4 operator-(const mat4 &lhs, const mat4 &rhs) {
+	std::array<std::array<float, 4>, 4> tmp;
+	for (int i = 0; i < 4; i++)
+		for (int j = 0; j < 4; j++)
+			tmp[i][j] = lhs[i][j]-rhs[i][j];
+	return mat4(tmp);
+}
+
+mat4 &operator-=(mat4 &lhs, const mat4 &rhs) {
+	for (int i = 0; i < 4; i++)
+		for (int j = 0; j < 4; j++)
+			lhs[i][j] -= rhs[i][j];
+	return lhs;
+}
+
+mat4 operator-(const mat4 &rhs) {
+	std::array<std::array<float, 4>, 4> tmp;
+	for (int i = 0; i < 4; i++)
+		for (int j = 0; j < 4; j++)
+			tmp[i][j] = -rhs[i][j];
+	return mat4(tmp);
+}
+
+mat4 operator*(const mat4 &lhs, const float &rhs) {
+	std::array<std::array<float, 4>, 4> tmp;
+	for (int i = 0; i < 4; i++)
+		for (int j = 0; j < 4; j++)
+			tmp[i][j] = lhs[i][j]*rhs;
+	return mat4(tmp);
+}
+
+mat4 operator*(const float &lhs, const mat4 &rhs) {
+	std::array<std::array<float, 4>, 4> tmp;
+	for (int i = 0; i < 4; i++)
+		for (int j = 0; j < 4; j++)
+			tmp[i][j] = rhs[i][j]*lhs;
+	return mat4(tmp);
+}
+
+vec4 operator*(const mat4 &lhs, const vec4 &rhs) {
+	std::array<float, 4> tmp;
+	for (int i = 0; i < 4; i++)
+		tmp[i] = lhs[i][0]*rhs[0]+lhs[i][1]*rhs[1]+lhs[i][2]*rhs[2]+lhs[i][3]*rhs[3];
 	return vec4(tmp);
 }
 
-vec3 operator*(const mat4 &a, const vec3 &b) {
-	double tmp[3];
-	for (int i = 0; i < 3; i++)
-		tmp[i] = a[i * 4] * b[0] + a[i * 4 + 1] * b[1] + a[i * 4 + 2] * b[2] + a[i * 4 + 3];
-	return vec3(tmp);
-}
-
 vec4 operator*(const vec4 &a, const mat4 &b) {
-	double tmp[4];
+	std::array<float, 4> tmp;
 	for (int i = 0; i < 4; i++)
-		tmp[i] = a[0] * b[i] + a[1] * b[i + 4] + a[2] * b[i + 8] + a[3] * b[i + 12];
+		tmp[i] = a[0]*b[0][i]+a[1]*b[1][i]+a[2]*b[2][i]+a[3]*b[3][i];
 	return vec4(tmp);
 }
 
 mat4 operator*(const mat4 &a, const mat4 &b) {
-	double tmp[16];
+	std::array<std::array<float, 4>, 4> tmp;
 	for (int i = 0; i < 4; i++)
 		for (int j = 0; j < 4; j++)
-			tmp[i * 4 + j] =
-					a[i * 4] * b[j] + a[i * 4 + 1] * b[4 + j] + a[i * 4 + 2] * b[8 + j] + a[i * 4 + 3] * b[12 + j];
+			tmp[i][j] = a[i][0]*b[0][j]+a[i][1]*b[1][j]+a[i][2]*b[2][j]+a[i][3]*b[3][j];
 	return mat4(tmp);
 }
 
-mat4 &operator*=(mat4 &a, const mat4 &b) {
-	a = a * b;
-	return a;
-}
-
-mat4 &operator*=(mat4 &a, const double n) {
+mat4 &operator*=(mat4 &a, const float &n) {
 	for (int i = 0; i < 16; i += 4) {
-		a[i] *= n;
-		a[i + 1] *= n;
-		a[i + 2] *= n;
-		a[i + 3] *= n;
+		a[i][0] *= n;
+		a[i][1] *= n;
+		a[i][2] *= n;
+		a[i][3] *= n;
 	}
 	return a;
 }
 
 mat4 invert(const mat4 &a) {
-	double det = a[0] * a[5] * a[10] * a[15] + a[0] * a[6] * a[11] * a[13] +
-				 a[0] * a[7] * a[9] * a[14] + a[1] * a[4] * a[11] * a[14] +
-				 a[1] * a[6] * a[8] * a[15] + a[1] * a[7] * a[10] * a[12] +
-				 a[2] * a[4] * a[9] * a[15] + a[2] * a[5] * a[11] * a[12] +
-				 a[2] * a[7] * a[8] * a[13] + a[3] * a[4] * a[10] * a[13] +
-				 a[3] * a[5] * a[8] * a[14] + a[3] * a[6] * a[9] * a[12] -
-				 a[0] * a[5] * a[11] * a[14] - a[0] * a[6] * a[9] * a[15] -
-				 a[0] * a[7] * a[10] * a[13] - a[1] * a[4] * a[10] * a[15] -
-				 a[1] * a[6] * a[11] * a[12] - a[1] * a[7] * a[8] * a[14] -
-				 a[2] * a[4] * a[11] * a[13] - a[2] * a[5] * a[8] * a[15] -
-				 a[2] * a[7] * a[9] * a[12] - a[3] * a[4] * a[9] * a[14] -
-				 a[3] * a[5] * a[10] * a[12] - a[3] * a[6] * a[8] * a[13];
-	double tmp[] = {
-			(a[5] * a[10] * a[15] + a[6] * a[11] * a[13] + a[7] * a[9] * a[14] -
-			 a[5] * a[11] * a[14] - a[6] * a[9] * a[15] - a[7] * a[10] * a[13]) /
-			det,
-			(a[1] * a[11] * a[14] + a[2] * a[9] * a[15] + a[3] * a[10] * a[13] -
-			 a[1] * a[10] * a[15] - a[2] * a[11] * a[13] - a[3] * a[9] * a[14]) /
-			det,
-			(a[1] * a[6] * a[15] + a[2] * a[7] * a[13] + a[3] * a[5] * a[14] -
-			 a[1] * a[7] * a[14] - a[2] * a[5] * a[15] - a[3] * a[6] * a[13]) / det,
-			(a[1] * a[7] * a[10] + a[2] * a[5] * a[11] + a[3] * a[6] * a[9] -
-			 a[1] * a[6] * a[11] - a[2] * a[7] * a[9] - a[3] * a[5] * a[10]) / det,
-			(a[4] * a[11] * a[14] + a[6] * a[8] * a[15] + a[7] * a[10] * a[12] -
-			 a[4] * a[10] * a[15] - a[6] * a[11] * a[12] - a[7] * a[8] * a[14]) /
-			det,
-			(a[0] * a[10] * a[15] + a[2] * a[11] * a[12] + a[3] * a[8] * a[14] -
-			 a[0] * a[11] * a[14] - a[2] * a[8] * a[15] - a[3] * a[10] * a[12]) /
-			det,
-			(a[0] * a[7] * a[14] + a[2] * a[4] * a[15] + a[3] * a[6] * a[12] -
-			 a[0] * a[6] * a[15] - a[2] * a[7] * a[12] - a[3] * a[4] * a[14]) / det,
-			(a[0] * a[6] * a[11] + a[2] * a[7] * a[8] + a[3] * a[4] * a[10] -
-			 a[0] * a[7] * a[10] - a[2] * a[4] * a[11] - a[3] * a[6] * a[8]) / det,
-			(a[4] * a[9] * a[15] + a[5] * a[11] * a[12] + a[7] * a[8] * a[13] -
-			 a[4] * a[11] * a[13] - a[5] * a[8] * a[15] - a[7] * a[9] * a[12]) /
-			det,
-			(a[0] * a[11] * a[13] + a[1] * a[8] * a[15] + a[3] * a[9] * a[12] -
-			 a[0] * a[9] * a[15] - a[1] * a[11] * a[12] - a[3] * a[8] * a[13]) /
-			det,
-			(a[0] * a[5] * a[15] + a[1] * a[7] * a[12] + a[3] * a[4] * a[13] -
-			 a[0] * a[7] * a[13] - a[1] * a[4] * a[15] - a[3] * a[5] * a[12]) / det,
-			(a[0] * a[7] * a[9] + a[1] * a[4] * a[11] + a[3] * a[5] * a[8] -
-			 a[0] * a[5] * a[11] - a[1] * a[7] * a[8] - a[3] * a[4] * a[9]) / det,
-			(a[4] * a[10] * a[13] + a[5] * a[8] * a[14] + a[6] * a[9] * a[12] -
-			 a[4] * a[9] * a[14] - a[5] * a[10] * a[12] - a[6] * a[8] * a[13]) /
-			det,
-			(a[0] * a[9] * a[14] + a[1] * a[10] * a[12] + a[2] * a[8] * a[13] -
-			 a[0] * a[10] * a[13] - a[1] * a[8] * a[14] - a[2] * a[9] * a[12]) /
-			det,
-			(a[0] * a[6] * a[13] + a[1] * a[4] * a[14] + a[2] * a[5] * a[12] -
-			 a[0] * a[5] * a[14] - a[1] * a[6] * a[12] - a[2] * a[4] * a[13]) / det,
-			(a[0] * a[5] * a[10] + a[1] * a[6] * a[8] + a[2] * a[4] * a[9] -
-			 a[0] * a[6] * a[9] - a[1] * a[4] * a[10] - a[2] * a[5] * a[8]) / det
-	};
+	float idet = 1/(a[0][0]*a[1][1]*a[2][2]*a[3][3]+a[0][0]*a[1][2]*a[2][3]*a[3][1]+
+					a[0][0]*a[1][3]*a[2][1]*a[3][2]+a[0][1]*a[1][0]*a[2][3]*a[3][2]+
+					a[0][1]*a[1][2]*a[2][0]*a[3][3]+a[0][1]*a[1][3]*a[2][2]*a[3][0]+
+					a[0][2]*a[1][0]*a[2][1]*a[3][3]+a[0][2]*a[1][1]*a[2][3]*a[3][0]+
+					a[0][2]*a[1][3]*a[2][0]*a[3][1]+a[0][3]*a[1][0]*a[2][2]*a[3][1]+
+					a[0][3]*a[1][1]*a[2][0]*a[3][2]+a[0][3]*a[1][2]*a[2][1]*a[3][0]-
+					a[0][0]*a[1][1]*a[2][3]*a[3][2]-a[0][0]*a[1][2]*a[2][1]*a[3][3]-
+					a[0][0]*a[1][3]*a[2][2]*a[3][1]-a[0][1]*a[1][0]*a[2][2]*a[3][3]-
+					a[0][1]*a[1][2]*a[2][3]*a[3][0]-a[0][1]*a[1][3]*a[2][0]*a[3][2]-
+					a[0][2]*a[1][0]*a[2][3]*a[3][1]-a[0][2]*a[1][1]*a[2][0]*a[3][3]-
+					a[0][2]*a[1][3]*a[2][1]*a[3][0]-a[0][3]*a[1][0]*a[2][1]*a[3][2]-
+					a[0][3]*a[1][1]*a[2][2]*a[3][0]-a[0][3]*a[1][2]*a[2][0]*a[3][1]);
+	std::array<std::array<float, 4>, 4> tmp = {{
+			{(a[1][1]*a[2][2]*a[3][3]+a[1][2]*a[2][3]*a[3][1]+a[1][3]*a[2][1]*a[3][2]-
+			  a[1][1]*a[2][3]*a[3][2]-a[1][2]*a[2][1]*a[3][3]-a[1][3]*a[2][2]*a[3][1])*idet,
+			 (a[0][1]*a[2][3]*a[3][2]+a[0][2]*a[2][1]*a[3][3]+a[0][3]*a[2][2]*a[3][1]-
+			  a[0][1]*a[2][2]*a[3][3]-a[0][2]*a[2][3]*a[3][1]-a[0][3]*a[2][1]*a[3][2])*idet,
+			 (a[0][1]*a[1][2]*a[3][3]+a[0][2]*a[1][3]*a[3][1]+a[0][3]*a[1][1]*a[3][2]-
+			  a[0][1]*a[1][3]*a[3][2]-a[0][2]*a[1][1]*a[3][3]-a[0][3]*a[1][2]*a[3][1])*idet,
+			 (a[0][1]*a[1][3]*a[2][2]+a[0][2]*a[1][1]*a[2][3]+a[0][3]*a[1][2]*a[2][1]-
+			  a[0][1]*a[1][2]*a[2][3]-a[0][2]*a[1][3]*a[2][1]-a[0][3]*a[1][1]*a[2][2])*idet},
+			{(a[1][0]*a[2][3]*a[3][2]+a[1][2]*a[2][0]*a[3][3]+a[1][3]*a[2][2]*a[3][0]-
+			  a[1][0]*a[2][2]*a[3][3]-a[1][2]*a[2][3]*a[3][0]-a[1][3]*a[2][0]*a[3][2])*idet,
+			 (a[0][0]*a[2][2]*a[3][3]+a[0][2]*a[2][3]*a[3][0]+a[0][3]*a[2][0]*a[3][2]-
+			  a[0][0]*a[2][3]*a[3][2]-a[0][2]*a[2][0]*a[3][3]-a[0][3]*a[2][2]*a[3][0])*idet,
+			 (a[0][0]*a[1][3]*a[3][2]+a[0][2]*a[1][0]*a[3][3]+a[0][3]*a[1][2]*a[3][0]-
+			  a[0][0]*a[1][2]*a[3][3]-a[0][2]*a[1][3]*a[3][0]-a[0][3]*a[1][0]*a[3][2])*idet,
+			 (a[0][0]*a[1][2]*a[2][3]+a[0][2]*a[1][3]*a[2][0]+a[0][3]*a[1][0]*a[2][2]-
+			  a[0][0]*a[1][3]*a[2][2]-a[0][2]*a[1][0]*a[2][3]-a[0][3]*a[1][2]*a[2][0])*idet},
+			{(a[1][0]*a[2][1]*a[3][3]+a[1][1]*a[2][3]*a[3][0]+a[1][3]*a[2][0]*a[3][1]-
+			  a[1][0]*a[2][3]*a[3][1]-a[1][1]*a[2][0]*a[3][3]-a[1][3]*a[2][1]*a[3][0])*idet,
+			 (a[0][0]*a[2][3]*a[3][1]+a[0][1]*a[2][0]*a[3][3]+a[0][3]*a[2][1]*a[3][0]-
+			  a[0][0]*a[2][1]*a[3][3]-a[0][1]*a[2][3]*a[3][0]-a[0][3]*a[2][0]*a[3][1])*idet,
+			 (a[0][0]*a[1][1]*a[3][3]+a[0][1]*a[1][3]*a[3][0]+a[0][3]*a[1][0]*a[3][1]-
+			  a[0][0]*a[1][3]*a[3][1]-a[0][1]*a[1][0]*a[3][3]-a[0][3]*a[1][1]*a[3][0])*idet,
+			 (a[0][0]*a[1][3]*a[2][1]+a[0][1]*a[1][0]*a[2][3]+a[0][3]*a[1][1]*a[2][0]-
+			  a[0][0]*a[1][1]*a[2][3]-a[0][1]*a[1][3]*a[2][0]-a[0][3]*a[1][0]*a[2][1])*idet},
+			{(a[1][0]*a[2][2]*a[3][1]+a[1][1]*a[2][0]*a[3][2]+a[1][2]*a[2][1]*a[3][0]-
+			  a[1][0]*a[2][1]*a[3][2]-a[1][1]*a[2][2]*a[3][0]-a[1][2]*a[2][0]*a[3][1])*idet,
+			 (a[0][0]*a[2][1]*a[3][2]+a[0][1]*a[2][2]*a[3][0]+a[0][2]*a[2][0]*a[3][1]-
+			  a[0][0]*a[2][2]*a[3][1]-a[0][1]*a[2][0]*a[3][2]-a[0][2]*a[2][1]*a[3][0])*idet,
+			 (a[0][0]*a[1][2]*a[3][1]+a[0][1]*a[1][0]*a[3][2]+a[0][2]*a[1][1]*a[3][0]-
+			  a[0][0]*a[1][1]*a[3][2]-a[0][1]*a[1][2]*a[3][0]-a[0][2]*a[1][0]*a[3][1])*idet,
+			 (a[0][0]*a[1][1]*a[2][2]+a[0][1]*a[1][2]*a[2][0]+a[0][2]*a[1][0]*a[2][1]-
+			  a[0][0]*a[1][2]*a[2][1]-a[0][1]*a[1][0]*a[2][2]-a[0][2]*a[1][1]*a[2][0])*idet}
+	}};
 	return mat4(tmp);
 }
 
-vec3 transform(const mat4 &a, const vec3 &b) {
-	double tmp[3];
-	for (int i = 0; i < 3; i++)
-		tmp[i] = a[i * 4] * b[0] + a[i * 4 + 1] * b[1] + a[i * 4 + 2] * b[2];
-	return vec3(tmp);
-}
-
 mat4 transpose(const mat4 &a) {
-	double tmp[16];
+	std::array<std::array<float, 4>, 4> tmp;
 	for (int i = 0; i < 4; i++)
 		for (int j = 0; j < 4; j++)
-			tmp[j * 4 + i] = a[i * 4 + j];
+			tmp[j][i] = a[i][j];
 	return mat4(tmp);
 }
