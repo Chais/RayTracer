@@ -4,7 +4,7 @@ mat4::mat4() {
 	m = {{{1, 0, 0, 0}, {0, 1, 0, 0}, {0, 0, 1, 0}, {0, 0, 0, 1}}};
 }
 
-mat4::mat4(const std::array<std::array<const float, 4>, 4> &in) {
+mat4::mat4(const std::array<std::array<float, 4>, 4> &in) {
 	for (int i = 0; i < 4; i++)
 		for (int j = 0; j < 4; j++)
 			m[i][j] = in[i][j];
@@ -28,7 +28,7 @@ std::array<float, 4> mat4::operator[](const unsigned long i) {
 	return this->m[i];
 }
 
-const std::array<const float, 4> mat4::operator[](const unsigned long i) const {
+const std::array<float, 4> mat4::operator[](const unsigned long i) const {
 	assert(0 <= i <= 3);
 	return this->m[i];
 }

@@ -4,7 +4,7 @@
 
 #include "lambertian_material.h"
 
-lambertian_material::lambertian_material(color col, float ambient, float diffuse) : col(col), ambient(ambient),
+lambertian_material::lambertian_material(color col, float ambient, float diffuse) : solid_material(col), ambient(ambient),
 																					diffuse(diffuse) { }
 
 std::ostream &operator<<(std::ostream &out, const lambertian_material &a) {

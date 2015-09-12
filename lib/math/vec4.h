@@ -12,6 +12,7 @@
 #include <algorithm>
 #include <array>
 #include <cassert>
+#include "helper.h"
 
 /**
  * @name vec4
@@ -54,7 +55,7 @@ public:
 	 *
 	 * @param &in the values
 	 */
-	vec4(const std::array<const float, 4> &in);
+	vec4(const std::array<float, 4> &in);
 
 	/**
 	 * @brief Copy constructor
@@ -63,16 +64,14 @@ public:
 	 */
 	vec4(const vec4 &in);
 
-	virtual ~vec4();
-
-/**
+	/**
 	 * @brief Assignment operator
 	 *
 	 * Assigns the values from the given vector.
 	 *
 	 * @param &in the rvalue vector
 	 */
-	vec4 &operator=(const vec4 &in);
+	virtual vec4 &operator=(const vec4 &in);
 
 	/**
 	 * @brief Array subscript

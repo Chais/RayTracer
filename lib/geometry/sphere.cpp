@@ -4,50 +4,45 @@
 
 #include "sphere.h"
 
-sphere::sphere(double radius, material *matrl) : radius(radius), shape(matrl) {
-	if (radius <= 0)
-		throw new geometry_exception("The radius has to be greater than zero.");
+sphere::sphere(float radius, material *matrl) : radius(radius), shape(matrl) {
+	assert(radius > 0);
 }
 
 std::ostream &operator<<(std::ostream &out, const sphere &a) {
-	out << "Radius: " << a.radius << ", Transformations: " << a.transforms << ", inverse transformations: " <<
-	a.inv_trans;;
+	out << "Radius: " << a.radius << ", Transformations: " << a.object_to_world;
 	return out;
 }
 
-ray sphere::intersect(ray r) {
-	mat4 m = this->getTransforms();
-	mat4 im = this->getInvTransforms();
-	ray tr = ray(im*r.getOrigin(), transform(im, r.getDirection()));
-	vec3 c = -tr.getOrigin();
-	double a = std::max(0.0, dot(tr.getDirection(), c));
-	double b = std::sqrt(std::pow(length(c), 2)-std::pow(a, 2));
-	if (b < this->radius-1E-12) {
-		double d = std::sqrt(std::pow(this->radius, 2)-std::pow(b, 2));
-		vec3 x;
-		if (d < a-1E-12)
-			x = tr.getOrigin()+tr.getDirection()*(a-d);
+intersection sphere::intersect_full(const ray &r) {
+	ray tr = this->world_to_object(r);
+	direction c = -tr.o;
+	float a = std::max(float(0.0), dot(tr.d, c));
+	float b = std::sqrt(std::pow(length(c), 2)-std::pow(a, 2));
+	intersection out = intersection();
+	if (b < this->radius-1E-7) {
+		float d = std::sqrt(std::pow(this->radius, 2)-std::pow(b, 2));
+		point *x;
+		if (d < a-1E-7)
+			x = new point(tr.o+direction(tr.d*(a-d)));
 		else
-			x = tr.getOrigin()+tr.getDirection()*(a+d);
-		vec3 dir = x;
-		double local_len = length(x);
-		vec3 col = this->getColor(x[0]/local_len, x[1]/local_len);
-		x = m*x;
-		dir = transform(transpose(im), dir);
-		return ray(x, dir, col);
+			x = new point(tr.o+direction(tr.d*(a+d)));
+		normal *norm = new normal(*x);
+		float local_len = length(direction(*x));
+		vec2 *local_pos = new vec2((*x)[0]/local_len, (*x)[1]/local_len);
+		*x = this->object_to_world(*x);
+		*norm = normalise(this->object_to_world(*norm));
+		out.object = this;
+		out.norm = norm;
+		out.pos = x;
+		out.local_pos = local_pos;
 	}
-	throw geometry_exception("No intersection");
+	return out;
 }
 
-bool sphere::intersect_shadow(vec3 origin, vec3 direction) {
-	mat4 im = this->getInvTransforms();
-	ray tr = ray(im*origin, transform(im, direction));
-	vec3 c = -tr.getOrigin();
-	double a = dot(tr.getDirection(), c);
-	double b = std::sqrt(std::pow(length(c), 2)-std::pow(a, 2));
+bool sphere::intersect_shadow(const ray &r) {
+	ray tr = this->world_to_object(r);
+	direction c = -tr.o;
+	float a = std::max(float(0.0), dot(tr.d, c));
+	float b = std::sqrt(std::pow(length(c), 2)-std::pow(a, 2));
 	return (a > 0 && b < this->radius);
-}
-
-vec3 sphere::getColor(double u, double v) {
-	return this->getMaterial()->getColor(u, v);
 }

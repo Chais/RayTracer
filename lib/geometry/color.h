@@ -8,6 +8,7 @@
 #include <cmath>
 #include <array>
 #include <cassert>
+#include <ostream>
 
 /**
  * @name color
@@ -32,6 +33,8 @@ public:
 };
 
 color operator+(const color &lhs, const color &rhs);
+
+color &operator+=(color &lhs, const color &rhs);
 
 color operator*(const color &lhs, const float &rhs);
 

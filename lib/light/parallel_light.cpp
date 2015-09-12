@@ -4,17 +4,17 @@
 
 #include "parallel_light.h"
 
-parallel_light::parallel_light(const color &col, const direction &dir) : light(col), dir(dir) { }
+parallel_light::parallel_light(const color &col, const direction &dir) : light(col, dir) { }
 
 std::ostream &operator<<(std::ostream &out, const parallel_light &a) {
-	out << "Parallel light: color [r, g, b]: " << rgb(a.col) << ", direction: " << a.dir;
+	out << "Parallel light: color [r, g, b]: " << a.col << ", direction: " << a.dir;
 	return out;
 }
 
-const direction &parallel_light::get_direction() const {
+direction &parallel_light::get_direction(const point &pos) {
 	return this->dir;
 }
 
-color &parallel_light::emit(const direction &dir) const {
+color &parallel_light::emit(const direction &dir) {
 	return this->col;
 }

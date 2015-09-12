@@ -2,23 +2,26 @@
 // Created by chais on 06.08.15.
 //
 
-#ifndef RAY_TRACER_AMBIENT_LIGHT_H
-#define RAY_TRACER_AMBIENT_LIGHT_H
+#ifndef RAY_TRACER_LIGHT_H
+#define RAY_TRACER_LIGHT_H
 
 #include <ostream>
-#include "../geometry/direction.h"
 #include "../geometry/color.h"
+#include "../geometry/point.h"
 
 class light {
 protected:
 	color col;
+	direction dir;
 
 	light(const color &col);
 
-public:
-	friend std::ostream &operator<<(std::ostream &out, const light &a);
+	light(const color &col, const direction &dir);
 
-	virtual color &emit(const direction &dir) const = 0;
+public:
+	virtual direction &get_direction(const point &pos) = 0;
+
+	virtual color &emit(const direction &dir) = 0;
 };
 
-#endif //RAY_TRACER_AMBIENT_LIGHT_H
+#endif //RAY_TRACER_LIGHT_H

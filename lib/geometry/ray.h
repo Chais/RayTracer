@@ -7,9 +7,12 @@
 
 #include "point.h"
 
-struct ray {
+class ray {
+public:
 	point o;
 	direction d;
+
+	ray(const point &o, const direction &d);
 };
 
 #endif //RAY_TRACER_RAY_H

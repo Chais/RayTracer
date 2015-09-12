@@ -4,12 +4,17 @@
 
 #include "ambient_light.h"
 
-ambient_light::ambient_light(color col) : light(col) {}
+ambient_light::ambient_light(color col) : light(col) { }
 
 std::ostream &operator<<(std::ostream &out, const ambient_light &a) {
-	out << "Ambient light: color [r, g, b]: " << rgb(a.col) << ", direction: " << a.dir;
+	out << "Ambient light: color [r, g, b]: " << a.col;
 	return out;
 }
-color &ambient_light::emit(const direction &dir) const {
+
+direction &ambient_light::get_direction(const point &pos) {
+	return this->dir;
+}
+
+color &ambient_light::emit(const direction &dir) {
 	return this->col;
 }

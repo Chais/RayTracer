@@ -5,9 +5,6 @@
 #include "light.h"
 #include "../geometry/direction.h"
 
-light::light(const color &col) : col(col) { }
+light::light(const color &col) : col(col), dir(direction()) { }
 
-std::ostream &operator<<(std::ostream &out, const light &a) {
-	out << "Ambient light: color [r, g, b]: " << rgb(a.col);
-	return out;
-}
+light::light(const color &col, const direction &dir) : col(col), dir(normalise(dir)) { }

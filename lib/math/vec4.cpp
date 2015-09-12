@@ -1,5 +1,4 @@
 #include "vec4.h"
-#include "helper.h"
 
 vec4::vec4() {
 	a = {0, 0, 0, 0};
@@ -9,15 +8,12 @@ vec4::vec4(const float &x, const float &y, const float &z, const float &w) {
 	a = {x, y, z, w};
 }
 
-vec4::vec4(const std::array<const float, 4> &in) {
+vec4::vec4(const std::array<float, 4> &in) {
 	a = {in[0], in[1], in[2], in[3]};
 }
 
 vec4::vec4(const vec4 &in) {
 	a = {in.a[0], in.a[1], in.a[2], in.a[3]};
-}
-
-vec4::~vec4() {
 }
 
 vec4 &vec4::operator=(const vec4 &in) {
@@ -115,8 +111,8 @@ bool operator==(const vec4 &lhs, const vec4 &rhs) {
 }
 
 bool operator!=(const vec4 &lhs, const vec4 &rhs) {
-	return !(helper::almost_equal(lhs[0], rhs[0], 1) || helper::almost_equal(lhs[1], rhs[1], 1) ||
-		   helper::almost_equal(lhs[2], rhs[2], 1) || helper::almost_equal(lhs[3], rhs[3], 1));
+	return !(helper::almost_equal(lhs[0], rhs[0], 1) && helper::almost_equal(lhs[1], rhs[1], 1) &&
+		   helper::almost_equal(lhs[2], rhs[2], 1) && helper::almost_equal(lhs[3], rhs[3], 1));
 }
 
 float dot(const vec4 &lhs, const vec4 &rhs) {
@@ -134,7 +130,7 @@ vec4 scale(const vec4 &a, const float f[4]) {
 }
 
 float length(const vec4 &a) {
-	return sqrt(a[0]*a[0]+a[1]*a[1]+a[2]*a[2]+a[3]*a[3]));
+	return std::sqrt(a[0]*a[0]+a[1]*a[1]+a[2]*a[2]+a[3]*a[3]);
 }
 
 vec4 normalise(const vec4 &a) {

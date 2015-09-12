@@ -70,7 +70,7 @@ public:
 	 *
 	 * Allows access to the matrix' values
 	 */
-	const std::array<const float, 4> operator[](const unsigned long i) const;
+	const std::array<float, 4> operator[](const unsigned long i) const;
 
 	/**
 	 * @brief Stream output

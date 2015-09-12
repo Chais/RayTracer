@@ -17,7 +17,7 @@ digraph Classes {
 				- cam : camera\l
 				- lights : std::vector\<light *\>\l
 				- scene : std::vector\<shape *\>\l
-				- max_bounces : int\l|
+				- max_bounces : unsigned long\l|
 				+ whitted_rt(bg_color : color &,
 						 cam : camera &,
 						 lights : std::vector\<light *\> &,
@@ -40,10 +40,16 @@ digraph Classes {
 	camera [
 		label = "{camera|
 				# transforms : transform\l
-				# resolution : unsigned long[2]\l
-				# data : std::vector\<color\>\l|
-				- camera()\l
-				+ get_ray(x : int, y : int) : ray &\l
+				# resolution : std::array\<unsigned long, 2\>\l
+				# data : std::vector\<std::vector\<std::vector\<color\>\>\>\l|
+				# camera(position : point &,
+						 look_at : point &,
+						 up : direction &,
+						 resolution : std::array<unsigned long, 2> &,
+						 samples : unsigned long &)\l
+				+ camera()\l
+				+ get_rays(x : int, y : int) : ray &\l
+				+ set_data(x : unsigned long, y : unsigned long, data : std::vector\<color\>) : void\l
 				+ get_pixel(x : int, y : int) : color\l
 		}"
 	]
@@ -54,22 +60,24 @@ digraph Classes {
 				+ perspective_camera(position : point &,
 						 look_at : point &,
 						 up : direction &,
-						 fov : float,
-						 resolution : int *)\l
+						 fov : float &,
+						 resolution : std::array<unsigned long, 2> &,
+						 samples : unsigned long &)\l
 		}"
 	]
 	ray [
 		label = "{ray|
 				+ o : point\l
-				+ d : direction\l
+				+ d : direction\l|
+				+ ray(o : point &, d : direction &)\l
 		}"
 	]
 	shape_ [
 		label = "{
 			shape|
-			- transforms : transform\l
-			- matrl : material *\l|
-			+ shape(matrl : material *)\l
+			# transforms : transform\l
+			# matrl : material *\l|
+			# shape(matrl : material *)\l
 			+ intersect_full(r : ray) : intersection\l
 			+ intersect_shadow(r : ray) : bool\l
 			+ shade(lcol : color, l : direction, n : normal, v : direction, pos : vec2, internal : bool) : color\l
@@ -102,7 +110,7 @@ digraph Classes {
 			- diffuse : float\l|
 			+ lambertian_material(col : color,
 					 ambient : float,
-					 diffuse : float)
+					 diffuse : float)\l
 		}"
 	]
 	phong_material [
@@ -116,7 +124,7 @@ digraph Classes {
 					 ambient : float,
 					 diffuse : float,
 					 specular : float,
-					 exponent : float)
+					 exponent : float)\l
 		}"
 	]
 	light [

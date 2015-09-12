@@ -50,7 +50,7 @@ public:
 	 *
 	 * @param &in the std::array of values
 	 */
-	vec2(const std::array<const float, 2> &in);
+	vec2(const std::array<float, 2> &in);
 
 	/**
 	 * @brief Copy constructor

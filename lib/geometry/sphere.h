@@ -6,21 +6,19 @@
 #define RAY_TRACER_SPHERE_H
 
 #include "shape.h"
-#include "geometry_exception.h"
+#include <ostream>
 
 class sphere : public shape {
 private:
-	double radius;
+	float radius;
 public:
-	sphere(double radius, material *matrl);
+	sphere(float radius, material *matrl);
 
 	friend std::ostream &operator<<(std::ostream &out, const sphere &a);
 
-	virtual ray intersect(ray r) override;
+	virtual intersection intersect_full(const ray &r);
 
-	virtual bool intersect_shadow(vec3 origin, vec3 direction) override;
-
-	virtual vec3 getColor(double u, double v);
+	virtual bool intersect_shadow(const ray &r);
 };
 
 #endif //RAY_TRACER_SPHERE_H

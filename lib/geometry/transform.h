@@ -10,6 +10,7 @@
 #include "normal.h"
 #include <array>
 #include "../math/helper.h"
+#include "ray.h"
 
 /**
  * @name transform
@@ -21,10 +22,10 @@
  * inverse transformation is applied to the inverse matrix from the opposite direction.
  */
 class transform {
-private:
-	mat4 trans;
-	mat4 inv_trans;
 public:
+	mat4 *trans;
+	mat4 *inv_trans;
+
 	/**
 	 * @brief Default constructor
 	 *
@@ -35,10 +36,17 @@ public:
 	/**
 	 * @brief Explicit constructor
 	 *
+	 * Copies the values of the input matrix into its own matrices. For world_to_object the input matrix is inverted.
+	 */
+	transform(mat4 *trans);
+
+	/**
+	 * @brief Explicit constructor
+	 *
 	 * Copies the values of the input matrices into its own matrices. If the input matrices aren't each other's inverse
 	 * the results will be incorrect.
 	 */
-	transform(const mat4 &trans, const mat4 &inv_trans);
+	transform(mat4 *trans, mat4 *inv_trans);
 
 	/**
 	 * @brief Copy constructor
@@ -91,6 +99,19 @@ public:
 	 * @return the new, transformed normal
 	 */
 	normal operator()(const normal &n) const;
+
+	/**
+	 * @brief Transform application to ray
+	 *
+	 * Applies its inverse transformations to the given ray.
+	 *
+	 * @param &r the ray to be transformed
+	 *
+	 * @return the new, transformed ray
+	 */
+	ray operator()(const ray &r) const;
+
+	friend std::ostream &operator<<(std::ostream &out, const transform &a);
 
 	/**
 	 * @brief Translate transform

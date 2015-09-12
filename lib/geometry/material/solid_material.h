@@ -17,6 +17,7 @@
 class solid_material : public material {
 protected:
 	color col;
+	solid_material(const color &col);
 };
 
 #endif //RAY_TRACER_SOLID_MATERIAL_H

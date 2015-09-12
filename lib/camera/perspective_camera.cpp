@@ -1,41 +1,23 @@
 #include "perspective_camera.h"
-#include "../math/mat4.h"
 
-perspective_camera::perspective_camera() {
-	std::array<std::array<float, 4>, 4> d = {{
-													 {-1, 0, 0, 0},
-													 {0, 1, 0, 0},
-													 {0, 0, -1, 0},
-													 {0, 0, 0, 1}
-											 }};
-	mat4 m = mat4(d);
-	transforms = transform(mat4(m), mat4(m));
-	resolution = {1024, 768};
-	data.reserve(1024*768);
-	fov = 75;
+perspective_camera::perspective_camera() : perspective_camera(point(0, 0, 0), point(0, 0, -1), direction(0, 1, 0),
+															  {1024, 768}, 1, 45) {
 }
 
 perspective_camera::perspective_camera(const point &position, const point &look_at, const direction &up,
-									   const float fov, const unsigned long resolution[2]) : resolution(resolution),
-																							 fov(fov) {
-	direction dir = normalise(look_at-position);
-	direction left = normalise(cross(normalise(up), dir));
-	direction new_up = cross(dir, left);
-	std::array<std::array<float, 4>, 4> d = {{
-													 {left[0], new_up[0], dir[0], position[0]},
-													 {left[1], new_up[1], dir[1], position[1]},
-													 {left[2], new_up[2], dir[2], position[2]},
-													 {0, 0, 0, 1}
-											 }};
-	mat4 m = mat4(d);
-	transforms = transform(m, invert(m));
-	data.reserve(resolution[0]*resolution[1]);
+									   const std::array<unsigned long, 2> &resolution, const unsigned long &samples,
+									   const float &fov) :
+		camera(position, look_at, up, resolution, samples), fov(fov) {
+	assert(0 < fov && fov < 90);
+	stepwidth = tan(helper::to_radians(this->fov))/(resolution[0]/2);
+	start = direction(0, 0, 1)+direction(1, 0, 0)*(((resolution[0]-1)/2.0)*stepwidth)+
+			direction(0, 1, 0)*(((resolution[1]-1)/2.0)*stepwidth);
 }
 
-std::ostream &operator<<(std::ostream &out, const perspective_camera &cam) {
+std::vector<ray> *perspective_camera::get_rays(const unsigned long &x, const unsigned long &y) {
+	// TODO extend to support multisampling
+	std::vector<ray> *out = new std::vector<ray>();
+	out->push_back(this->transforms(
+			ray(point(), this->start+direction(-1, 0, 0)*(this->stepwidth*x)+direction(0, -1, 0)*(this->stepwidth*y))));
 	return out;
-}
-
-double perspective_camera::getFov() const {
-	return 0;
 }

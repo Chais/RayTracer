@@ -54,19 +54,6 @@ public:
 	 * @param &in the original vector
 	 */
 	normal(const normal &in);
-
-	/**
-	 * @brief Output operator
-	 *
-	 * Puts the vector on an output stream in an Octave/Matlab-compatible format.
-	 *
-	 * @param &out the output stream
-	 *
-	 * @param &a the vector
-	 *
-	 * @return the output stream
-	 */
-	friend std::ostream &operator<<(std::ostream &out, const normal &a);
 };
 
 #endif //RAY_TRACER_NORMAL_H

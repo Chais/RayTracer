@@ -54,19 +54,6 @@ public:
 	 * @param &in the original vector
 	 */
 	point(const point &in);
-
-	/**
-	 * @brief Output operator
-	 *
-	 * Puts the vector on an output stream in an Octave/Matlab-compatible format.
-	 *
-	 * @param &out the output stream
-	 *
-	 * @param &a the vector
-	 *
-	 * @return the output stream
-	 */
-	friend std::ostream &operator<<(std::ostream &out, const point &a);
 };
 
 /**

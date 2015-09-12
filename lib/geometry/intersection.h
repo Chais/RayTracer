@@ -5,9 +5,11 @@
 #ifndef RAY_TRACER_INTERSECTION_H
 #define RAY_TRACER_INTERSECTION_H
 
-#include "shape.h"
 #include "normal.h"
+#include "point.h"
 #include "../math/vec2.h"
+
+class shape;
 
 struct intersection {
 	shape *object = nullptr;

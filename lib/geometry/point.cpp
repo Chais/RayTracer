@@ -12,20 +12,15 @@ point::point(const vec4 &in) : vec4(in[0], in[1], in[2], 1) { }
 
 point::point(const point &in) : vec4(in) { }
 
-std::ostream &operator<<(std::ostream &out, const point &a) {
-	out << vec4::operator<<(out, dynamic_cast<vec4>(a));
-	return out;
-}
-
 point operator+(const point &lhs, const direction &rhs) {
-	return point(dynamic_cast<vec4>(lhs)+dynamic_cast<vec4>(rhs));
+	return point(dynamic_cast<const vec4 &>(lhs)+dynamic_cast<const vec4 &>(rhs));
 }
 
 point &operator+=(point &lhs, const direction &rhs) {
-	dynamic_cast<vec4>(lhs)+= dynamic_cast<vec4>(rhs);
+	dynamic_cast<vec4 &>(lhs) += dynamic_cast<const vec4 &>(rhs);
 	return lhs;
 }
 
 direction operator-(const point &lhs, const point &rhs) {
-	return direction(dynamic_cast<vec4>(lhs)-dynamic_cast<vec4>(rhs));
+	return direction(dynamic_cast<const vec4 &>(lhs)-dynamic_cast<const vec4 &>(rhs));
 }

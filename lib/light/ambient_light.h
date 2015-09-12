@@ -13,7 +13,10 @@ class ambient_light : public light {
 public:
 	ambient_light(color col);
 	friend std::ostream &operator<<(std::ostream &out, const ambient_light &a);
-	virtual color &emit(const direction &dir) const;
+
+	virtual direction &get_direction(const point &pos);
+
+	virtual color &emit(const direction &dir);
 };
 
 #endif //RAY_TRACER_AMBIENT_LIGHT_H
