@@ -5,7 +5,8 @@
 #include "camera.h"
 
 camera::camera(const point &position, const point &look_at, const direction &up,
-			   const std::array<unsigned long, 2> &resolution, const unsigned long &samples) : resolution(resolution) {
+			   const std::array<unsigned long, 2> &resolution, const unsigned long max_bounces,
+			   const unsigned long &samples) : resolution(resolution), max_bounces(max_bounces) {
 	assert(resolution[0] > 0 && resolution[1] > 0);
 	assert(samples > 0);
 	direction dir = normalise(look_at-position);

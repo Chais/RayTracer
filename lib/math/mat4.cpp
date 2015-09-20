@@ -24,12 +24,12 @@ mat4 &mat4::operator=(const mat4 &in) {
 }
 
 std::array<float, 4> mat4::operator[](const unsigned long i) {
-	assert(0 <= i <= 3);
+	assert(0 <= i && i <= 3);
 	return this->m[i];
 }
 
 const std::array<float, 4> mat4::operator[](const unsigned long i) const {
-	assert(0 <= i <= 3);
+	assert(0 <= i && i <= 3);
 	return this->m[i];
 }
 

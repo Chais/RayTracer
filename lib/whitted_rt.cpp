@@ -4,19 +4,20 @@
 
 #include "whitted_rt.h"
 
-whitted_rt::whitted_rt(const color &background_color, camera *cam, const std::vector<light *> &lights,
-					   const std::vector<shape *> &scene, const unsigned long &max_bounces) : background_color(
-		background_color), cam(cam), lights(lights), scene(scene), max_bounces(max_bounces) { }
+whitted_rt::whitted_rt(const color *background_color, camera *cam, std::vector<light *> *lights,
+					   std::vector<shape *> *scene) : background_color(
+		background_color), cam(cam), lights(lights), scene(scene) { }
 
 color whitted_rt::cast_ray(ray r, int step, bool internal) {
 	intersection is = this->find_nearest(r);
 	if (is.object == nullptr) // No intersection
-		return this->background_color;
+		return *this->background_color;
 	color out = color();
-	for (light *l : lights) {
-		direction light_dir = l->get_direction(*is.pos);
-		if (!this->cast_shadow(ray (*is.pos, -light_dir)))
-			out += is.object->shade(l->emit(light_dir), -light_dir, *is.norm, -r.d, *is.local_pos, internal);
+	for (light *l : *lights) {
+		direction *light_dir = l->get_direction(*is.pos);
+		if (!this->cast_shadow(ray (*is.pos, -*light_dir)))
+			out += is.object->shade(*l->emit(*light_dir), -*light_dir, *is.norm, -r.d, *is.local_pos, internal);
+		delete light_dir;
 	}
 	return out;
 	/*try {
@@ -93,7 +94,7 @@ void whitted_rt::render() {
 }
 
 bool whitted_rt::cast_shadow(const ray &r) {
-	for (shape *obstacle : this->scene)
+	for (shape *obstacle : *this->scene)
 		if (obstacle->intersect_shadow(r))
 			return true;
 	return false;
@@ -102,7 +103,7 @@ bool whitted_rt::cast_shadow(const ray &r) {
 intersection whitted_rt::find_nearest(ray r) {
 	intersection out = intersection();
 	float dist = std::numeric_limits<float>::max();
-	for (shape *object : scene) {
+	for (shape *object : *this->scene) {
 		intersection cur = object->intersect_full(r);
 		if (cur.object == nullptr)
 			continue;
@@ -113,4 +114,12 @@ intersection whitted_rt::find_nearest(ray r) {
 		}
 	}
 	return out;
+}
+
+color *whitted_rt::get_pixel(const unsigned long &x, const unsigned long &y) const {
+	return this->cam->get_pixel(x, y);
+}
+
+const std::array<unsigned long, 2> &whitted_rt::get_resolution() const {
+	return this->cam->get_resolution();
 }

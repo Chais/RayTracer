@@ -96,4 +96,14 @@ point &operator+=(point &lhs, const direction &rhs);
  */
 direction operator-(const point &lhs, const point &rhs);
 
+/**
+ * @brief Addition operator
+ * Subtracts a direction vector from a point vector. The result is a point vector again. This is equivalent to
+ * lhs+(-rhs).
+ * @param &lhs the point vector
+ * @param &rhs the direction vector
+ * @return the resulting point vector
+ */
+point operator-(const point &lhs, const direction &rhs);
+
 #endif //RAY_TRACER_POINT_H

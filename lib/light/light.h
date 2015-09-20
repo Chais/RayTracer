@@ -8,20 +8,21 @@
 #include <ostream>
 #include "../geometry/color.h"
 #include "../geometry/point.h"
+#include "../geometry/transform.h"
 
 class light {
 protected:
-	color col;
-	direction dir;
+	const color *col;
+	const direction *dir;
 
-	light(const color &col);
+	light(const color *col);
 
-	light(const color &col, const direction &dir);
+	light(const color *col, const direction *dir);
 
 public:
-	virtual direction &get_direction(const point &pos) = 0;
+	virtual direction *get_direction(const point &pos) = 0;
 
-	virtual color &emit(const direction &dir) = 0;
+	virtual color *emit(const direction &dir) = 0;
 };
 
 #endif //RAY_TRACER_LIGHT_H

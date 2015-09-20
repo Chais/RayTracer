@@ -8,12 +8,14 @@
 #include "../geometry/transform.h"
 #include "../geometry/ray.h"
 #include "../geometry/color.h"
+#include "../math/helper.h"
 
 class camera {
 protected:
 	transform transforms;
 	std::array<unsigned long, 2> resolution;
 	std::vector<std::vector<std::vector<color>>> data;
+	const unsigned long max_bounces = 0;
 
 	camera() { };
 
@@ -23,9 +25,9 @@ protected:
 	 * Initialises the values common to all camera implementations. Transforms and resolution are set as given. Memory
 	 * for the data variable is allocated according to the resolution.
 	 *
-	 * @param &position the position of the camera
+	 * @param &offset the offset of the camera
 	 *
-	 * @param &look_at the position the camera is centred on
+	 * @param &look_at the offset the camera is centred on
 	 *
 	 * @param &up the up direction of the image
 	 *
@@ -34,7 +36,8 @@ protected:
 	 * @param &samples the number of samples per pixel
 	 */
 	camera(const point &position, const point &look_at, const direction &up,
-		   const std::array<unsigned long, 2> &resolution, const unsigned long &samples);
+		   const std::array<unsigned long, 2> &resolution, const unsigned long max_bounces,
+		   const unsigned long &samples);
 
 public:
 /**

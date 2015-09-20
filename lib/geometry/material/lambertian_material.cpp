@@ -14,6 +14,17 @@ std::ostream &operator<<(std::ostream &out, const lambertian_material &a) {
 }
 
 color lambertian_material::shade(const color &lcol, const direction &l, const normal &n, const direction &v, const vec2 &pos,
-								 const bool internal) {
+								 const bool internal) const {
+	if (l != direction()) {
+		// Directional light
+		if (!internal) {
+			float phi = std::max<float>(0.0, dot(n, l));
+			if (phi > 0) {
+				return scale(this->col, lcol*(this->diffuse*phi));
+			}
+		}
+	} else
+		// Ambient light
+		return scale(this->col, lcol*this->ambient);
 	return color();
 }

@@ -4,7 +4,10 @@
 
 #include "shape.h"
 
-shape::shape(material *matrl) : object_to_world(transform()), world_to_object(object_to_world.inv_trans, object_to_world.trans), matrl(matrl) { }
+shape::shape(const direction *offset, const material *matrl) : object_to_world(transform()),
+															   world_to_object(object_to_world.inv_trans,
+																		   object_to_world.trans), offset(offset),
+															   matrl(matrl) { }
 
 color shape::shade(const color &lcol, const direction &l, const normal &n, const direction &v, const vec2 &pos,
 				   const bool internal) {

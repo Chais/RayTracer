@@ -4,7 +4,8 @@
 
 #include "sphere.h"
 
-sphere::sphere(float radius, material *matrl) : radius(radius), shape(matrl) {
+sphere::sphere(const float &radius, const direction *position, material *matrl) : radius(radius),
+																				  shape(position, matrl) {
 	assert(radius > 0);
 }
 
@@ -15,7 +16,7 @@ std::ostream &operator<<(std::ostream &out, const sphere &a) {
 
 intersection sphere::intersect_full(const ray &r) {
 	ray tr = this->world_to_object(r);
-	direction c = -tr.o;
+	direction c = point(-tr.o)+*this->offset;
 	float a = std::max(float(0.0), dot(tr.d, c));
 	float b = std::sqrt(std::pow(length(c), 2)-std::pow(a, 2));
 	intersection out = intersection();
@@ -26,9 +27,9 @@ intersection sphere::intersect_full(const ray &r) {
 			x = new point(tr.o+direction(tr.d*(a-d)));
 		else
 			x = new point(tr.o+direction(tr.d*(a+d)));
-		normal *norm = new normal(*x);
-		float local_len = length(direction(*x));
-		vec2 *local_pos = new vec2((*x)[0]/local_len, (*x)[1]/local_len);
+		normal *norm = new normal(*x-*this->offset);
+		float local_len = length(*norm);
+		vec2 *local_pos = new vec2((*norm)[0]/local_len, (*norm)[1]/local_len);
 		*x = this->object_to_world(*x);
 		*norm = normalise(this->object_to_world(*norm));
 		out.object = this;
@@ -41,7 +42,7 @@ intersection sphere::intersect_full(const ray &r) {
 
 bool sphere::intersect_shadow(const ray &r) {
 	ray tr = this->world_to_object(r);
-	direction c = -tr.o;
+	direction c = point(-tr.o)+*this->offset;
 	float a = std::max(float(0.0), dot(tr.d, c));
 	float b = std::sqrt(std::pow(length(c), 2)-std::pow(a, 2));
 	return (a > 0 && b < this->radius);

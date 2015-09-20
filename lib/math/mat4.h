@@ -215,7 +215,6 @@ vec4 operator*(const vec4 &a, const mat4 &b);
 mat4 operator*(const mat4 &a, const mat4 &b);
 
 /**
- * /**
  * @brief Multiplication assignment
  *
  * Mulitplies the matrix lhs with the scalar rhs. The result is assigned to lhs. This is equivalent to lhs=lhs*rhs.

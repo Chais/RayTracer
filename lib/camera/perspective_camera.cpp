@@ -1,13 +1,13 @@
 #include "perspective_camera.h"
 
 perspective_camera::perspective_camera() : perspective_camera(point(0, 0, 0), point(0, 0, -1), direction(0, 1, 0),
-															  {1024, 768}, 1, 45) {
+															  {1024, 768}, 10, 1, 45) {
 }
 
 perspective_camera::perspective_camera(const point &position, const point &look_at, const direction &up,
-									   const std::array<unsigned long, 2> &resolution, const unsigned long &samples,
-									   const float &fov) :
-		camera(position, look_at, up, resolution, samples), fov(fov) {
+									   const std::array<unsigned long, 2> &resolution, const unsigned long max_bounces,
+									   const unsigned long &samples, const float &fov) :
+		camera(position, look_at, up, resolution, max_bounces, samples), fov(fov) {
 	assert(0 < fov && fov < 90);
 	stepwidth = tan(helper::to_radians(this->fov))/(resolution[0]/2);
 	start = direction(0, 0, 1)+direction(1, 0, 0)*(((resolution[0]-1)/2.0)*stepwidth)+

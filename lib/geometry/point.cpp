@@ -24,3 +24,7 @@ point &operator+=(point &lhs, const direction &rhs) {
 direction operator-(const point &lhs, const point &rhs) {
 	return direction(dynamic_cast<const vec4 &>(lhs)-dynamic_cast<const vec4 &>(rhs));
 }
+
+point operator-(const point &lhs, const direction &rhs) {
+	return point(dynamic_cast<const vec4 &>(lhs)-dynamic_cast<const vec4 &>(rhs));
+}

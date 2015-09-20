@@ -17,12 +17,12 @@ color::color(const color &in) {
 }
 
 float &color::operator[](const unsigned long i) {
-	assert(0 <= i <= 2);
+	assert(0 <= i && i <= 2);
 	return this->v[i];
 }
 
 const float &color::operator[](const unsigned long i) const {
-	assert(0 <= i <= 2);
+	assert(0 <= i && i <= 2);
 	return this->v[i];
 }
 

@@ -25,12 +25,12 @@ vec4 &vec4::operator=(const vec4 &in) {
 }
 
 float &vec4::operator[](const unsigned long i) {
-	assert(0 <= i <= 3);
+	assert(0 <= i && i <= 3);
 	return this->a[i];
 }
 
 const float &vec4::operator[](const unsigned long i) const {
-	assert(0 <= i <= 3);
+	assert(0 <= i && i <= 3);
 	return this->a[i];
 }
 

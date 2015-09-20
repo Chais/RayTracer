@@ -17,7 +17,7 @@
  */
 class material {
 protected:
-	material() {};
+	material() { };
 public:
 	/**
 	 * @brief Shading
@@ -32,7 +32,8 @@ public:
 	 * to.
 	 * @return the base color multiplied by a factor according to the viewing situation
 	 */
-	virtual color shade(const color &lcol, const direction &l, const normal &n, const direction &v, const vec2 &pos, const bool internal) = 0;
+	virtual color shade(const color &lcol, const direction &l, const normal &n, const direction &v, const vec2 &pos,
+						const bool internal) const = 0;
 };
 
 #endif //RAY_TRACER_MATERIAL_H

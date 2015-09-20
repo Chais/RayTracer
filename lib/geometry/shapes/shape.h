@@ -5,11 +5,11 @@
 #ifndef RAY_TRACER_SHAPE_H
 #define RAY_TRACER_SHAPE_H
 
-#include "ray.h"
-#include "material/material.h"
-#include "transform.h"
-#include "intersection.h"
-#include "color.h"
+#include "../ray.h"
+#include "../material/material.h"
+#include "../transform.h"
+#include "../intersection.h"
+#include "../color.h"
 
 class shape {
 private:
@@ -17,9 +17,10 @@ private:
 protected:
 	transform object_to_world;
 	transform world_to_object;
-	material *matrl;
+	const direction *offset;
+	const material *matrl;
 
-	shape(material *matrl);
+	shape(const direction *offset, const material *matrl);
 
 public:
 	virtual intersection intersect_full(const ray &r) = 0;

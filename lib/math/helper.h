@@ -11,6 +11,7 @@
 class helper {
 public:
 	static float to_radians(float angle);
+
 	static bool almost_equal(const float &x, const float &y, const int ulp);
 };
 

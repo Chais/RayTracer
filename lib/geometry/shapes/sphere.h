@@ -7,12 +7,13 @@
 
 #include "shape.h"
 #include <ostream>
+#include <cassert>
 
 class sphere : public shape {
 private:
 	float radius;
 public:
-	sphere(float radius, material *matrl);
+	sphere(const float &radius, const direction *offset, material *matrl);
 
 	friend std::ostream &operator<<(std::ostream &out, const sphere &a);
 

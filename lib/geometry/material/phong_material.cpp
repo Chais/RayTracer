@@ -4,9 +4,9 @@
 
 #include "phong_material.h"
 
-phong_material::phong_material(color col, float ambient, float diffuse, float specular,
-							   float exponent) : solid_material(col), ambient(ambient), diffuse(diffuse), specular(specular),
-												 exponent(exponent) { }
+phong_material::phong_material(const color &col, const float &ambient, const float &diffuse, const float &specular,
+							   const float &exponent) : solid_material(col), ambient(ambient), diffuse(diffuse),
+														specular(specular), exponent(exponent) { }
 
 std::ostream &operator<<(std::ostream &out, const phong_material &a) {
 	out << "Phong material: Color: " << a.col << " Ambient intensity: " << a.ambient << ", Diffuse intensity: " <<
@@ -16,7 +16,7 @@ std::ostream &operator<<(std::ostream &out, const phong_material &a) {
 }
 
 color phong_material::shade(const color &lcol, const direction &l, const normal &n, const direction &v, const vec2 &pos,
-							const bool internal) {
+							const bool internal) const {
 	if (l != direction()) {
 		// Directional light
 		if (!internal) {
@@ -24,7 +24,7 @@ color phong_material::shade(const color &lcol, const direction &l, const normal 
 			if (phi > 0) {
 				direction r = n*(2*phi)-l;
 				return scale(this->col, lcol*(this->diffuse*phi))+
-						lcol*(std::pow(std::max<float>(0.0, dot(v, r)), this->exponent)*this->specular);
+					   lcol*(std::pow(std::max<float>(0.0, dot(v, r)), this->exponent)*this->specular);
 			}
 		}
 	} else

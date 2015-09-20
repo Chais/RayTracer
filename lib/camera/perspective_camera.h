@@ -31,9 +31,9 @@ public:
 	 *
 	 * Creates a perspective camera with the given parameters
 	 *
-	 * @param &position the position of the camera in world coordinates
+	 * @param &offset the offset of the camera in world coordinates
 	 *
-	 * @param &look_at the position the camera is centered on in world coordinates
+	 * @param &look_at the offset the camera is centered on in world coordinates
 	 *
 	 * @param &up the up direction of the image
 	 *
@@ -44,7 +44,8 @@ public:
 	 * @param &fov the half horizontal field-of-view angle of the camera
 	 */
 	perspective_camera(const point &position, const point &look_at, const direction &up,
-					   const std::array<unsigned long, 2> &resolution, const unsigned long &samples, const float &fov);
+					   const std::array<unsigned long, 2> &resolution, const unsigned long max_bounces,
+					   const unsigned long &samples, const float &fov);
 
 	virtual std::vector<ray> *get_rays(const unsigned long &x, const unsigned long &y);
 };

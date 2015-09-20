@@ -23,12 +23,12 @@ vec2 &vec2::operator=(const vec2 &in) {
 }
 
 float &vec2::operator[](const unsigned long i) {
-	assert(0 <= i <= 1);
+	assert(0 <= i && i <= 1);
 	return this->a[i];
 }
 
 const float &vec2::operator[](const unsigned long i) const {
-	assert(0 <= i <= 1);
+	assert(0 <= i && i <= 1);
 	return this->a[i];
 }
 
