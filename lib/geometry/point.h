@@ -15,45 +15,45 @@
  *
  * A vec4 specialisation that has the w component set to 1 by default.
  */
-class point : public vec4 {
-public:
-	/**
-	 * @brief Default constructor
-	 *
-	 * Creates a 0 point vector.
-	 */
-	point();
+class point: public vec4 {
+ public:
+  /**
+   * @brief Default constructor
+   *
+   * Creates a 0 point vector.
+   */
+  point();
 
-	/**
-	 * @brief Explicit constructor
-	 *
-	 * Sets the x, y and z components. The w component defaults to 1.
-	 *
-	 * @param &x the x component
-	 *
-	 * @param &y the y component
-	 *
-	 * @param &z the z component
-	 */
-	point(const float &x, const float &y, const float &z);
+  /**
+   * @brief Explicit constructor
+   *
+   * Sets the x, y and z components. The w component defaults to 1.
+   *
+   * @param &x the x component
+   *
+   * @param &y the y component
+   *
+   * @param &z the z component
+   */
+  point(const float &x, const float &y, const float &z);
 
-	/**
-	 * @brief vec4 copy constructor
-	 *
-	 * Sets the x, y and z components. The values are taken from the vec4 parameter.
-	 *
-	 * @param &in the vec4 of component values. Note that in[3] is ignored.
-	 */
-	point(const vec4 &in);
+  /**
+   * @brief vec4 copy constructor
+   *
+   * Sets the x, y and z components. The values are taken from the vec4 parameter.
+   *
+   * @param &in the vec4 of component values. Note that in[3] is ignored.
+   */
+  point(const vec4 &in);
 
-	/**
-	 * @brief Copy constructor
-	 *
-	 * Creates a copy of the given point vector.
-	 *
-	 * @param &in the original vector
-	 */
-	point(const point &in);
+  /**
+   * @brief Copy constructor
+   *
+   * Creates a copy of the given point vector.
+   *
+   * @param &in the original vector
+   */
+  point(const point &in);
 };
 
 /**

@@ -8,11 +8,11 @@
 #include "point.h"
 
 class ray {
-public:
-	point o;
-	direction d;
+ public:
+  point o;
+  direction d;
 
-	ray(const point &o, const direction &d);
+  ray(const point &o, const direction &d);
 };
 
 #endif //RAY_TRACER_RAY_H

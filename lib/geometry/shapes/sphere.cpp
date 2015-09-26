@@ -16,18 +16,18 @@ std::ostream &operator<<(std::ostream &out, const sphere &a) {
 
 intersection sphere::intersect_full(const ray &r) {
 	ray tr = this->world_to_object(r);
-	direction c = point(-tr.o)+*this->offset;
+	direction c = point(-tr.o) + *this->offset;
 	float a = std::max(float(0.0), dot(tr.d, c));
-	float b = std::sqrt(std::pow(length(c), 2)-std::pow(a, 2));
+	float b = std::sqrt(std::pow(length(c), 2) - std::pow(a, 2));
 	intersection out = intersection();
-	if (b < this->radius-1E-7) {
-		float d = std::sqrt(std::pow(this->radius, 2)-std::pow(b, 2));
+	if (b < this->radius - 1E-4) {
+		float d = std::sqrt(std::pow(this->radius, 2) - std::pow(b, 2));
 		point *x;
-		if (d < a-1E-7)
-			x = new point(tr.o+direction(tr.d*(a-d)));
+		if (d < a - 1E-4)
+			x = new point(tr.o + direction(tr.d*(a - d)));
 		else
-			x = new point(tr.o+direction(tr.d*(a+d)));
-		normal *norm = new normal(*x-*this->offset);
+			x = new point(tr.o + direction(tr.d*(a + d)));
+		normal *norm = new normal(*x - *this->offset);
 		float local_len = length(*norm);
 		vec2 *local_pos = new vec2((*norm)[0]/local_len, (*norm)[1]/local_len);
 		*x = this->object_to_world(*x);
@@ -40,10 +40,13 @@ intersection sphere::intersect_full(const ray &r) {
 	return out;
 }
 
-bool sphere::intersect_shadow(const ray &r) {
-	ray tr = this->world_to_object(r);
-	direction c = point(-tr.o)+*this->offset;
-	float a = std::max(float(0.0), dot(tr.d, c));
-	float b = std::sqrt(std::pow(length(c), 2)-std::pow(a, 2));
-	return (a > 0 && b < this->radius);
+bool sphere::intersect_shadow(const point &o, const direction &d) {
+	if (d == direction())
+		return false;
+	point to = this->world_to_object(o);
+	direction td = this->world_to_object(d);
+	direction c = point(-to) + *this->offset;
+	float a = std::max(float(0.0), dot(normalise(td), c));
+	float b = std::sqrt(std::pow(length(c), 2) - std::pow(a, 2));
+	return (length(td) > a && a > 0 && b < this->radius);
 }

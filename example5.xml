@@ -1,0 +1,174 @@
+<?xml version="1.0" standalone="no" ?>
+<!DOCTYPE scene SYSTEM "scene.dtd">
+
+<scene output_file="example5.png">
+	<background_color r="0.0" g="0.0" b="0.0"/>
+	<camera type="perspective">
+		<position x="0.0" y="0.0" z="1.0"/>
+		<lookat x="0.0" y="0.0" z="-3.0"/>
+		<up x="0.0" y="1.0" z="0.0"/>
+		<horizontal_fov angle="55"/>
+		<resolution horizontal="1024" vertical="1024"/>
+		<max_bounces n="8"/>
+	</camera>
+	<lights>
+		<ambient_light>
+			<color r="1.0" g="1.0" b="1.0"/>
+		</ambient_light>
+		<point_light>
+			<color r="0.7" g="0.7" b="0.7"/>
+			<position x="2.0" y="10.0" z="-2.5"/>
+		</point_light>
+		<point_light>
+			<color r="0.7" g="0.7" b="0.7"/>
+			<position x="-2.0" y="10.0" z="-2.5"/>
+		</point_light>
+	</lights>
+	<surfaces>
+		<mesh name="box.obj">
+			<material type="phong">
+				<color r="1.0" g="1.0" b="1.0"/>
+				<phong ka="0.3" kd="0.9" ks="1.0" exponent="20"/>
+			</material>
+			<transform>
+				<scale x="0.8" y="2.0" z="0.8"/>
+				<rotateY theta="60"/>
+				<translate x="-6.0" y="-1.5" z="-5.0"/>
+			</transform>
+		</mesh>
+		<mesh name="box.obj">
+			<material type="phong">
+				<color r="1.0" g="1.0" b="1.0"/>
+				<phong ka="0.3" kd="0.9" ks="1.0" exponent="20"/>
+			</material>
+			<transform>
+				<scale x="0.8" y="2.0" z="0.8"/>
+				<rotateY theta="-60.0"/>
+				<translate x="6.0" y="-1.5" z="-5.0"/>
+			</transform>
+		</mesh>
+		<mesh name="box.obj">
+			<material type="phong">
+				<color r="1.0" g="1.0" b="1.0"/>
+				<phong ka="0.3" kd="0.9" ks="1.0" exponent="20"/>
+			</material>
+			<transform>
+				<scale x="0.8" y="3.0" z="0.8"/>
+				<rotateY theta="30.0"/>
+				<translate x="-4.0" y="-1.5" z="-7.0"/>
+			</transform>
+		</mesh>
+		<mesh name="box.obj">
+			<material type="phong">
+				<color r="1.0" g="1.0" b="1.0"/>
+				<phong ka="0.3" kd="0.9" ks="1.0" exponent="20"/>
+			</material>
+			<transform>
+				<scale x="0.8" y="3.0" z="0.8"/>
+				<rotateY theta="-30.0"/>
+				<translate x="4.0" y="-1.5" z="-7.0"/>
+			</transform>
+		</mesh>
+		<mesh name="box.obj">
+			<material type="phong">
+				<color r="1.0" g="1.0" b="1.0"/>
+				<phong ka="0.3" kd="0.9" ks="1.0" exponent="20"/>
+			</material>
+			<transform>
+				<scale x="0.8" y="5.0" z="0.8"/>
+				<translate x="0.0" y="-1.5" z="-8.5"/>
+			</transform>
+		</mesh>
+		<mesh name="plane_small.obj">
+			<material type="textured">
+				<texture name="marmor6x6.png"/>
+				<phong ka="0.3" kd="0.9" ks="1.0" exponent="200"/>
+			</material>
+			<transform>
+				<scale x="20" y="20" z="1.0"/>
+				<rotateX theta="-90.0"/>
+				<translate x="0.0" y="-2.5" z="-10.0"/>
+			</transform>
+		</mesh>
+		<mesh name="plane_small.obj">
+			<material type="textured">
+				<texture name="Brick.png"/>
+				<phong ka="0.3" kd="0.9" ks="1.0" exponent="200"/>
+			</material>
+			<transform>
+				<scale x="160.0" y="160.0" z="1.0"/>
+				<translate x="0.0" y="0" z="-15.0"/>
+			</transform>
+		</mesh>
+		<sphere radius="1.0">
+			<position x="0" y="0" z="0"/>
+			<material type="transparent">
+				<color r="0.18" g="0.5" b="0.17"/>
+				<phong ka="0.3" kd="0.9" ks="1.0" exponent="200"/>
+				<reflectance r="0"/>
+				<transmittance t="0.8"/>
+				<refraction iof="2.3"/>
+			</material>
+			<transform>
+				<rotateY theta="60"/>
+				<scale x="1.8" y="0.8" z="0.8"/>
+				<translate x="-6.0" y="1.5" z="-5.0"/>
+			</transform>
+		</sphere>
+		<sphere radius="1.0">
+			<position x="0" y="0" z="0"/>
+			<material type="transparent">
+				<color r="0.18" g="0.5" b="0.17"/>
+				<phong ka="0.3" kd="0.9" ks="1.0" exponent="200"/>
+				<reflectance r="0"/>
+				<transmittance t="0.8"/>
+				<refraction iof="2.3"/>
+			</material>
+			<transform>
+				<rotateY theta="-60"/>
+				<scale x="1.8" y="0.8" z="0.8"/>
+				<translate x="6.0" y="1.5" z="-5.0"/>
+			</transform>
+		</sphere>
+		<sphere radius="1.0">
+			<position x="0" y="0" z="0"/>
+			<material type="specular">
+				<color r="0.17" g="0.18" b="0.5"/>
+				<phong ka="0.3" kd="0.9" ks="1.0" exponent="200"/>
+				<reflectance r="0.8"/>
+			</material>
+			<transform>
+				<rotateY theta="30"/>
+				<scale x="2" y="1" z="1"/>
+				<translate x="-4.0" y="3.0" z="-7.0"/>
+			</transform>
+		</sphere>
+		<sphere radius="1.0">
+			<position x="0" y="0" z="0"/>
+			<material type="specular">
+				<color r="0.17" g="0.18" b="0.5"/>
+				<phong ka="0.3" kd="0.9" ks="1.0" exponent="200"/>
+				<reflectance r="0.8"/>
+			</material>
+			<transform>
+				<rotateY theta="-30"/>
+				<scale x="2" y="1" z="1"/>
+				<translate x="4.0" y="3.0" z="-7.0"/>
+			</transform>
+		</sphere>
+		<sphere radius="1.0">
+			<position x="0" y="0" z="0"/>
+			<material type="transparent">
+				<color r="0.2" g="0.2" b="0.2"/>
+				<phong ka="0.3" kd="0.9" ks="1.0" exponent="200"/>
+				<reflectance r="0.3"/>
+				<transmittance t="0.7"/>
+				<refraction iof="1.5"/>
+			</material>
+			<transform>
+				<scale x="1" y="2" z="1"/>
+				<translate x="0.0" y="5.5" z="-8.5"/>
+			</transform>
+		</sphere>
+	</surfaces>
+</scene>

@@ -12,32 +12,37 @@
 #include "../color.h"
 
 class shape {
-private:
-	shape() {};
-protected:
-	transform object_to_world;
-	transform world_to_object;
-	const direction *offset;
-	const material *matrl;
+ private:
+  shape() { };
+ protected:
+  transform object_to_world;
+  transform world_to_object;
+  const direction *offset;
+  const material *matrl;
 
-	shape(const direction *offset, const material *matrl);
+  shape(const direction *offset, const material *matrl);
 
-public:
-	virtual intersection intersect_full(const ray &r) = 0;
+ public:
+  virtual intersection intersect_full(const ray &r) = 0;
 
-	virtual bool intersect_shadow(const ray &r) = 0;
+  virtual bool intersect_shadow(const point &o, const direction &d) = 0;
 
-	/**
-	 * @copydoc material::shade(const color &lcol,const direction &l,const normal &n,const direction &v,const vec2 &pos,const bool internal)
-	 */
-	virtual color shade(const color &lcol, const direction &l, const normal &n, const direction &v, const vec2 &pos,
-						const bool internal);
+  /**
+   * @copydoc material::shade(const color &lcol,const direction &l,const normal &n,const direction &v,const vec2 &pos,const bool internal)
+   */
+  virtual color shade(const color &lcol, const direction &l, const normal &n, const direction &v, const vec2 &pos,
+					  const bool internal);
 
-	void translate(const direction &t);
-	void scale(const std::array<float, 3> sf);
-	void rotateX(const float &angle);
-	void rotateY(const float &angle);
-	void rotateZ(const float &angle);
+  std::vector<ray> *reflect(const direction &i, const normal &n, const point &x, const unsigned int &s) const;
+  std::vector<ray> *refract(const direction &i, const normal &n, const point &x, const unsigned int &s,
+							const bool internal) const;
+  void translate(const direction &t);
+  void scale(const std::array<float, 3> sf);
+  void rotateX(const float &angle);
+  void rotateY(const float &angle);
+  void rotateZ(const float &angle);
+  const float get_reflectance() const;
+  const float get_transmittance() const;
 };
 
 #endif //RAY_TRACER_SHAPE_H

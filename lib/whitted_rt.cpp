@@ -6,7 +6,7 @@
 
 whitted_rt::whitted_rt(const color *background_color, camera *cam, std::vector<light *> *lights,
 					   std::vector<shape *> *scene) : background_color(
-		background_color), cam(cam), lights(lights), scene(scene) { }
+	background_color), cam(cam), lights(lights), scene(scene) { }
 
 color whitted_rt::cast_ray(ray r, int step, bool internal) {
 	intersection is = this->find_nearest(r);
@@ -15,69 +15,33 @@ color whitted_rt::cast_ray(ray r, int step, bool internal) {
 	color out = color();
 	for (light *l : *lights) {
 		direction *light_dir = l->get_direction(*is.pos);
-		if (!this->cast_shadow(ray (*is.pos, -*light_dir)))
+		if (!this->cast_shadow(*is.pos, -*light_dir)) {
+			*light_dir = normalise(*light_dir);
 			out += is.object->shade(*l->emit(*light_dir), -*light_dir, *is.norm, -r.d, *is.local_pos, internal);
+		}
 		delete light_dir;
 	}
+	if (step < this->cam->get_max_bounces()) {
+		std::vector<ray> *refl_ray = internal ? nullptr : is.object->reflect(-r.d, *is.norm, *is.pos, 1);
+		if (refl_ray != nullptr) {
+			color refl_col = color();
+			for (ray &rr : *refl_ray) {
+				refl_col += this->cast_ray(rr, step + 1, internal);
+			}
+			refl_col = (refl_col*(1/refl_ray->size()))*is.object->get_reflectance();
+			out += refl_col;
+		}
+		std::vector<ray> *refr_ray = is.object->refract(-r.d, internal ? -*is.norm : *is.norm, *is.pos, 1, internal);
+		if (refr_ray != nullptr) {
+			color refr_col = color();
+			for (ray &rr : *refr_ray) {
+				refr_col += this->cast_ray(rr, step + 1, dot(rr.d, internal ? -*is.norm : *is.norm) < 0 == !internal);
+			}
+			refr_col = (refr_col*(1/refr_ray->size()))*is.object->get_transmittance();
+			out += refr_col;
+		}
+	}
 	return out;
-	/*try {
-		intersection is = this->find_nearest(r);
-		vec3 *base_color = normal.getColor();
-		vec3 *reflect_color = new vec3();
-		vec3 *refract_color = new vec3();
-		material *matrl = object->getMaterial();
-		phong_material phng = matrl->getPhong_params();
-		double ref = matrl->getReflectance();
-		double t = matrl->getTransmittance();
-		double iof = matrl->getRefraction();
-		vec3 view_dir = -r.getDirection();
-		vec3 *ac = new vec3();
-		vec3 *dc = new vec3();
-		vec3 *sc = new vec3();
-		for (light *light : lights) {
-			if (parallel_light*l = dynamic_cast<parallel_light *>(light)) {
-				if (!internal) {
-					vec3 light_dir = -l->getDirection();
-					if (this->cast_shadow(normal.getOrigin()))
-						continue;
-					double phi = std::max(0.0, dot(normal.getDirection(), light_dir));
-					if (phi > 0) {
-						*dc += l->emit(<#initializer#>)*(phng.diffuse*phi);
-						vec3 reflect_dir = normal.getDirection()*(2*phi)-light_dir;
-						*sc += l->emit(<#initializer#>)*
-							   (std::pow(std::max(0.0, dot(view_dir, reflect_dir)), phng.exponent)*phng.specular);
-					}
-				}
-			} else {
-				*ac += light->emit(<#initializer#>)*phng.ambient;
-			}
-		}
-		vec3 *light_weight = new vec3(*ac+*dc);
-		double lw[] = {(*light_weight)[0], (*light_weight)[1], (*light_weight)[2]};
-		delete light_weight;
-		*base_color = (scale(*base_color, lw)+*sc)*(1-ref-t);
-		/* Reflect
-		if (ref > 0) {
-			double phi = std::max(0.0, dot(normal.getDirection(), view_dir));
-			vec3 reflect_dir = normal.getDirection()*(2*phi)-view_dir;
-			*reflect_color = cast_ray(ray(normal.getOrigin(), reflect_dir), step+1, internal)*ref;
-		}
-		// Refract
-		if (t > 0) {
-			vec3 n = internal ? -normal.getDirection() : normal.getDirection();
-			double cosi = std::max(0.0, dot(n, view_dir));
-			double eta = internal ? iof : 1/iof;
-			double sint2 = std::pow(eta, 2)*(1-std::pow(cosi, 2));
-			if (sint2 <= 1) {
-				vec3 refract_dir = r.getDirection()*eta+n*(eta*cosi-std::sqrt(1-sint2));
-				*refract_color = cast_ray(ray(normal.getOrigin(), refract_dir), step+1, !internal)*t;
-			} else {
-				vec3 reflect_dir = n*(2*cosi)-view_dir;
-				*refract_color = cast_ray(ray(normal.getOrigin(), reflect_dir), step+1, internal)*t;
-			}
-		}
-		return *base_color+*reflect_color+*refract_color;
-	}*/
 }
 
 void whitted_rt::render() {
@@ -93,9 +57,9 @@ void whitted_rt::render() {
 		}
 }
 
-bool whitted_rt::cast_shadow(const ray &r) {
+bool whitted_rt::cast_shadow(const point &o, const direction &d) {
 	for (shape *obstacle : *this->scene)
-		if (obstacle->intersect_shadow(r))
+		if (obstacle->intersect_shadow(o, d))
 			return true;
 	return false;
 }
@@ -107,7 +71,7 @@ intersection whitted_rt::find_nearest(ray r) {
 		intersection cur = object->intersect_full(r);
 		if (cur.object == nullptr)
 			continue;
-		float new_dist = length(r.o-*cur.pos);
+		float new_dist = length(r.o - *cur.pos);
 		if (new_dist < dist) {
 			dist = new_dist;
 			out = cur;

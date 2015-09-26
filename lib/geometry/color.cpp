@@ -32,13 +32,13 @@ std::ostream &operator<<(std::ostream &out, const color &a) {
 }
 
 color operator+(const color &lhs, const color &rhs) {
-	return color(lhs[0]+rhs[0], lhs[1]+rhs[1], lhs[2]+rhs[2]);
+	return color(lhs[0] + rhs[0], lhs[1] + rhs[1], lhs[2] + rhs[2]);
 }
 
 color &operator+=(color &lhs, const color &rhs) {
-	lhs[0]+=rhs[0];
-	lhs[1]+=rhs[1];
-	lhs[2]+=rhs[2];
+	lhs[0] += rhs[0];
+	lhs[1] += rhs[1];
+	lhs[2] += rhs[2];
 	return lhs;
 }
 
@@ -60,9 +60,9 @@ color scale(const color &col, const color &sf) {
 
 std::array<int, 3> rgb(const color &col) {
 	std::array<int, 3> out = {{
-									  col[0] > 1 ? 255 : int(std::round(col[0]*255)),
-									  col[1] > 1 ? 255 : int(std::round(col[1]*255)),
-									  col[2] > 1 ? 255 : int(std::round(col[2]*255))
+								  col[0] > 1 ? 255 : int(std::round(col[0]*255)),
+								  col[1] > 1 ? 255 : int(std::round(col[1]*255)),
+								  col[2] > 1 ? 255 : int(std::round(col[2]*255))
 							  }};
 	return out;
 }

@@ -7,15 +7,15 @@
 
 #include "light.h"
 
-class point_light : public light {
-protected:
-	const point *position;
-public:
-	point_light(const color *col, const point *pos);
+class point_light: public light {
+ protected:
+  const point *position;
+ public:
+  point_light(const color *col, const point *pos);
 
-	virtual direction *get_direction(const point &pos);
+  virtual direction *get_direction(const point &pos);
 
-	virtual color *emit(const direction &dir);
+  virtual color *emit(const direction &dir);
 };
 
 #endif //RAY_TRACER_POINT_LIGHT_H

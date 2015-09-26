@@ -4,16 +4,18 @@
 
 #include "lambertian_material.h"
 
-lambertian_material::lambertian_material(color col, float ambient, float diffuse) : solid_material(col), ambient(ambient),
+lambertian_material::lambertian_material(color col, float ambient, float diffuse) : solid_material(col),
+																					ambient(ambient),
 																					diffuse(diffuse) { }
 
 std::ostream &operator<<(std::ostream &out, const lambertian_material &a) {
 	out << "Phong material: Color: " << a.col << " Ambient intensity: " << a.ambient << ", Diffuse intensity: " <<
-	a.diffuse;
+		a.diffuse;
 	return out;
 }
 
-color lambertian_material::shade(const color &lcol, const direction &l, const normal &n, const direction &v, const vec2 &pos,
+color lambertian_material::shade(const color &lcol, const direction &l, const normal &n, const direction &v,
+								 const vec2 &pos,
 								 const bool internal) const {
 	if (l != direction()) {
 		// Directional light
@@ -27,4 +29,22 @@ color lambertian_material::shade(const color &lcol, const direction &l, const no
 		// Ambient light
 		return scale(this->col, lcol*this->ambient);
 	return color();
+}
+
+std::vector<ray> *lambertian_material::reflect(const direction &i, const normal &n, const point &x,
+											   const unsigned int &s) const {
+	return nullptr;
+}
+
+std::vector<ray> *lambertian_material::refract(const direction &i, const normal &n, const point &x,
+											   const unsigned int &s, const bool internal) const {
+	return nullptr;
+}
+
+const float lambertian_material::get_reflectance() const {
+	return 0;
+}
+
+const float lambertian_material::get_transmittance() const {
+	return 0;
 }

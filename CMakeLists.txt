@@ -16,7 +16,10 @@ set(SOURCE_FILES lib/whitted_rt.cpp lib/whitted_rt.h lib/math/vec4.cpp lib/math/
         lib/light/ambient_light.cpp lib/light/ambient_light.h lib/camera/camera.h lib/camera/camera.cpp
         lib/geometry/ray.cpp lib/geometry/material/solid_material.cpp lib/light/point_light.cpp lib/light/point_light.h
         lib/parser.cpp lib/parser.h lib/geometry/shapes/mesh.cpp lib/geometry/shapes/mesh.h
-        lib/geometry/shapes/triangle.cpp lib/geometry/shapes/triangle.h lib/tiny_obj_loader.cpp lib/tiny_obj_loader.h)
+        lib/geometry/shapes/triangle.cpp lib/geometry/shapes/triangle.h lib/tiny_obj_loader.cpp lib/tiny_obj_loader.h
+        lib/geometry/material/specular_material.cpp lib/geometry/material/specular_material.h
+        lib/geometry/material/textured_material.cpp lib/geometry/material/textured_material.h
+        lib/geometry/material/transparent_material.cpp lib/geometry/material/transparent_material.h)
 add_executable(Ray_Tracer ${SOURCE_FILES} main.cpp)
 add_executable(Test ${SOURCE_FILES} test.cpp)
 target_link_libraries(Ray_Tracer png16 pugixml)

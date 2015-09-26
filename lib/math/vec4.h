@@ -22,16 +22,16 @@
  * Defines constructors and basic operations
  */
 class vec4 {
-protected:
-	std::array<float, 4> a;
+ protected:
+  std::array<float, 4> a;
 
-public:
-	/**
-	 * @brief Default constructor
-	 *
-	 * Creates a new 0 vector
-	 */
-	vec4();
+ public:
+  /**
+   * @brief Default constructor
+   *
+   * Creates a new 0 vector
+   */
+  vec4();
 
 /**
 	 * @brief Explicit constructor
@@ -46,63 +46,63 @@ public:
 	 *
 	 * @param w the w value
 	 */
-	vec4(const float &x, const float &y, const float &z, const float &w);
+  vec4(const float &x, const float &y, const float &z, const float &w);
 
-	/**
-	 * @brief Explicit constructor
-	 *
-	 * Creates a new vector with the values x, y, z and w
-	 *
-	 * @param &in the values
-	 */
-	vec4(const std::array<float, 4> &in);
+  /**
+   * @brief Explicit constructor
+   *
+   * Creates a new vector with the values x, y, z and w
+   *
+   * @param &in the values
+   */
+  vec4(const std::array<float, 4> &in);
 
-	/**
-	 * @brief Copy constructor
-	 *
-	 * Creates a new vector with values identical to the given vector
-	 */
-	vec4(const vec4 &in);
+  /**
+   * @brief Copy constructor
+   *
+   * Creates a new vector with values identical to the given vector
+   */
+  vec4(const vec4 &in);
 
-	/**
-	 * @brief Assignment operator
-	 *
-	 * Assigns the values from the given vector.
-	 *
-	 * @param &in the rvalue vector
-	 */
-	virtual vec4 &operator=(const vec4 &in);
+  /**
+   * @brief Assignment operator
+   *
+   * Assigns the values from the given vector.
+   *
+   * @param &in the rvalue vector
+   */
+  virtual vec4 &operator=(const vec4 &in);
 
-	/**
-	 * @brief Array subscript
-	 *
-	 * Allows access to the vector's values.
-	 *
-	 * @param i the index
-	 */
-	float &operator[](const unsigned long i);
+  /**
+   * @brief Array subscript
+   *
+   * Allows access to the vector's values.
+   *
+   * @param i the index
+   */
+  float &operator[](const unsigned long i);
 
-	/**
-	 * @brief Array subscript
-	 *
-	 * Allows access to the vector's values.
-	 *
-	 * @param i the index
-	 */
-	const float &operator[](const unsigned long i) const;
+  /**
+   * @brief Array subscript
+   *
+   * Allows access to the vector's values.
+   *
+   * @param i the index
+   */
+  const float &operator[](const unsigned long i) const;
 
-	/**
-	 * @brief Output operator
-	 *
-	 * Puts the vector on an output stream in an Octave/Matlab-compatible format.
-	 *
-	 * @param &out the output stream
-	 *
-	 * @param &a the vector
-	 *
-	 * @return the output stream
-	 */
-	friend std::ostream &operator<<(std::ostream &out, const vec4 &a);
+  /**
+   * @brief Output operator
+   *
+   * Puts the vector on an output stream in an Octave/Matlab-compatible format.
+   *
+   * @param &out the output stream
+   *
+   * @param &a the vector
+   *
+   * @return the output stream
+   */
+  friend std::ostream &operator<<(std::ostream &out, const vec4 &a);
 };
 
 /**

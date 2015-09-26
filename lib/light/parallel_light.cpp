@@ -12,7 +12,7 @@ std::ostream &operator<<(std::ostream &out, const parallel_light &a) {
 }
 
 direction *parallel_light::get_direction(const point &pos) {
-	return new direction(*this->dir);
+	return new direction(*this->dir*std::numeric_limits<float>::infinity());
 }
 
 color *parallel_light::emit(const direction &dir) {

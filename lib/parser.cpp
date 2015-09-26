@@ -3,7 +3,7 @@
 //
 
 #include "parser.h"
-#include "geometry/material/lambertian_material.h"
+#include "geometry/material/transparent_material.h"
 
 whitted_rt *parser::parse(const char *in_path, std::string &out_path) {
 	pugi::xml_document doc;
@@ -35,8 +35,8 @@ camera *parser::parse_camera(const pugi::xml_node &cam) {
 																	  nullptr, 10),
 														 1, // Number of samples per pixel
 														 std::strtof(
-																 cam.child("horizontal_fov").attribute("angle").value(),
-																 nullptr)
+															 cam.child("horizontal_fov").attribute("angle").value(),
+															 nullptr)
 		);
 		delete position;
 		delete lookat;
@@ -72,10 +72,14 @@ point_light *parser::parse_point_light(const pugi::xml_node &l) {
 
 std::vector<shape *> *parser::parse_surfaces(const pugi::xml_node &surfaces) {
 	std::vector<shape *> *out = new std::vector<shape *>();
-	for (pugi::xml_node s : surfaces.children("sphere"))
-		out->push_back(parse_sphere(s));
-	for (pugi::xml_node m : surfaces.children("mesh"))
-		out->push_back(parse_mesh(m));
+	for (pugi::xml_node s : surfaces.children()) {
+		if (std::string(s.name()) == "sphere")
+			out->push_back(parse_sphere(s));
+		else if (std::string(s.name()) == "mesh")
+			out->push_back(parse_mesh(s));
+		for (pugi::xml_node t : s.children("transform"))
+			parse_transform(t, out->back());
+	}
 	return out;
 }
 
@@ -83,8 +87,6 @@ sphere *parser::parse_sphere(pugi::xml_node &s) {
 	material *matrl = parse_material(s.child("material"));
 	sphere *out = new sphere(std::strtof(s.attribute("radius").value(), nullptr), parse_direction(s.child("position")),
 							 matrl);
-	for (pugi::xml_node t : s.children("transforms"))
-		parse_transform(t, out);
 	return out;
 }
 
@@ -103,42 +105,45 @@ mesh *parser::parse_mesh(const pugi::xml_node &m) {
 			std::array<normal, 3> *normals = new std::array<normal, 3>();
 			std::array<vec2, 3> *texture_coords = new std::array<vec2, 3>();
 			for (int ii = 0; ii < 3; ii++) {
-				vertices->at(ii) = point(s.mesh.positions[s.mesh.indices[i*3+ii]*3],
-									   s.mesh.positions[s.mesh.indices[i*3+ii]*3+1],
-									   s.mesh.positions[s.mesh.indices[i*3+ii]*3+2]);
-				normals->at(ii) = normal(s.mesh.normals[s.mesh.indices[i*3+ii]*3],
-									   s.mesh.normals[s.mesh.indices[i*3+ii]*3+1],
-									   s.mesh.normals[s.mesh.indices[i*3+ii]*3+2]);
-				texture_coords->at(ii) = vec2(s.mesh.texcoords[s.mesh.indices[i*3+ii]*2],
-											s.mesh.texcoords[s.mesh.indices[i*3+ii]*2+1]);
+				vertices->at(ii) = point(s.mesh.positions[s.mesh.indices[i*3 + ii]*3],
+										 s.mesh.positions[s.mesh.indices[i*3 + ii]*3 + 1],
+										 s.mesh.positions[s.mesh.indices[i*3 + ii]*3 + 2]);
+				normals->at(ii) = normal(s.mesh.normals[s.mesh.indices[i*3 + ii]*3],
+										 s.mesh.normals[s.mesh.indices[i*3 + ii]*3 + 1],
+										 s.mesh.normals[s.mesh.indices[i*3 + ii]*3 + 2]);
+				texture_coords->at(ii) = vec2(s.mesh.texcoords[s.mesh.indices[i*3 + ii]*2],
+											  s.mesh.texcoords[s.mesh.indices[i*3 + ii]*2 + 1]);
 			}
 			triangles->push_back(new triangle(vertices, normals, texture_coords));
 		}
 	material *matrl;
-	if (materials.empty()) {
+	if (materials.empty())
 		matrl = parse_material(m.child("material"));
-	}
-	return new mesh(new direction(), matrl, triangles);
+	mesh *out = new mesh(new direction(), matrl, triangles);
+	return out;
 }
 
-void parser::parse_transform(const pugi::xml_node &t, sphere *s) {
-	std::array<float, 3> sf = {
-			std::strtof(t.child("scale").attribute("x").value(), nullptr),
-			std::strtof(t.child("scale").attribute("y").value(), nullptr),
-			std::strtof(t.child("scale").attribute("z").value(), nullptr)
-	};
-	s->scale(sf);
+void parser::parse_transform(const pugi::xml_node &t, shape *s) {
 	for (pugi::xml_node r : t.children()) {
-		if (std::string(r.name()) == "rotateX")
+		if (std::string(r.name()) == "scale") {
+			std::array<float, 3> sf = {
+				std::strtof(r.attribute("x").value(), nullptr),
+				std::strtof(r.attribute("y").value(), nullptr),
+				std::strtof(r.attribute("z").value(), nullptr)
+			};
+			s->scale(sf);
+		} else if (std::string(r.name()) == "rotateX")
 			s->rotateX(std::strtof(r.attribute("theta").value(), nullptr));
 		else if (std::string(r.name()) == "rotateY")
 			s->rotateY(std::strtof(r.attribute("theta").value(), nullptr));
 		else if (std::string(r.name()) == "rotateZ")
 			s->rotateZ(std::strtof(r.attribute("theta").value(), nullptr));
+		else if (std::string(r.name()) == "translate") {
+			direction *d = parse_direction(r);
+			s->translate(*d);
+			delete d;
+		}
 	}
-	direction *d = parse_direction(t.child("translate"));
-	s->translate(*d);
-	delete d;
 }
 
 material *parser::parse_material(const pugi::xml_node &m) {
@@ -154,10 +159,50 @@ material *parser::parse_material(const pugi::xml_node &m) {
 	} else if (std::string(m.attribute("type").value()) == "lambertian") {
 		color *col = parse_color(m.child("color"));
 		lambertian_material *out = new lambertian_material(*col,
-												 std::strtof(m.child("lambertian").attribute("ka").value(), nullptr),
-												 std::strtof(m.child("lambertian").attribute("kd").value(), nullptr));
+														   std::strtof(m.child("lambertian").attribute("ka").value(),
+																	   nullptr),
+														   std::strtof(m.child("lambertian").attribute("kd").value(),
+																	   nullptr));
 		delete col;
 		return out;
+	} else if (std::string(m.attribute("type").value()) == "specular") {
+		color *col = parse_color(m.child("color"));
+		specular_material *out = new specular_material(*col,
+													   std::strtof(m.child("phong").attribute("ka").value(), nullptr),
+													   std::strtof(m.child("phong").attribute("kd").value(), nullptr),
+													   std::strtof(m.child("phong").attribute("ks").value(), nullptr),
+													   std::strtof(m.child("phong").attribute("exponent").value(),
+																   nullptr),
+													   std::strtof(m.child("reflectance").attribute("r").value(),
+																   nullptr));
+		delete col;
+		return out;
+	} else if (std::string(m.attribute("type").value()) == "transparent") {
+		color *col = parse_color(m.child("color"));
+		specular_material *out = new transparent_material(*col,
+														  std::strtof(m.child("phong").attribute("ka").value(),
+																	  nullptr),
+														  std::strtof(m.child("phong").attribute("kd").value(),
+																	  nullptr),
+														  std::strtof(m.child("phong").attribute("ks").value(),
+																	  nullptr),
+														  std::strtof(m.child("phong").attribute("exponent").value(),
+																	  nullptr),
+														  std::strtof(m.child("reflectance").attribute("r").value(),
+																	  nullptr),
+														  std::strtof(m.child("transmittance").attribute("t").value(),
+																	  nullptr),
+														  std::strtof(m.child("refraction").attribute("iof").value(),
+																	  nullptr));
+		delete col;
+		return out;
+	} else if (std::string(m.attribute("type").value()) == "textured") {
+		return new textured_material(std::strtof(m.child("phong").attribute("ka").value(), nullptr),
+									 std::strtof(m.child("phong").attribute("kd").value(), nullptr),
+									 std::strtof(m.child("phong").attribute("ks").value(), nullptr),
+									 std::strtof(m.child("phong").attribute("exponent").value(),
+												 nullptr),
+									 load_image(m.child("texture").attribute("name").value()));
 	}
 	return nullptr;
 }
@@ -178,4 +223,21 @@ direction *parser::parse_direction(const pugi::xml_node &d) {
 	return new direction(std::strtof(d.attribute("x").value(), nullptr),
 						 std::strtof(d.attribute("y").value(), nullptr),
 						 std::strtof(d.attribute("z").value(), nullptr));
+}
+
+std::vector<std::vector<color>> *parser::load_image(const std::string path) {
+	png::image<png::rgb_pixel> img(path);
+	std::vector<std::vector<color>> *out = new std::vector<std::vector<color>>();
+	out->reserve(img.get_height());
+	for (unsigned long y = 0; y < img.get_height(); y++) {
+		out->push_back(std::vector<color>());
+		out->at(y).reserve(img.get_width());
+		for (unsigned long x = 0; x < img.get_width(); x++) {
+			png::rgb_pixel tmp = img.get_pixel(x, y);
+			out->at(y).push_back(color(static_cast<int>(tmp.red)/255.0f,
+									   static_cast<int>(tmp.green)/255.0f,
+									   static_cast<int>(tmp.blue)/255.0f));
+		}
+	}
+	return out;
 }

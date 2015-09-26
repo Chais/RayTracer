@@ -36,10 +36,10 @@ const float &vec4::operator[](const unsigned long i) const {
 
 vec4 operator+(const vec4 &lhs, const vec4 &rhs) {
 	std::array<float, 4> tmp = {
-			lhs[0]+rhs[0],
-			lhs[1]+rhs[1],
-			lhs[2]+rhs[2],
-			lhs[3]+rhs[3]
+		lhs[0] + rhs[0],
+		lhs[1] + rhs[1],
+		lhs[2] + rhs[2],
+		lhs[3] + rhs[3]
 	};
 	return vec4(tmp);
 }
@@ -54,10 +54,10 @@ vec4 &operator+=(vec4 &a, const vec4 &b) {
 
 vec4 operator-(const vec4 &a, const vec4 &b) {
 	std::array<float, 4> tmp = {
-			a[0]-b[0],
-			a[1]-b[1],
-			a[2]-b[2],
-			a[3]-b[3]
+		a[0] - b[0],
+		a[1] - b[1],
+		a[2] - b[2],
+		a[3] - b[3]
 	};
 	return vec4(tmp);
 }
@@ -72,10 +72,10 @@ vec4 &operator-=(vec4 &a, const vec4 &b) {
 
 vec4 operator-(const vec4 &rhs) {
 	std::array<float, 4> tmp = {
-			-rhs[0],
-			-rhs[1],
-			-rhs[2],
-			-rhs[3]
+		-rhs[0],
+		-rhs[1],
+		-rhs[2],
+		-rhs[3]
 	};
 	return vec4(tmp);
 }
@@ -87,59 +87,60 @@ std::ostream &operator<<(std::ostream &out, const vec4 &a) {
 
 vec4 operator*(const vec4 &lhs, const float &rhs) {
 	std::array<float, 4> tmp = {
-			lhs[0]*rhs,
-			lhs[1]*rhs,
-			lhs[2]*rhs,
-			lhs[3]*rhs
+		lhs[0]*rhs,
+		lhs[1]*rhs,
+		lhs[2]*rhs,
+		lhs[3]*rhs
 	};
 	return vec4(tmp);
 }
 
 vec4 operator*(const float &lhs, const vec4 &rhs) {
 	std::array<float, 4> tmp = {
-			lhs*rhs[0],
-			lhs*rhs[1],
-			lhs*rhs[2],
-			lhs*rhs[3]
+		lhs*rhs[0],
+		lhs*rhs[1],
+		lhs*rhs[2],
+		lhs*rhs[3]
 	};
 	return vec4(tmp);
 }
 
 bool operator==(const vec4 &lhs, const vec4 &rhs) {
 	return helper::almost_equal(lhs[0], rhs[0], 1) && helper::almost_equal(lhs[1], rhs[1], 1) &&
-		   helper::almost_equal(lhs[2], rhs[2], 1) && helper::almost_equal(lhs[3], rhs[3], 1);
+		helper::almost_equal(lhs[2], rhs[2], 1) && helper::almost_equal(lhs[3], rhs[3], 1);
 }
 
 bool operator!=(const vec4 &lhs, const vec4 &rhs) {
 	return !(helper::almost_equal(lhs[0], rhs[0], 1) && helper::almost_equal(lhs[1], rhs[1], 1) &&
-		   helper::almost_equal(lhs[2], rhs[2], 1) && helper::almost_equal(lhs[3], rhs[3], 1));
+		helper::almost_equal(lhs[2], rhs[2], 1) && helper::almost_equal(lhs[3], rhs[3], 1));
 }
 
 float dot(const vec4 &lhs, const vec4 &rhs) {
-	return lhs[0]*rhs[0]+lhs[1]*rhs[1]+lhs[2]*rhs[2]+lhs[3]*rhs[3];
+	return lhs[0]*rhs[0] + lhs[1]*rhs[1] + lhs[2]*rhs[2] + lhs[3]*rhs[3];
 }
 
 vec4 scale(const vec4 &a, const float f[4]) {
 	std::array<float, 4> tmp = {
-			a[0]*f[0],
-			a[1]*f[1],
-			a[2]*f[2],
-			a[3]*f[3]
+		a[0]*f[0],
+		a[1]*f[1],
+		a[2]*f[2],
+		a[3]*f[3]
 	};
 	return vec4(tmp);
 }
 
 float length(const vec4 &a) {
-	return std::sqrt(a[0]*a[0]+a[1]*a[1]+a[2]*a[2]+a[3]*a[3]);
+	return std::sqrt(a[0]*a[0] + a[1]*a[1] + a[2]*a[2] + a[3]*a[3]);
 }
 
 vec4 normalise(const vec4 &a) {
-	float il = 1/length(a);
+	float il = length(a);
+	il = il == 0 ? 1 : 1/il;
 	std::array<float, 4> tmp = {
-			a[0]*il,
-			a[1]*il,
-			a[2]*il,
-			a[3]*il
+		a[0]*il,
+		a[1]*il,
+		a[2]*il,
+		a[3]*il
 	};
 	return vec4(tmp);
 }

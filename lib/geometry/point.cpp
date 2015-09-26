@@ -13,7 +13,7 @@ point::point(const vec4 &in) : vec4(in[0], in[1], in[2], 1) { }
 point::point(const point &in) : vec4(in) { }
 
 point operator+(const point &lhs, const direction &rhs) {
-	return point(dynamic_cast<const vec4 &>(lhs)+dynamic_cast<const vec4 &>(rhs));
+	return point(dynamic_cast<const vec4 &>(lhs) + dynamic_cast<const vec4 &>(rhs));
 }
 
 point &operator+=(point &lhs, const direction &rhs) {
@@ -22,9 +22,9 @@ point &operator+=(point &lhs, const direction &rhs) {
 }
 
 direction operator-(const point &lhs, const point &rhs) {
-	return direction(dynamic_cast<const vec4 &>(lhs)-dynamic_cast<const vec4 &>(rhs));
+	return direction(dynamic_cast<const vec4 &>(lhs) - dynamic_cast<const vec4 &>(rhs));
 }
 
 point operator-(const point &lhs, const direction &rhs) {
-	return point(dynamic_cast<const vec4 &>(lhs)-dynamic_cast<const vec4 &>(rhs));
+	return point(dynamic_cast<const vec4 &>(lhs) - dynamic_cast<const vec4 &>(rhs));
 }

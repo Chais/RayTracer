@@ -9,17 +9,17 @@
 #include <ostream>
 #include <cassert>
 
-class sphere : public shape {
-private:
-	float radius;
-public:
-	sphere(const float &radius, const direction *offset, material *matrl);
+class sphere: public shape {
+ private:
+  float radius;
+ public:
+  sphere(const float &radius, const direction *offset, material *matrl);
 
-	friend std::ostream &operator<<(std::ostream &out, const sphere &a);
+  friend std::ostream &operator<<(std::ostream &out, const sphere &a);
 
-	virtual intersection intersect_full(const ray &r);
+  virtual intersection intersect_full(const ray &r);
 
-	virtual bool intersect_shadow(const ray &r);
+  virtual bool intersect_shadow(const point &o, const direction &d);
 };
 
 #endif //RAY_TRACER_SPHERE_H

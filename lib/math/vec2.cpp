@@ -34,8 +34,8 @@ const float &vec2::operator[](const unsigned long i) const {
 
 vec2 operator+(const vec2 &lhs, const vec2 &rhs) {
 	std::array<float, 2> tmp = {
-			lhs[0]+rhs[0],
-			lhs[1]+rhs[1]
+		lhs[0] + rhs[0],
+		lhs[1] + rhs[1]
 	};
 	return vec2(tmp);
 }
@@ -48,8 +48,8 @@ vec2 &operator+=(vec2 &lhs, const vec2 &rhs) {
 
 vec2 operator-(const vec2 &lhs, const vec2 &rhs) {
 	std::array<float, 2> tmp = {
-			lhs[0]-rhs[0],
-			lhs[1]-rhs[1]
+		lhs[0] - rhs[0],
+		lhs[1] - rhs[1]
 	};
 	return vec2(tmp);
 }
@@ -62,8 +62,8 @@ vec2 &operator-=(vec2 &lhs, const vec2 &rhs) {
 
 vec2 operator-(const vec2 &rhs) {
 	std::array<float, 2> tmp = {
-			-rhs[0],
-			-rhs[1]
+		-rhs[0],
+		-rhs[1]
 	};
 	return vec2(tmp);
 }
@@ -75,41 +75,41 @@ std::ostream &operator<<(std::ostream &out, const vec2 &a) {
 
 vec2 operator*(const vec2 &lhs, const float &rhs) {
 	std::array<float, 2> tmp = {
-			lhs[0]*rhs,
-			lhs[1]*rhs
+		lhs[0]*rhs,
+		lhs[1]*rhs
 	};
 	return vec2(tmp);
 }
 
 vec2 operator*(const float &lhs, const vec2 &rhs) {
 	std::array<float, 2> tmp = {
-			lhs*rhs[0],
-			lhs*rhs[1]
+		lhs*rhs[0],
+		lhs*rhs[1]
 	};
 	return vec2(tmp);
 }
 
 float dot(const vec2 &lhs, const vec2 &rhs) {
-	return lhs[0]*rhs[0]+lhs[1]*rhs[1];
+	return lhs[0]*rhs[0] + lhs[1]*rhs[1];
 }
 
 vec2 scale(const vec2 &a, const float f[2]) {
 	std::array<float, 2> tmp = {
-			a[0]*f[0],
-			a[1]*f[1]
+		a[0]*f[0],
+		a[1]*f[1]
 	};
 	return vec2(tmp);
 }
 
 float length(const vec2 &a) {
-	return std::sqrt(a[0]*a[0]+a[1]*a[1]);
+	return std::sqrt(a[0]*a[0] + a[1]*a[1]);
 }
 
 vec2 normalise(const vec2 &a) {
 	float il = 1/length(a);
 	std::array<float, 2> tmp = {
-			a[0]*il,
-			a[1]*il
+		a[0]*il,
+		a[1]*il
 	};
 	return vec2(tmp);
 }

@@ -16,20 +16,20 @@
  * @brief Models color
  */
 class color {
-private:
-	std::array<float, 3> v;
-public:
-	color();
+ private:
+  std::array<float, 3> v;
+ public:
+  color();
 
-	color(const float r, const float g, const float b);
+  color(const float r, const float g, const float b);
 
-	color(const color &in);
+  color(const color &in);
 
-	float &operator[](const unsigned long i);
+  float &operator[](const unsigned long i);
 
-	const float &operator[](const unsigned long i) const;
+  const float &operator[](const unsigned long i) const;
 
-	friend std::ostream &operator<<(std::ostream &out, const color &a);
+  friend std::ostream &operator<<(std::ostream &out, const color &a);
 };
 
 color operator+(const color &lhs, const color &rhs);

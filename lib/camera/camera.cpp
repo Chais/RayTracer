@@ -9,14 +9,14 @@ camera::camera(const point &position, const point &look_at, const direction &up,
 			   const unsigned long &samples) : resolution(resolution), max_bounces(max_bounces) {
 	assert(resolution[0] > 0 && resolution[1] > 0);
 	assert(samples > 0);
-	direction dir = normalise(look_at-position);
+	direction dir = normalise(look_at - position);
 	direction left = cross(normalise(up), dir);
 	direction new_up = cross(dir, left);
 	std::array<std::array<float, 4>, 4> d = {{
-													 {left[0], new_up[0], dir[0], position[0]},
-													 {left[1], new_up[1], dir[1], position[1]},
-													 {left[2], new_up[2], dir[2], position[2]},
-													 {0, 0, 0, 1}
+												 {left[0], new_up[0], dir[0], position[0]},
+												 {left[1], new_up[1], dir[1], position[1]},
+												 {left[2], new_up[2], dir[2], position[2]},
+												 {0, 0, 0, 1}
 											 }};
 	mat4 *m = new mat4(d);
 	transforms = transform(m);
@@ -41,5 +41,9 @@ color *camera::get_pixel(const unsigned long &x, const unsigned long &y) const {
 }
 
 const std::array<unsigned long, 2> &camera::get_resolution() const {
-	return resolution;
+	return this->resolution;
+}
+
+const unsigned long camera::get_max_bounces() const {
+	return this->max_bounces;
 }

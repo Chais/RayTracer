@@ -9,15 +9,15 @@
 #include "light.h"
 #include "../geometry/direction.h"
 
-class ambient_light : public light {
-public:
-	ambient_light(const color *col);
+class ambient_light: public light {
+ public:
+  ambient_light(const color *col);
 
-	friend std::ostream &operator<<(std::ostream &out, const ambient_light &a);
+  friend std::ostream &operator<<(std::ostream &out, const ambient_light &a);
 
-	virtual direction *get_direction(const point &pos);
+  virtual direction *get_direction(const point &pos);
 
-	virtual color *emit(const direction &dir);
+  virtual color *emit(const direction &dir);
 };
 
 #endif //RAY_TRACER_AMBIENT_LIGHT_H

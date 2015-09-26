@@ -16,21 +16,21 @@ using namespace std;
 
 int main(int argc, char *argv[]) {
 	array<array<float, 4>, 4> mat = {{{1, 0, 1, 1},
-											 {0, 1, 0, 1},
-											 {0, 0, 1, 0},
-											 {0, 0, 0, 1}}};
+									  {0, 1, 0, 1},
+									  {0, 0, 1, 0},
+									  {0, 0, 0, 1}}};
 	mat4 m{mat};
 	cout << "mat4 tests:" << endl;
 	cout << "m=" << m << endl;
 	cout << "invert(m)=" << invert(m) << endl;
 	array<array<float, 4>, 4> mata = {{{2, 5, 4, 6},
-											  {7, 10, 2, 6},
-											  {7, 5, 3, 2},
-											  {7, 4, 1, 5}}};
+									   {7, 10, 2, 6},
+									   {7, 5, 3, 2},
+									   {7, 4, 1, 5}}};
 	array<array<float, 4>, 4> matb = {{{5, 9, 3, 7},
-											  {4, 3, 9, 2},
-											  {3, 1, 8, 2},
-											  {10, 2, 10, 9}}};
+									   {4, 3, 9, 2},
+									   {3, 1, 8, 2},
+									   {10, 2, 10, 9}}};
 	mat4 ma{mata};
 	mat4 mb{matb};
 	cout << "ma=" << ma << endl;

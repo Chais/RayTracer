@@ -8,7 +8,7 @@ using namespace std;
 int main(int argc, char *argv[]) {
 	if (argc == 1) {
 		cout << "Usage: " << argv[0] << " <input>" << endl
-		<< "        <input> - Path of the XML file specifying the camera, lights and geometry." << endl;
+			<< "        <input> - Path of the XML file specifying the camera, lights and geometry." << endl;
 		return 0;
 	}
 	std::string out_file;

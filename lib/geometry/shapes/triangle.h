@@ -8,20 +8,20 @@
 #include "shape.h"
 
 class triangle {
-protected:
-	std::array<point, 3> *vertices;
-	std::array<normal, 3> *normals;
-	std::array<vec2, 3> *texture_coords;
-public:
-	triangle(std::array<point, 3> *vertices, std::array<normal, 3> *normals, std::array<vec2, 3> *texture_coords);
+ protected:
+  std::array<point, 3> *vertices;
+  std::array<normal, 3> *normals;
+  std::array<vec2, 3> *texture_coords;
+ public:
+  triangle(std::array<point, 3> *vertices, std::array<normal, 3> *normals, std::array<vec2, 3> *texture_coords);
 
-	virtual intersection intersect_full(const ray &r);
+  virtual intersection intersect_full(const ray &r);
 
-	virtual bool intersect_shadow(const ray &r);
+  virtual bool intersect_shadow(const point &o, const direction &d);
 
-	virtual normal * get_avg_normal();
+  virtual normal *get_avg_normal();
 
-	virtual normal * get_barycentric_normal(const float &a, const float &b, const float &c);
+  virtual normal *get_barycentric_normal(const float &a, const float &b, const float &c);
 };
 
 #endif //RAY_TRACER_TRIANGLE_H

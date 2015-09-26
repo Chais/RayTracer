@@ -1,0 +1,89 @@
+<?xml version="1.0" standalone="no" ?>
+<!DOCTYPE scene SYSTEM "scene.dtd">
+
+<scene output_file="example6.png">
+	<background_color r="0.0" g="0.0" b="0.0"/>
+	<camera type="perspective">
+		<position x="0.0" y="0.0" z="5.0"/>
+		<lookat x="0.0" y="0.0" z="4.0"/>
+		<up x="0.0" y="1.0" z="0.0"/>
+		<horizontal_fov angle="45"/>
+		<resolution horizontal="1024" vertical="1024"/>
+		<max_bounces n="8"/>
+	</camera>
+	<lights>
+		<ambient_light>
+			<color r="1.0" g="1.0" b="1.0"/>
+		</ambient_light>
+		<point_light>
+			<color r="0.8" g="0.8" b="0.8"/>
+			<position x="0.0" y="4.8" z="-5.0"/>
+		</point_light>
+	</lights>
+	<surfaces>
+		<mesh name="plane_small.obj">
+			<material type="phong">
+				<color r="1.0" g="1.0" b="1.0"/>
+				<phong ka="0.3" kd="0.9" ks="1.0" exponent="20"/>
+			</material>
+			<transform>
+				<scale x="5.1" y="5.1" z="1.0"/>
+				<translate x="0.0" y="0.0" z="-10.0"/>
+			</transform>
+		</mesh>
+		<mesh name="plane_small.obj">
+			<material type="phong">
+				<color r="1.0" g="1.0" b="1.0"/>
+				<phong ka="0.3" kd="0.9" ks="1.0" exponent="20"/>
+			</material>
+			<transform>
+				<scale x="5.1" y="5.1" z="1.0"/>
+				<rotateX theta="-90"/>
+				<translate x="0.0" y="-5.0" z="-5.0"/>
+			</transform>
+		</mesh>
+		<mesh name="plane_small.obj">
+			<material type="phong">
+				<color r="1.0" g="1.0" b="1.0"/>
+				<phong ka="0.3" kd="0.9" ks="1.0" exponent="20"/>
+			</material>
+			<transform>
+				<scale x="5.1" y="5.1" z="1.0"/>
+				<rotateX theta="90.0"/>
+				<translate x="0.0" y="5.0" z="-5.0"/>
+			</transform>
+		</mesh>
+		<mesh name="plane_small.obj">
+			<material type="phong">
+				<color r="1.0" g="0.0" b="0.0"/>
+				<phong ka="0.3" kd="0.9" ks="1.0" exponent="20"/>
+			</material>
+			<transform>
+				<scale x="5.1" y="5.1" z="1.0"/>
+				<rotateY theta="90.0"/>
+				<translate x="-5.0" y="0.0" z="-5.0"/>
+			</transform>
+		</mesh>
+		<mesh name="plane_small.obj">
+			<material type="phong">
+				<color r="0.0" g="1.0" b="0.0"/>
+				<phong ka="0.3" kd="0.9" ks="1.0" exponent="20"/>
+			</material>
+			<transform>
+				<scale x="5.1" y="5.1" z="1.0"/>
+				<rotateY theta="-90.0"/>
+				<translate x="5.0" y="0.0" z="-5.0"/>
+			</transform>
+		</mesh>
+		<mesh name="bunny.obj">
+			<material type="lambertian">
+				<color r="1.0" g="1.0" b="1.0"/>
+				<phong ka="0.3" kd="0.9"/>
+			</material>
+			<transform>
+				<scale x="2" y="2" z="2"/>
+				<translate x="0" y="0" z="-5"/>
+			</transform>
+		</mesh>
+	</surfaces>
+</scene>

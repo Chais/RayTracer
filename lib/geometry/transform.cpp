@@ -39,16 +39,16 @@ std::ostream &operator<<(std::ostream &out, const transform &a) {
 
 void transform::translate(const direction t) {
 	std::array<std::array<float, 4>, 4> tmp = {{
-													   {1, 0, 0, t[0]},
-													   {0, 1, 0, t[1]},
-													   {0, 0, 1, t[2]},
-													   {0, 0, 0, 1}
+												   {1, 0, 0, t[0]},
+												   {0, 1, 0, t[1]},
+												   {0, 0, 1, t[2]},
+												   {0, 0, 0, 1}
 											   }};
 	std::array<std::array<float, 4>, 4> itmp = {{
-														{1, 0, 0, -t[0]},
-														{0, 1, 0, -t[1]},
-														{0, 0, 1, -t[2]},
-														{0, 0, 0, 1}
+													{1, 0, 0, -t[0]},
+													{0, 1, 0, -t[1]},
+													{0, 0, 1, -t[2]},
+													{0, 0, 0, 1}
 												}};
 	*this->trans = mat4(tmp)*(*this->trans);
 	*this->inv_trans = *this->inv_trans*mat4(itmp);
@@ -56,16 +56,16 @@ void transform::translate(const direction t) {
 
 void transform::scale(const std::array<float, 3> sf) {
 	std::array<std::array<float, 4>, 4> tmp = {{
-													   {sf[0], 0, 0, 0},
-													   {0, sf[1], 0, 0},
-													   {0, 0, sf[2], 0},
-													   {0, 0, 0, 1}
+												   {sf[0], 0, 0, 0},
+												   {0, sf[1], 0, 0},
+												   {0, 0, sf[2], 0},
+												   {0, 0, 0, 1}
 											   }};
 	std::array<std::array<float, 4>, 4> itmp = {{
-														{1/sf[0], 0, 0, 0},
-														{0, 1/sf[1], 0, 0},
-														{0, 0, 1/sf[2], 0},
-														{0, 0, 0, 1}
+													{1/sf[0], 0, 0, 0},
+													{0, 1/sf[1], 0, 0},
+													{0, 0, 1/sf[2], 0},
+													{0, 0, 0, 1}
 												}};
 	*this->trans = mat4(tmp)*(*this->trans);
 	*this->inv_trans = *this->inv_trans*mat4(itmp);
@@ -88,16 +88,16 @@ void transform::rotateX(const float &angle) {
 	float c = std::cos(a);
 	float s = std::sin(a);
 	std::array<std::array<float, 4>, 4> tmp = {{
-													   {1, 0, 0, 0},
-													   {0, c, -s, 0},
-													   {0, s, c, 0},
-													   {0, 0, 0, 1}
+												   {1, 0, 0, 0},
+												   {0, c, -s, 0},
+												   {0, s, c, 0},
+												   {0, 0, 0, 1}
 											   }};
 	std::array<std::array<float, 4>, 4> itmp = {{
-														{1, 0, 0, 0},
-														{0, c, s, 0},
-														{0, -s, c, 0},
-														{0, 0, 0, 1}
+													{1, 0, 0, 0},
+													{0, c, s, 0},
+													{0, -s, c, 0},
+													{0, 0, 0, 1}
 												}};
 	*this->trans = mat4(tmp)*(*this->trans);
 	*this->inv_trans = *this->inv_trans*mat4(itmp);
@@ -120,16 +120,16 @@ void transform::rotateY(const float &angle) {
 	float c = std::cos(a);
 	float s = std::sin(a);
 	std::array<std::array<float, 4>, 4> tmp = {{
-													   {c, 0, s, 0},
-													   {0, 1, 0, 0},
-													   {-s, 0, c, 0},
-													   {0, 0, 0, 1}
+												   {c, 0, s, 0},
+												   {0, 1, 0, 0},
+												   {-s, 0, c, 0},
+												   {0, 0, 0, 1}
 											   }};
 	std::array<std::array<float, 4>, 4> itmp = {{
-														{c, 0, -s, 0},
-														{0, 1, 0, 0},
-														{s, 0, c, 0},
-														{0, 0, 0, 1}
+													{c, 0, -s, 0},
+													{0, 1, 0, 0},
+													{s, 0, c, 0},
+													{0, 0, 0, 1}
 												}};
 	*this->trans = mat4(tmp)*(*this->trans);
 	*this->inv_trans = *this->inv_trans*mat4(itmp);
@@ -152,16 +152,16 @@ void transform::rotateZ(const float &angle) {
 	float c = std::cos(a);
 	float s = std::sin(a);
 	std::array<std::array<float, 4>, 4> tmp = {{
-													   {c, -s, 0, 0},
-													   {s, c, 0, 0},
-													   {0, 0, 1, 0},
-													   {0, 0, 0, 1}
+												   {c, -s, 0, 0},
+												   {s, c, 0, 0},
+												   {0, 0, 1, 0},
+												   {0, 0, 0, 1}
 											   }};
 	std::array<std::array<float, 4>, 4> itmp = {{
-														{c, s, 0, 0},
-														{-s, c, 0, 0},
-														{0, 0, 1, 0},
-														{0, 0, 0, 1}
+													{c, s, 0, 0},
+													{-s, c, 0, 0},
+													{0, 0, 1, 0},
+													{0, 0, 0, 1}
 												}};
 	*this->trans = mat4(tmp)*(*this->trans);
 	*this->inv_trans = *this->inv_trans*mat4(itmp);

@@ -7,7 +7,7 @@
 point_light::point_light(const color *col, const point *pos) : light(col), position(pos) { }
 
 direction *point_light::get_direction(const point &pos) {
-	return new direction(normalise(pos-*this->position));
+	return new direction(pos - *this->position);
 }
 
 color *point_light::emit(const direction &dir) {
