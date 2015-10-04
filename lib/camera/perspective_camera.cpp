@@ -14,9 +14,9 @@ perspective_camera::perspective_camera(const point &position, const point &look_
 		direction(0, 1, 0)*(((resolution[1] - 1)/2.0)*stepwidth);
 }
 
-std::vector<ray> *perspective_camera::get_rays(const unsigned long &x, const unsigned long &y) {
+std::shared_ptr<std::vector<ray>> perspective_camera::get_rays(const unsigned long &x, const unsigned long &y) {
 	// TODO extend to support multisampling
-	std::vector<ray> *out = new std::vector<ray>();
+	std::shared_ptr<std::vector<ray>> out(new std::vector<ray>());
 	out->push_back(this->transforms(
 		ray(point(), this->start + direction(-1, 0, 0)*(this->stepwidth*x) + direction(0, -1, 0)*(this->stepwidth*y))));
 	return out;

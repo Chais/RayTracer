@@ -5,24 +5,51 @@
 #ifndef RAY_TRACER_LIGHT_H
 #define RAY_TRACER_LIGHT_H
 
-#include <ostream>
 #include "../geometry/color.h"
 #include "../geometry/point.h"
 #include "../geometry/transform.h"
+#include <memory>
+#include <ostream>
 
+/**
+ * @brief Models generic lights
+ *
+ * Every light has a color. If omnidirectional lights are considered to have a 0 vector for direction every light also has a direction.
+ */
 class light {
- protected:
-  const color *col;
-  const direction *dir;
+protected:
+	const std::shared_ptr<color> col;
+	const std::shared_ptr<direction> dir;
 
-  light(const color *col);
+	/**
+	 * @brief Minimal constructor
+	 *
+	 * \p dir is set to [0, 0, 0, 0] for omnidirectional lights
+	 * @param col The light's \ref color
+	 */
+	light(const std::shared_ptr<color> col);
 
-  light(const color *col, const direction *dir);
+	/**
+	 * Explicit constructor
+	 * @param col The light's \ref color
+	 * @param dir The light's \ref direction
+	 */
+	light(const std::shared_ptr<color> col, const std::shared_ptr<direction> dir);
 
- public:
-  virtual direction *get_direction(const point &pos) = 0;
+public:
+	/**
+	 * @brief Returns the direction the light shines on the position \p pos in.
+	 * @param pos The \ref point (in world coordinates) to shine light on
+	 * @return    The \ref direction the light is going to reach \p pos
+	 */
+	virtual const std::shared_ptr<direction> get_direction(const point &pos) = 0;
 
-  virtual color *emit(const direction &dir) = 0;
+	/**
+	 * @brief Returns the color the light is emitting in the direction \p dir.
+	 * @param dir The \ref direction to emit to
+	 * @return    The \ref color of the emitted light
+	 */
+	virtual const std::shared_ptr<color> emit(const direction &dir) = 0;
 };
 
 #endif //RAY_TRACER_LIGHT_H

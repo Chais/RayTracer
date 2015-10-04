@@ -18,7 +18,7 @@ camera::camera(const point &position, const point &look_at, const direction &up,
 												 {left[2], new_up[2], dir[2], position[2]},
 												 {0, 0, 0, 1}
 											 }};
-	mat4 *m = new mat4(d);
+	std::shared_ptr<mat4> m(new mat4(d));
 	transforms = transform(m);
 	data.resize(resolution[0]);
 	for (auto &i : data) {
@@ -32,8 +32,8 @@ void camera::set_data(const unsigned long &x, const unsigned long &y, const std:
 	this->data[x][y] = data;
 }
 
-color *camera::get_pixel(const unsigned long &x, const unsigned long &y) const {
-	color *out = new color();
+std::shared_ptr<color> camera::get_pixel(const unsigned long &x, const unsigned long &y) const {
+	std::shared_ptr<color> out(new color());
 	for (auto &i : this->data[x][y])
 		*out += i;
 	*out = *out*(1/this->data[x][y].capacity());

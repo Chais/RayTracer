@@ -7,12 +7,18 @@
 
 #include "point.h"
 
+/**
+ * Models a ray with a \ref point of origin and a \ref direction. The direction is automatically normalised.
+ */
 class ray {
- public:
-  point o;
-  direction d;
+public:
+	point o;
+	direction d;
 
-  ray(const point &o, const direction &d);
+	/**
+	 * Explicit constructor
+	 */
+	ray(const point &o, const direction &d);
 };
 
 #endif //RAY_TRACER_RAY_H

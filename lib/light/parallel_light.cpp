@@ -4,17 +4,18 @@
 
 #include "parallel_light.h"
 
-parallel_light::parallel_light(const color *col, const direction *dir) : light(col, dir) { }
+parallel_light::parallel_light(const std::shared_ptr<color> col, const std::shared_ptr<direction> dir) : light(col,
+																											   dir) { }
 
 std::ostream &operator<<(std::ostream &out, const parallel_light &a) {
 	out << "Parallel light: color [r, g, b]: " << *a.col << ", direction: " << *a.dir;
 	return out;
 }
 
-direction *parallel_light::get_direction(const point &pos) {
-	return new direction(*this->dir*std::numeric_limits<float>::infinity());
+const std::shared_ptr<direction> parallel_light::get_direction(const point &pos) {
+	return std::make_shared<direction>(*this->dir*std::numeric_limits<float>::max());
 }
 
-color *parallel_light::emit(const direction &dir) {
-	return new color(*this->col);
+const std::shared_ptr<color> parallel_light::emit(const direction &dir) {
+	return this->col;
 }

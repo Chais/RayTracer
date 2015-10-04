@@ -6,14 +6,17 @@
 
 transform::transform() : trans(new mat4()), inv_trans(new mat4()) { }
 
-transform::transform(mat4 *trans) : trans(trans), inv_trans(new mat4(invert(*trans))) { }
+transform::transform(std::shared_ptr<mat4> trans) : trans(trans), inv_trans(new mat4(invert(*trans))) { }
 
-transform::transform(mat4 *trans, mat4 *inv_trans) : trans(trans), inv_trans(inv_trans) { }
+transform::transform(std::shared_ptr<mat4> trans, std::shared_ptr<mat4> inv_trans)
+	: trans(trans), inv_trans(inv_trans) { }
 
 transform::transform(const transform &in) : trans(in.trans), inv_trans(in.inv_trans) { }
 
+
 transform transform::operator()(const transform &t) const {
-	return transform(new mat4(*this->trans*(*t.trans)), new mat4(*t.inv_trans*(*this->inv_trans)));
+	return transform(std::shared_ptr<mat4>(new mat4(*this->trans*(*t.trans))),
+					 std::shared_ptr<mat4>(new mat4(*t.inv_trans*(*this->inv_trans))));
 }
 
 point transform::operator()(const point &p) const {

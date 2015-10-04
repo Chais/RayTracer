@@ -7,15 +7,35 @@
 
 #include "light.h"
 
+/**
+ * Models a point light source
+ */
 class point_light: public light {
- protected:
-  const point *position;
- public:
-  point_light(const color *col, const point *pos);
+protected:
+	/**
+	 * The \ref point "position" (in world coordinates) of the light
+	 */
+	const std::shared_ptr<point> position;
+public:
+	/**
+	 * @brief Explicit constructor
+	 * @param col The \ref color of the light
+	 * @param pos The \ref point "position" stored in \p position
+	 */
+	point_light(const std::shared_ptr<color> col, const std::shared_ptr<point> pos);
 
-  virtual direction *get_direction(const point &pos);
+	/**
+	 * @copybrief light::get_direction()
+	 *
+	 * Returns \p pos - \p position.
+	 * \copydetails light::get_direction()
+	 */
+	virtual const std::shared_ptr<direction> get_direction(const point &pos);
 
-  virtual color *emit(const direction &dir);
+	/**
+	 * @copydoc ambient_light::emit()
+	 */
+	virtual const std::shared_ptr<color> emit(const direction &dir);
 };
 
 #endif //RAY_TRACER_POINT_LIGHT_H

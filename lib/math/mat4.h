@@ -13,77 +13,77 @@
 #include <array>
 
 /**
- * @class mat4
  * @brief Description of four-dimensional matrices
+ * 
  * Defines constructors and basic operations
  */
 class mat4 {
- private:
-  std::array<std::array<float, 4>, 4> m;
+private:
+	std::array<std::array<float, 4>, 4> m;
 
- public:
-  /**
-   * @brief Default constructor
-   *
-   * Creates a 4x4 unity matrix
-   */
-  mat4();
+public:
+	/**
+	 * @brief Default constructor
+	 *
+	 * Creates a 4x4 unity matrix
+	 */
+	mat4();
 
-  /**
-   * @brief Explicit constructor
-   *
-   * Creates a 4x4 matrix copying the given array
-   *
-   * @param &in the std::array of values
-   */
-  mat4(const std::array<std::array<float, 4>, 4> &in);
+	/**
+	 * @brief Explicit constructor
+	 *
+	 * Creates a 4x4 matrix copying the given array
+	 *
+	 * @param &in the std::array of values
+	 */
+	mat4(const std::array<std::array<float, 4>, 4> &in);
 
-  /**
-   * @brief Copy constructor
-   *
-   * Creates a 4x4 matrix from the given matrix
-   *
-   * @param &in the original matrix
-   */
-  mat4(const mat4 &in);
+	/**
+	 * @brief Copy constructor
+	 *
+	 * Creates a 4x4 matrix from the given matrix
+	 *
+	 * @param &in the original matrix
+	 */
+	mat4(const mat4 &in);
 
-  /**
-   * @brief Assignment
-   *
-   * Assigns the values of the right matrix
-   *
-   * @param &in the right operand
-   *
-   * @return the updated matrix
-   */
-  mat4 &operator=(const mat4 &in);
+	/**
+	 * @brief Assignment
+	 *
+	 * Assigns the values of the right matrix
+	 *
+	 * @param &in the right operand
+	 *
+	 * @return the updated matrix
+	 */
+	mat4 &operator=(const mat4 &in);
 
-  /**
-   * @brief Array subscript
-   *
-   * Allows access to the matrix' values
-   */
-  std::array<float, 4> operator[](const unsigned long i);
+	/**
+	 * @brief Array subscript
+	 *
+	 * Allows access to the matrix' values
+	 */
+	std::array<float, 4> operator[](const unsigned long i);
 
-  /**
-   * @brief Array subscript
-   *
-   * Allows access to the matrix' values
-   */
-  const std::array<float, 4> operator[](const unsigned long i) const;
+	/**
+	 * @brief Array subscript
+	 *
+	 * Allows access to the matrix' values
+	 */
+	const std::array<float, 4> operator[](const unsigned long i) const;
 
-  /**
-   * @brief Stream output
-   *
-   * Puts the matrix on an output stream in an Octave/Matlab-compatible format
-   *
-   * @param &out the output stream
-   *
-   * @param &a the matrix
-   *
-   * @return the output stream
-   */
-  friend std::ostream &operator<<(std::ostream &out, const mat4 &a);
+	/**
+	 * @brief Stream output
+	 *
+	 * Puts the matrix on an output stream in an Octave/Matlab-compatible format
+	 *
+	 * @param &out the output stream
+	 *
+	 * @param &a the matrix
+	 *
+	 * @return the output stream
+	 */
+	friend std::ostream &operator<<(std::ostream &out, const mat4 &a);
 };
 
 /**

@@ -8,14 +8,30 @@
 #include "normal.h"
 #include "point.h"
 #include "../math/vec2.h"
+#include <memory>
 
 class shape;
 
+/**
+ * Describes an intersection of a \ref ray with a \ref shape
+ */
 struct intersection {
-  shape *object = nullptr;
-  normal *norm = nullptr;
-  point *pos = nullptr;
-  vec2 *local_pos = nullptr;
+	/**
+	 * The intersected \ref shape
+	 */
+	std::shared_ptr<shape> object;
+	/**
+	 * The normal at the intersection point
+	 */
+	std::shared_ptr<normal> norm;
+	/**
+	 * The \ref point "position" of the intersection in world coordinates
+	 */
+	std::shared_ptr<point> pos;
+	/**
+	 * The local (UV) coordinates at the intersection point.
+	 */
+	std::shared_ptr<vec2> local_pos;
 };
 
 #endif //RAY_TRACER_INTERSECTION_H

@@ -11,38 +11,120 @@
 #include "../intersection.h"
 #include "../color.h"
 
-class shape {
- private:
-  shape() { };
- protected:
-  transform object_to_world;
-  transform world_to_object;
-  const direction *offset;
-  const material *matrl;
+/**
+ * Models properties common to all geometry objects
+ */
+class shape: public std::enable_shared_from_this<shape> {
+private:
+	shape() { };
+protected:
+	/**
+	 * Stores the transformations necessary to convert object space into world space. Since this is a transform it also stores its inverse. However for ease of use and lower cognitive load both matrices are also accessible through \p world_to_object.
+	 */
+	transform object_to_world;
 
-  shape(const direction *offset, const material *matrl);
+	/**
+	 * This is effectively transform(object_to_world.inv_trans, object_to_world.trans). Since transform stores pointers next to no additional memory is required.
+	 */
+	transform world_to_object;
 
- public:
-  virtual intersection intersect_full(const ray &r) = 0;
+	/**
+	 * This is an offset from the object coordinate origin. It is untracked in the \p object_to_world (and therefor also \p world_to_object). This effectively moves the center of rotation for the shape by \p -offset
+	 */
+	const std::shared_ptr<direction> offset;
 
-  virtual bool intersect_shadow(const point &o, const direction &d) = 0;
+	/**
+	 * The shape's material
+	 */
+	std::shared_ptr<material> matrl;
 
-  /**
-   * @copydoc material::shade(const color &lcol,const direction &l,const normal &n,const direction &v,const vec2 &pos,const bool internal)
-   */
-  virtual color shade(const color &lcol, const direction &l, const normal &n, const direction &v, const vec2 &pos,
-					  const bool internal);
+	shape(std::shared_ptr<direction> offset, std::shared_ptr<material> matrl);
 
-  std::vector<ray> *reflect(const direction &i, const normal &n, const point &x, const unsigned int &s) const;
-  std::vector<ray> *refract(const direction &i, const normal &n, const point &x, const unsigned int &s,
-							const bool internal) const;
-  void translate(const direction &t);
-  void scale(const std::array<float, 3> sf);
-  void rotateX(const float &angle);
-  void rotateY(const float &angle);
-  void rotateZ(const float &angle);
-  const float get_reflectance() const;
-  const float get_transmittance() const;
+public:
+	/**
+	 * Checks whether the given ray intersects the shape.
+	 * @param  r The ray
+	 * @return   An intersction containing the necessary information to continue calculations if the ray intersects. An intersection with null pointers if it doesn't
+	 */
+	virtual intersection intersect_full(const ray &r) = 0;
+
+	/**
+	 * Checks whether the given \ref point is shadows by the shape for light coming from \p o+d .
+	 * @param  o The \ref point (in world coordinates) to check
+	 * @param  d The vector pointing to the light source
+	 * @return   true if the point is shadowed by the shape, false otherwise
+	 */
+	virtual bool intersect_shadow(const point &o, const direction &d) const = 0;
+
+	/**
+	 * @copydoc material::shade()
+	 */
+	virtual std::shared_ptr<color>
+		shade(const color &lcol, const direction &l, const normal &n, const direction &v, const vec2 &pos,
+			  const bool internal);
+
+	/**
+	 * @copydoc material::reflect()
+	 */
+	std::shared_ptr<std::vector<ray>>
+		reflect(const direction &i, const normal &n, const point &x, const unsigned int &s) const;
+
+	/**
+	 * @copydoc material::refract()
+	 */
+	std::shared_ptr<std::vector<ray>>
+		refract(const direction &i, const normal &n, const point &x, const unsigned int &s,
+				const bool internal) const;
+
+	/**
+	 * Translates the shape according to the given \ref direction vector
+	 * @param t The vector to translate along
+	 */
+	void translate(const direction &t);
+
+	/**
+	 * @brief Non-uniform scaling
+	 *
+	 * Scales the shape according to the given factors
+	 * @param sf The array of scaling factors
+	 */
+	void scale(const std::array<float, 3> sf);
+
+	/**
+	 * @brief X rotation
+	 *
+	 * Rotates the shape around the X axis
+	 * @param angle The angle (in degrees) to rotate around
+	 */
+	void rotateX(const float &angle);
+
+	/**
+	 * @brief Y rotation
+	 *
+	 * Rotates the shape around the Y axis
+	 * @param angle The angle (in degrees) to rotate around
+	 */
+	void rotateY(const float &angle);
+
+	/**
+	 * @brief Z rotation
+	 *
+	 * Rotates the shape around the Z axis
+	 * @param angle The angle (in degrees) to rotate around
+	 */
+	void rotateZ(const float &angle);
+
+	/**
+	 * Returns the reflectance of the shape's material
+	 * @return The reflectance
+	 */
+	const float get_reflectance() const;
+
+	/**
+	 * Returns the transmittance of the shape's material
+	 * @return The transmittance
+	 */
+	const float get_transmittance() const;
 };
 
 #endif //RAY_TRACER_SHAPE_H

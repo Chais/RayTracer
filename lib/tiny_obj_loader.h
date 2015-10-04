@@ -12,67 +12,72 @@
 
 namespace tinyobj {
 
+/**
+ * @brief Tiny OBJ loader taken from https://github.com/syoyo/tinyobjloader
+ *
+ * Translates OBJ files into a generic output that can be used to create geomtry objects.
+ */
 typedef struct {
-  std::string name;
+	std::string name;
 
-  float ambient[3];
-  float diffuse[3];
-  float specular[3];
-  float transmittance[3];
-  float emission[3];
-  float shininess;
-  float ior;      // index of refraction
-  float dissolve; // 1 == opaque; 0 == fully transparent
-  // illumination model (see http://www.fileformat.info/format/material/)
-  int illum;
+	float ambient[3];
+	float diffuse[3];
+	float specular[3];
+	float transmittance[3];
+	float emission[3];
+	float shininess;
+	float ior;      // index of refraction
+	float dissolve; // 1 == opaque; 0 == fully transparent
+	// illumination model (see http://www.fileformat.info/format/material/)
+	int illum;
 
-  std::string ambient_texname;            // map_Ka
-  std::string diffuse_texname;            // map_Kd
-  std::string specular_texname;           // map_Ks
-  std::string specular_highlight_texname; // map_Ns
-  std::string bump_texname;               // map_bump, bump
-  std::string displacement_texname;       // disp
-  std::string alpha_texname;              // map_d
-  std::map<std::string, std::string> unknown_parameter;
+	std::string ambient_texname;            // map_Ka
+	std::string diffuse_texname;            // map_Kd
+	std::string specular_texname;           // map_Ks
+	std::string specular_highlight_texname; // map_Ns
+	std::string bump_texname;               // map_bump, bump
+	std::string displacement_texname;       // disp
+	std::string alpha_texname;              // map_d
+	std::map<std::string, std::string> unknown_parameter;
 } material_t;
 
 typedef struct {
-  std::vector<float> positions;
-  std::vector<float> normals;
-  std::vector<float> texcoords;
-  std::vector<unsigned int> indices;
-  std::vector<int> material_ids; // per-mesh material ID
+	std::vector<float> positions;
+	std::vector<float> normals;
+	std::vector<float> texcoords;
+	std::vector<unsigned int> indices;
+	std::vector<int> material_ids; // per-mesh material ID
 } mesh_t;
 
 typedef struct {
-  std::string name;
-  mesh_t mesh;
+	std::string name;
+	mesh_t mesh;
 } shape_t;
 
 class MaterialReader {
- public:
-  MaterialReader() { }
+public:
+	MaterialReader() { }
 
-  virtual ~MaterialReader() { }
+	virtual ~MaterialReader() { }
 
-  virtual std::string operator()(const std::string &matId,
-								 std::vector<material_t> &materials,
-								 std::map<std::string, int> &matMap) = 0;
+	virtual std::string operator()(const std::string &matId,
+								   std::vector<material_t> &materials,
+								   std::map<std::string, int> &matMap) = 0;
 };
 
 class MaterialFileReader: public MaterialReader {
- public:
-  MaterialFileReader(const std::string &mtl_basepath)
-	  : m_mtlBasePath(mtl_basepath) { }
+public:
+	MaterialFileReader(const std::string &mtl_basepath)
+		: m_mtlBasePath(mtl_basepath) { }
 
-  virtual ~MaterialFileReader() { }
+	virtual ~MaterialFileReader() { }
 
-  virtual std::string operator()(const std::string &matId,
-								 std::vector<material_t> &materials,
-								 std::map<std::string, int> &matMap);
+	virtual std::string operator()(const std::string &matId,
+								   std::vector<material_t> &materials,
+								   std::map<std::string, int> &matMap);
 
- private:
-  std::string m_mtlBasePath;
+private:
+	std::string m_mtlBasePath;
 };
 
 /// Loads .obj from a file.

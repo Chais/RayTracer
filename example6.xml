@@ -76,13 +76,16 @@
 			</transform>
 		</mesh>
 		<mesh name="bunny.obj">
-			<material type="lambertian">
-				<color r="1.0" g="1.0" b="1.0"/>
-				<phong ka="0.3" kd="0.9"/>
+			<material type="transparent">
+				<color r="0.17" g="0.18" b="0.50"/>
+				<phong ka="0.3" kd="0.9" ks="1.0" exponent="200"/>
+				<reflectance r="0.3"/>
+				<transmittance t="0.5"/>
+				<refraction iof="2.3"/>
 			</material>
 			<transform>
-				<scale x="2" y="2" z="2"/>
-				<translate x="0" y="0" z="-5"/>
+				<scale x="8" y="8" z="8"/>
+				<translate x="0" y="-1" z="-5"/>
 			</transform>
 		</mesh>
 	</surfaces>

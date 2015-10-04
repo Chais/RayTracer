@@ -7,15 +7,30 @@
 
 #include "light.h"
 
+/**
+ * Models a parallel light source
+ */
 class parallel_light: public light {
- public:
-  parallel_light(const color *col, const direction *dir);
+public:
+	/**
+	 * @copydoc light::light()
+	 */
+	parallel_light(const std::shared_ptr<color> col, const std::shared_ptr<direction> dir);
 
-  friend std::ostream &operator<<(std::ostream &out, const parallel_light &a);
+	friend std::ostream &operator<<(std::ostream &out, const parallel_light &a);
 
-  virtual direction *get_direction(const point &pos);
+	/**
+	 * @copybrief light::get_direction()
+	 *
+	 * Returns the \ref direction stored in \p light::dir
+	 * @copydetails light::get_direction()
+	 */
+	virtual const std::shared_ptr<direction> get_direction(const point &pos);
 
-  virtual color *emit(const direction &dir);
+	/**
+	 * @copydoc ambient_light::emit()
+	 */
+	virtual const std::shared_ptr<color> emit(const direction &dir);
 };
 
 #endif //RAY_TRACER_PARALLEL_LIGHT_H

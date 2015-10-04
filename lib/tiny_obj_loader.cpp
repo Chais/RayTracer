@@ -45,13 +45,13 @@ namespace tinyobj {
 #define TINYOBJ_SSCANF_BUFFER_SIZE  (4096)
 
 struct vertex_index {
-  int v_idx, vt_idx, vn_idx;
+	int v_idx, vt_idx, vn_idx;
 
-  vertex_index() { };
+	vertex_index() { };
 
-  vertex_index(int idx) : v_idx(idx), vt_idx(idx), vn_idx(idx) { };
+	vertex_index(int idx) : v_idx(idx), vt_idx(idx), vn_idx(idx) { };
 
-  vertex_index(int vidx, int vtidx, int vnidx) : v_idx(vidx), vt_idx(vtidx), vn_idx(vnidx) { };
+	vertex_index(int vidx, int vtidx, int vnidx) : v_idx(vidx), vt_idx(vtidx), vn_idx(vnidx) { };
 };
 
 // for std::map
@@ -67,9 +67,9 @@ static inline bool operator<(const vertex_index &a, const vertex_index &b) {
 }
 
 struct obj_shape {
-  std::vector<float> v;
-  std::vector<float> vn;
-  std::vector<float> vt;
+	std::vector<float> v;
+	std::vector<float> vn;
+	std::vector<float> vt;
 };
 
 static inline bool isSpace(const char c) { return (c == ' ') || (c == '\t'); }

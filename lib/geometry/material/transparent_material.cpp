@@ -18,8 +18,12 @@ transparent_material::transparent_material(const color &col, const float &ambien
 	assert(ior > 0);
 }
 
-color transparent_material::shade(const color &lcol, const direction &l, const normal &n, const direction &v,
-								  const vec2 &pos, const bool internal) const {
+std::shared_ptr<color> transparent_material::shade(const color &lcol,
+												   const direction &l,
+												   const normal &n,
+												   const direction &v,
+												   const vec2 &pos,
+												   const bool internal) const {
 	if (this->reflectance + this->transmittance < 1) {
 		if (l != direction()) {
 			// Directional light
@@ -27,21 +31,22 @@ color transparent_material::shade(const color &lcol, const direction &l, const n
 				float phi = std::max<float>(0.0, dot(n, l));
 				if (phi > 0) {
 					direction r = n*(2*phi) - l;
-					return (scale(this->col, lcol*(this->diffuse*phi)) +
-						lcol*(std::pow(std::max<float>(0.0, dot(v, r)), this->exponent)*this->specular))*
-						(1 - this->reflectance - this->transmittance);
+					return std::make_shared<color>((scale(this->col, lcol*(this->diffuse*phi))
+						+ lcol*(std::pow(std::max<float>(0.0, dot(v, r)), this->exponent)*this->specular))
+													   *(1 - this->reflectance - this->transmittance));
 				}
 			}
 		} else
 			// Ambient light
-			return scale(this->col, lcol*this->ambient)*(1 - this->reflectance - this->transmittance);
+			return std::make_shared<color>(
+				scale(this->col, lcol*this->ambient)*(1 - this->reflectance - this->transmittance));
 	}
-	return color();
+	return std::make_shared<color>(color());
 }
 
-std::vector<ray> *transparent_material::refract(const direction &i, const normal &n, const point &x,
-												const unsigned int &s, const bool internal) const {
-	std::vector<ray> *out = new std::vector<ray>();
+std::shared_ptr<std::vector<ray>> transparent_material::refract(const direction &i, const normal &n, const point &x,
+																const unsigned int &s, const bool internal) const {
+	std::shared_ptr<std::vector<ray>> out(new std::vector<ray>());
 	// TODO adapt for multisampling
 	const float cosi = dot(n, i);
 	const float eta = internal ? this->ior : 1/this->ior;

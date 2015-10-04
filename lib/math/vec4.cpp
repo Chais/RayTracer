@@ -135,7 +135,11 @@ float length(const vec4 &a) {
 
 vec4 normalise(const vec4 &a) {
 	float il = length(a);
-	il = il == 0 ? 1 : 1/il;
+	if (il == 0)
+		il = 1;
+	if (il == std::numeric_limits<float>::infinity())
+		il = std::numeric_limits<float>::max();
+	il = 1/il;
 	std::array<float, 4> tmp = {
 		a[0]*il,
 		a[1]*il,

@@ -14,86 +14,84 @@
 #include <cassert>
 
 /**
- * @name vec2
- *
  * @brief Description of two-dimensional vectors
  *
  * Defines constructors and basic operations
  */
 class vec2 {
- private:
-  std::array<float, 2> a;
+private:
+	std::array<float, 2> a;
 
- public:
-  /**
-   * @brief Default constructor
-   *
-   * Creates a new 0 vector
-   */
-  vec2();
+public:
+	/**
+	 * @brief Default constructor
+	 *
+	 * Creates a new 0 vector
+	 */
+	vec2();
 
-  /**
-   * @brief Explicit constructor
-   *
-   * Creates a new vector with the values u and v
-   *
-   * @param &u the u component
-   *
-   * @param &v the v component
-   */
-  vec2(const float &u, const float &v);
+	/**
+	 * @brief Explicit constructor
+	 *
+	 * Creates a new vector with the values u and v
+	 *
+	 * @param &u the u component
+	 *
+	 * @param &v the v component
+	 */
+	vec2(const float &u, const float &v);
 
-  /**
-   * @brief Explicit constructor
-   *
-   * Creates a new vector with the values u and v.
-   *
-   * @param &in the std::array of values
-   */
-  vec2(const std::array<float, 2> &in);
+	/**
+	 * @brief Explicit constructor
+	 *
+	 * Creates a new vector with the values u and v.
+	 *
+	 * @param &in the std::array of values
+	 */
+	vec2(const std::array<float, 2> &in);
 
-  /**
-   * @brief Copy constructor
-   *
-   * Creates a new vector with values identical to the given vector.
-   */
-  vec2(const vec2 &in);
+	/**
+	 * @brief Copy constructor
+	 *
+	 * Creates a new vector with values identical to the given vector.
+	 */
+	vec2(const vec2 &in);
 
-  /**
-   * @brief Assignment operator
-   *
-   * Assigns the values from the given vector
-   */
-  vec2 &operator=(const vec2 &in);
+	/**
+	 * @brief Assignment operator
+	 *
+	 * Assigns the values from the given vector
+	 */
+	vec2 &operator=(const vec2 &in);
 
-  /**
-   * @brief Array subscript
-   *
-   * Allows access to the vector's values
-   *
-   * @param i the index
-   */
-  float &operator[](const unsigned long i);
+	/**
+	 * @brief Array subscript
+	 *
+	 * Allows access to the vector's values
+	 *
+	 * @param i the index
+	 */
+	float &operator[](const unsigned long i);
 
-  /**
-   * @brief Array subscript
-   *
-   * Allows access to the vector's values
-   *
-   * @param i the index
-   */
-  const float &operator[](const unsigned long i) const;
+	/**
+	 * @brief Array subscript
+	 *
+	 * Allows access to the vector's values
+	 *
+	 * @param i the index
+	 */
+	const float &operator[](const unsigned long i) const;
 
-  /**
-   * Puts the vector on an output stream in an Octave/Matlab-compatible format.
-   *
-   * @param &out the output stream
-   *
-   * @param &m the vector
-   *
-   * @return the output stream
-   */
-  friend std::ostream &operator<<(std::ostream &out, const vec2 &a);
+	/**
+	 * Puts the vector on an output stream in an Octave/Matlab-compatible format.
+	 *
+	 * @param &out the output stream
+	 *
+	 * @param &m the vector
+	 *
+	 * @return the output stream
+	 */
+	friend std::ostream &operator<<(std::ostream &out, const vec2 &a);
 };
 
 /**

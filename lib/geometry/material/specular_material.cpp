@@ -12,8 +12,12 @@ specular_material::specular_material(const color &col, const float &ambient, con
 	assert(reflectivity >= 0 && reflectivity <= 1);
 }
 
-color specular_material::shade(const color &lcol, const direction &l, const normal &n, const direction &v,
-							   const vec2 &pos, const bool internal) const {
+std::shared_ptr<color> specular_material::shade(const color &lcol,
+												const direction &l,
+												const normal &n,
+												const direction &v,
+												const vec2 &pos,
+												const bool internal) const {
 	if (this->reflectance < 1) {
 		if (l != direction()) {
 			// Directional light
@@ -21,29 +25,29 @@ color specular_material::shade(const color &lcol, const direction &l, const norm
 				float phi = std::max<float>(0.0, dot(n, l));
 				if (phi > 0) {
 					direction r = n*(2*phi) - l;
-					return (scale(this->col, lcol*(this->diffuse*phi)) +
+					return std::make_shared<color>((scale(this->col, lcol*(this->diffuse*phi)) +
 						lcol*(std::pow(std::max<float>(0.0, dot(v, r)), this->exponent)*this->specular))*
-						(1 - this->reflectance);
+						(1 - this->reflectance));
 				}
 			}
 		} else
 			// Ambient light
-			return scale(this->col, lcol*this->ambient)*(1 - this->reflectance);
+			return std::make_shared<color>(scale(this->col, lcol*this->ambient)*(1 - this->reflectance));
 	}
-	return color();
+	return std::shared_ptr<color>(new color());
 }
 
-std::vector<ray> *specular_material::reflect(const direction &i, const normal &n, const point &x,
-											 const unsigned int &s) const {
-	std::vector<ray> *out = new std::vector<ray>();
+std::shared_ptr<std::vector<ray>> specular_material::reflect(const direction &i, const normal &n, const point &x,
+															 const unsigned int &s) const {
+	std::shared_ptr<std::vector<ray>> out(new std::vector<ray>());
 	// TODO adapt for multisampling
 	out->push_back(ray(x, (2*dot(n, i))*n - i));
 	return out;
 }
 
-std::vector<ray> *specular_material::refract(const direction &i, const normal &n, const point &x,
-											 const unsigned int &s, const bool internal) const {
-	return nullptr;
+std::shared_ptr<std::vector<ray>> specular_material::refract(const direction &i, const normal &n, const point &x,
+															 const unsigned int &s, const bool internal) const {
+	return std::shared_ptr<std::vector<ray>>();
 }
 
 const float specular_material::get_reflectance() const {
