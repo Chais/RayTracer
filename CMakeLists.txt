@@ -3,6 +3,11 @@ project(Ray_Tracer)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
+find_package(OpenMP)
+if (OPENMP_FOUND)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
+endif ()
+
 set(SOURCE_FILES lib/whitted_rt.cpp lib/whitted_rt.h lib/math/vec4.cpp lib/math/vec4.h lib/math/vec2.cpp lib/math/vec2.h
         lib/math/mat4.cpp lib/math/mat4.h lib/camera/perspective_camera.cpp lib/camera/perspective_camera.h
         lib/geometry/ray.h lib/geometry/shapes/sphere.cpp lib/geometry/shapes/sphere.h lib/geometry/shapes/shape.cpp
@@ -19,7 +24,7 @@ set(SOURCE_FILES lib/whitted_rt.cpp lib/whitted_rt.h lib/math/vec4.cpp lib/math/
         lib/geometry/shapes/triangle.cpp lib/geometry/shapes/triangle.h lib/tiny_obj_loader.cpp lib/tiny_obj_loader.h
         lib/geometry/material/specular_material.cpp lib/geometry/material/specular_material.h
         lib/geometry/material/textured_material.cpp lib/geometry/material/textured_material.h
-        lib/geometry/material/transparent_material.cpp lib/geometry/material/transparent_material.h)
+        lib/geometry/material/transparent_material.cpp lib/geometry/material/transparent_material.h lib/sampler/sampler.h lib/sampler/random_sampler.cpp lib/sampler/random_sampler.h lib/sampler/sampler.cpp)
 add_executable(Ray_Tracer ${SOURCE_FILES} main.cpp)
 add_executable(Test ${SOURCE_FILES} test.cpp)
 target_link_libraries(Ray_Tracer png16 pugixml)

@@ -10,6 +10,7 @@
 #include "light/light.h"
 #include "geometry/shapes/shape.h"
 #include <typeinfo>
+#include <iostream>
 
 /**
  * @brief A whitted ray tracer.

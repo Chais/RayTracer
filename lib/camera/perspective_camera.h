@@ -10,7 +10,7 @@
 class perspective_camera: public camera {
 private:
 	float fov;
-	double stepwidth;
+	float stepwidth;
 	direction start;
 public:
 	/**
@@ -45,7 +45,7 @@ public:
 	 */
 	perspective_camera(const point &position, const point &look_at, const direction &up,
 					   const std::array<unsigned long, 2> &resolution, const unsigned long max_bounces,
-					   const unsigned long &samples, const float &fov);
+					   const float &fov, const std::shared_ptr<sampler> s);
 
 	virtual std::shared_ptr<std::vector<ray>> get_rays(const unsigned long &x, const unsigned long &y);
 };

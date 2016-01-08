@@ -3,7 +3,6 @@
 //
 
 #include "parser.h"
-#include "tiny_obj_loader.h"
 
 std::shared_ptr<whitted_rt> parser::parse(const char *in_path, std::string &out_path) {
 	pugi::xml_document doc;
@@ -27,15 +26,16 @@ std::shared_ptr<camera> parser::parse_camera(const pugi::xml_node &cam) {
 																nullptr, 10),
 												   std::strtoul(cam.child("resolution").attribute("vertical").value(),
 																nullptr, 10)};
-		std::shared_ptr<perspective_camera> out(new perspective_camera(*position,
-																	   *lookat,
-																	   *up,
-																	   resolution,
+		float stepwidth = std::tan(
+				helper::to_radians(std::strtof(cam.child("horizontal_fov").attribute("angle").value(), nullptr))) /
+						  (resolution[0] / 2);
+		std::shared_ptr<sampler> s = parse_sampler(cam.child("sampling"), stepwidth);
+		std::shared_ptr<perspective_camera> out(new perspective_camera(*position, *lookat, *up, resolution,
 																	   std::strtoul(cam.child("max_bounces").attribute(
-																		   "n").value(), nullptr, 10),
-																	   1, // Number of samples per pixel
-																	   std::strtof(cam.child("horizontal_fov").attribute(
-																		   "angle").value(), nullptr)));
+																			   "n").value(), nullptr, 10), std::strtof(
+						cam.child("horizontal_fov").attribute(
+								"angle").value(), nullptr),
+																	   s));
 		return out;
 	}
 	return std::shared_ptr<camera>(nullptr);
@@ -95,20 +95,20 @@ std::shared_ptr<mesh> parser::parse_mesh(const pugi::xml_node &m) {
 	}
 	std::shared_ptr<std::vector<std::shared_ptr<triangle>>> triangles(new std::vector<std::shared_ptr<triangle>>());
 	for (tinyobj::shape_t s : shapes)
-		for (int i = 0; i < s.mesh.indices.size()/3; i++) {
+		for (int i = 0; i < s.mesh.indices.size() / 3; i++) {
 			std::shared_ptr<std::array<point, 3>> vertices(new std::array<point, 3>());
 			std::shared_ptr<std::array<normal, 3>> normals(new std::array<normal, 3>());
 			std::shared_ptr<std::array<vec2, 3>> texture_coords(new std::array<vec2, 3>());
-			for (int ii = 0; ii < 3; ii++) {
-				vertices->at(ii) = point(s.mesh.positions[s.mesh.indices[i*3 + ii]*3],
-										 s.mesh.positions[s.mesh.indices[i*3 + ii]*3 + 1],
-										 s.mesh.positions[s.mesh.indices[i*3 + ii]*3 + 2]);
-				normals->at(ii) = normalise(normal(s.mesh.normals[s.mesh.indices[i*3 + ii]*3],
-												   s.mesh.normals[s.mesh.indices[i*3 + ii]*3 + 1],
-												   s.mesh.normals[s.mesh.indices[i*3 + ii]*3 + 2]));
+			for (unsigned long ii = 0; ii < 3; ii++) {
+				vertices->at(ii) = point(s.mesh.positions[s.mesh.indices[i * 3 + ii] * 3],
+										 s.mesh.positions[s.mesh.indices[i * 3 + ii] * 3 + 1],
+										 s.mesh.positions[s.mesh.indices[i * 3 + ii] * 3 + 2]);
+				normals->at(ii) = normalise(normal(s.mesh.normals[s.mesh.indices[i * 3 + ii] * 3],
+												   s.mesh.normals[s.mesh.indices[i * 3 + ii] * 3 + 1],
+												   s.mesh.normals[s.mesh.indices[i * 3 + ii] * 3 + 2]));
 				if (s.mesh.texcoords.size() != 0)
-					texture_coords->at(ii) = vec2(s.mesh.texcoords[s.mesh.indices[i*3 + ii]*2],
-												  s.mesh.texcoords[s.mesh.indices[i*3 + ii]*2 + 1]);
+					texture_coords->at(ii) = vec2(s.mesh.texcoords[s.mesh.indices[i * 3 + ii] * 2],
+												  s.mesh.texcoords[s.mesh.indices[i * 3 + ii] * 2 + 1]);
 				else
 					texture_coords->at(ii) = vec2();
 			}
@@ -124,9 +124,9 @@ void parser::parse_transform(const pugi::xml_node &t, std::shared_ptr<shape> s) 
 	for (pugi::xml_node r : t.children()) {
 		if (std::string(r.name()) == "scale") {
 			std::array<float, 3> sf = {
-				std::strtof(r.attribute("x").value(), nullptr),
-				std::strtof(r.attribute("y").value(), nullptr),
-				std::strtof(r.attribute("z").value(), nullptr)
+					std::strtof(r.attribute("x").value(), nullptr),
+					std::strtof(r.attribute("y").value(), nullptr),
+					std::strtof(r.attribute("z").value(), nullptr)
 			};
 			s->scale(sf);
 		} else if (std::string(r.name()) == "rotateX")
@@ -151,58 +151,69 @@ std::shared_ptr<material> parser::parse_material(const pugi::xml_node &m) {
 																		   nullptr),
 															   std::strtof(m.child("phong").attribute("ks").value(),
 																		   nullptr),
-															   std::strtof(m.child("phong").attribute("exponent").value(),
-																		   nullptr)));
+															   std::strtof(
+																	   m.child("phong").attribute("exponent").value(),
+																	   nullptr)));
 	} else if (std::string(m.attribute("type").value()) == "lambertian") {
 		return std::make_shared<lambertian_material>(lambertian_material(*parse_color(m.child("color")),
 																		 std::strtof(m.child("lambertian").attribute(
-																						 "ka").value(),
+																							 "ka").value(),
 																					 nullptr),
 																		 std::strtof(m.child("lambertian").attribute(
-																						 "kd").value(),
+																							 "kd").value(),
 																					 nullptr)));
 	} else if (std::string(m.attribute("type").value()) == "specular") {
 		return std::make_shared<specular_material>(specular_material(*parse_color(m.child("color")),
-																	 std::strtof(m.child("phong").attribute("ka").value(),
+																	 std::strtof(
+																			 m.child("phong").attribute("ka").value(),
+																			 nullptr),
+																	 std::strtof(
+																			 m.child("phong").attribute("kd").value(),
+																			 nullptr),
+																	 std::strtof(
+																			 m.child("phong").attribute("ks").value(),
+																			 nullptr),
+																	 std::strtof(m.child("phong").attribute(
+																						 "exponent").value(),
 																				 nullptr),
-																	 std::strtof(m.child("phong").attribute("kd").value(),
-																				 nullptr),
-																	 std::strtof(m.child("phong").attribute("ks").value(),
-																				 nullptr),
-																	 std::strtof(m.child("phong").attribute("exponent").value(),
-																				 nullptr),
-																	 std::strtof(m.child("reflectance").attribute("r").value(),
+																	 std::strtof(m.child("reflectance").attribute(
+																						 "r").value(),
 																				 nullptr)));
 	} else if (std::string(m.attribute("type").value()) == "transparent") {
 		return std::make_shared<transparent_material>(transparent_material(*parse_color(m.child("color")),
-																		   std::strtof(m.child("phong").attribute("ka").value(),
-																					   nullptr),
-																		   std::strtof(m.child("phong").attribute("kd").value(),
-																					   nullptr),
-																		   std::strtof(m.child("phong").attribute("ks").value(),
+																		   std::strtof(m.child("phong").attribute(
+																							   "ka").value(),
 																					   nullptr),
 																		   std::strtof(m.child("phong").attribute(
-																						   "exponent").value(),
+																							   "kd").value(),
+																					   nullptr),
+																		   std::strtof(m.child("phong").attribute(
+																							   "ks").value(),
+																					   nullptr),
+																		   std::strtof(m.child("phong").attribute(
+																							   "exponent").value(),
 																					   nullptr),
 																		   std::strtof(m.child("reflectance").attribute(
-																						   "r").value(),
+																							   "r").value(),
 																					   nullptr),
-																		   std::strtof(m.child("transmittance").attribute(
+																		   std::strtof(
+																				   m.child("transmittance").attribute(
 																						   "t").value(),
-																					   nullptr),
+																				   nullptr),
 																		   std::strtof(m.child("refraction").attribute(
-																						   "iof").value(),
+																							   "iof").value(),
 																					   nullptr)));
 	} else if (std::string(m.attribute("type").value()) == "textured") {
-		return std::make_shared<textured_material>(textured_material(std::strtof(m.child("phong").attribute("ka").value(),
-																				 nullptr),
-																	 std::strtof(m.child("phong").attribute("kd").value(),
-																				 nullptr),
-																	 std::strtof(m.child("phong").attribute("ks").value(),
-																				 nullptr),
-																	 std::strtof(m.child("phong").attribute("exponent").value(),
-																				 nullptr),
-																	 load_image(m.child("texture").attribute("name").value())));
+		return std::make_shared<textured_material>(
+				textured_material(std::strtof(m.child("phong").attribute("ka").value(),
+											  nullptr),
+								  std::strtof(m.child("phong").attribute("kd").value(),
+											  nullptr),
+								  std::strtof(m.child("phong").attribute("ks").value(),
+											  nullptr),
+								  std::strtof(m.child("phong").attribute("exponent").value(),
+											  nullptr),
+								  load_image(m.child("texture").attribute("name").value())));
 	}
 	return std::shared_ptr<material>(nullptr);
 }
@@ -234,10 +245,26 @@ std::shared_ptr<std::vector<std::vector<color>>> parser::load_image(const std::s
 		out->at(y).reserve(img.get_width());
 		for (unsigned long x = 0; x < img.get_width(); x++) {
 			png::rgb_pixel tmp = img.get_pixel(x, y);
-			out->at(y).push_back(color(static_cast<int>(tmp.red)/255.0f,
-									   static_cast<int>(tmp.green)/255.0f,
-									   static_cast<int>(tmp.blue)/255.0f));
+			out->at(y).push_back(color(static_cast<int>(tmp.red) / 255.0f,
+									   static_cast<int>(tmp.green) / 255.0f,
+									   static_cast<int>(tmp.blue) / 255.0f));
 		}
 	}
 	return out;
+}
+
+std::shared_ptr<sampler> parser::parse_sampler(const pugi::xml_node &node,
+											   const float &stepwidth) {
+	if (std::string(node.attribute("type").value()) == "random")
+		return parse_random_sampler(node, stepwidth);
+	else
+		return std::shared_ptr<sampler>(new sampler());
+}
+
+std::shared_ptr<sampler> parser::parse_random_sampler(const pugi::xml_node &node,
+													  const float &stepwidth) {
+
+	return std::shared_ptr<sampler>(
+			new random_sampler(stepwidth, stepwidth, std::strtoul(node.attribute("n").value(),
+																		nullptr, 10)));
 }

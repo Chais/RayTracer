@@ -17,6 +17,9 @@ public:
 
 	/**
 	 * Explicit constructor
+	 *
+	 * @param o The point of origin of the ray
+	 * @param d The direction of the ray. This will always be normalised.
 	 */
 	ray(const point &o, const direction &d);
 };

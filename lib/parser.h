@@ -17,6 +17,7 @@
 #include "geometry/material/specular_material.h"
 #include "geometry/material/textured_material.h"
 #include "geometry/material/transparent_material.h"
+#include "sampler/random_sampler.h"
 #include "tiny_obj_loader.h"
 #include <pugixml.hpp>
 #include <cassert>
@@ -148,6 +149,12 @@ public:
 	 * @return         A shared_ptr to a whitted_rt object that complies to the specifications in the XML file
 	 */
 	static std::shared_ptr<whitted_rt> parse(const char *in_path, std::string &out_path);
+
+	static std::shared_ptr<sampler> parse_sampler(const pugi::xml_node &node,
+												  const float &stepwidth);
+
+	static std::shared_ptr<sampler> parse_random_sampler(const pugi::xml_node &node,
+														 const float &stepwidth);
 };
 
 #endif //RAY_TRACER_PARSER_H

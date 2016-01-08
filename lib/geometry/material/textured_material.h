@@ -11,8 +11,19 @@
 
 class textured_material: public phong_material {
 protected:
+	/**
+	 * The texture data
+	 */
 	std::shared_ptr<std::vector<std::vector<color>>> texture;
 public:
+	/**
+	 * @brief Explicit constructor
+	 * @param ambient  The scaling factor for ambient lighting
+	 * @param diffuse  The scaling factor for diffuse lighting
+	 * @param specular The scaling factor for specular lighting
+	 * @param exponent The specular exponent
+	 * @param texture  The texture data
+	 */
 	textured_material(const float &ambient, const float &diffuse, const float &specular,
 					  const float &exponent, std::shared_ptr<std::vector<std::vector<color>>> texture);
 

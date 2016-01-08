@@ -2,7 +2,6 @@
 // Created by chais on 08.07.15.
 //
 
-#include <iostream>
 #include "whitted_rt.h"
 
 whitted_rt::whitted_rt(std::shared_ptr<color> background_color,
@@ -51,6 +50,7 @@ color whitted_rt::cast_ray(ray r, int step, bool internal) {
 void whitted_rt::render() {
 	const std::array<unsigned long, 2> resolution = this->cam->get_resolution();
 	for (unsigned long y = 0; y < resolution[1]; y++) {
+#pragma omp parallel for
 		for (unsigned long x = 0; x < resolution[0]; x++) {
 			std::shared_ptr<std::vector<ray>> rays = this->cam->get_rays(x, y);
 			std::vector<color> data;
