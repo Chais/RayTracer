@@ -8,7 +8,7 @@
 #include "camera.h"
 
 class perspective_camera: public camera {
-private:
+protected:
 	float fov;
 	float stepwidth;
 	direction start;

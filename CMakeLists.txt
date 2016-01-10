@@ -24,7 +24,7 @@ set(SOURCE_FILES lib/whitted_rt.cpp lib/whitted_rt.h lib/math/vec4.cpp lib/math/
         lib/geometry/shapes/triangle.cpp lib/geometry/shapes/triangle.h lib/tiny_obj_loader.cpp lib/tiny_obj_loader.h
         lib/geometry/material/specular_material.cpp lib/geometry/material/specular_material.h
         lib/geometry/material/textured_material.cpp lib/geometry/material/textured_material.h
-        lib/geometry/material/transparent_material.cpp lib/geometry/material/transparent_material.h lib/sampler/sampler.h lib/sampler/random_sampler.cpp lib/sampler/random_sampler.h lib/sampler/sampler.cpp)
+        lib/geometry/material/transparent_material.cpp lib/geometry/material/transparent_material.h lib/sampler/sampler.h lib/sampler/random_sampler.cpp lib/sampler/random_sampler.h lib/sampler/sampler.cpp lib/camera/realistic_camera.cpp lib/camera/realistic_camera.h)
 add_executable(Ray_Tracer ${SOURCE_FILES} main.cpp)
 add_executable(Test ${SOURCE_FILES} test.cpp)
 target_link_libraries(Ray_Tracer png16 pugixml)

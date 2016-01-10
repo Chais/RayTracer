@@ -40,6 +40,10 @@ private:
 	 */
 	static std::shared_ptr<camera> parse_camera(const pugi::xml_node &cam);
 
+	static std::shared_ptr<camera> parse_perspective_camera(const pugi::xml_node &cam);
+
+	static std::shared_ptr<camera> parse_realistic_camera(const pugi::xml_node &cam);
+
 	/**
 	 * @brief Parses all lights into a vector
 	 *
@@ -141,6 +145,12 @@ private:
 	 */
 	static std::shared_ptr<std::vector<std::vector<color>>> load_image(const std::string path);
 
+	static std::shared_ptr<sampler> parse_sampler(const pugi::xml_node &node,
+												  const float &stepwidth);
+
+	static std::shared_ptr<sampler> parse_random_sampler(const pugi::xml_node &node,
+														 const float &stepwidth);
+
 public:
 	/**
 	 * @brief Parses an XML file
@@ -149,12 +159,6 @@ public:
 	 * @return         A shared_ptr to a whitted_rt object that complies to the specifications in the XML file
 	 */
 	static std::shared_ptr<whitted_rt> parse(const char *in_path, std::string &out_path);
-
-	static std::shared_ptr<sampler> parse_sampler(const pugi::xml_node &node,
-												  const float &stepwidth);
-
-	static std::shared_ptr<sampler> parse_random_sampler(const pugi::xml_node &node,
-														 const float &stepwidth);
 };
 
 #endif //RAY_TRACER_PARSER_H

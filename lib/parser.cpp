@@ -3,6 +3,7 @@
 //
 
 #include "parser.h"
+#include "camera/realistic_camera.h"
 
 std::shared_ptr<whitted_rt> parser::parse(const char *in_path, std::string &out_path) {
 	pugi::xml_document doc;
@@ -18,27 +19,54 @@ std::shared_ptr<whitted_rt> parser::parse(const char *in_path, std::string &out_
 }
 
 std::shared_ptr<camera> parser::parse_camera(const pugi::xml_node &cam) {
-	if (std::string(cam.attribute("type").value()) == "perspective") {
-		std::shared_ptr<point> position = parse_position(cam.child("position"));
-		std::shared_ptr<point> lookat = parse_position(cam.child("lookat"));
-		std::shared_ptr<direction> up = parse_direction(cam.child("up"));
-		std::array<unsigned long, 2> resolution = {std::strtoul(cam.child("resolution").attribute("horizontal").value(),
-																nullptr, 10),
-												   std::strtoul(cam.child("resolution").attribute("vertical").value(),
-																nullptr, 10)};
-		float stepwidth = std::tan(
-				helper::to_radians(std::strtof(cam.child("horizontal_fov").attribute("angle").value(), nullptr))) /
-						  (resolution[0] / 2);
-		std::shared_ptr<sampler> s = parse_sampler(cam.child("sampling"), stepwidth);
-		std::shared_ptr<perspective_camera> out(new perspective_camera(*position, *lookat, *up, resolution,
-																	   std::strtoul(cam.child("max_bounces").attribute(
-																			   "n").value(), nullptr, 10), std::strtof(
-						cam.child("horizontal_fov").attribute(
-								"angle").value(), nullptr),
-																	   s));
-		return out;
-	}
+	if (std::string(cam.attribute("type").value()) == "perspective")
+		return parse_perspective_camera(cam);
+	if (std::string(cam.attribute("type").value()) == "realistic")
+		return parse_realistic_camera(cam);
 	return std::shared_ptr<camera>(nullptr);
+}
+
+std::shared_ptr<camera> parser::parse_perspective_camera(const pugi::xml_node &cam) {
+	std::shared_ptr<point> position = parse_position(cam.child("position"));
+	std::shared_ptr<point> lookat = parse_position(cam.child("lookat"));
+	std::shared_ptr<direction> up = parse_direction(cam.child("up"));
+	std::array<unsigned long, 2> resolution = {std::strtoul(cam.child("resolution").attribute("horizontal").value(),
+															nullptr, 10),
+											   std::strtoul(cam.child("resolution").attribute("vertical").value(),
+															nullptr, 10)};
+	float stepwidth = std::tan(
+			helper::to_radians(std::strtof(cam.child("horizontal_fov").attribute("angle").value(), nullptr))) /
+					  (resolution[0] / 2);
+	std::shared_ptr<sampler> s = parse_sampler(cam.child("sampling"), stepwidth);
+	std::shared_ptr<perspective_camera> out(new perspective_camera(*position, *lookat, *up, resolution,
+																   std::strtoul(cam.child("max_bounces").attribute(
+																		   "n").value(), nullptr, 10), std::strtof(
+					cam.child("horizontal_fov").attribute("angle").value(), nullptr), s));
+	return out;
+}
+
+std::shared_ptr<camera> parser::parse_realistic_camera(const pugi::xml_node &cam) {
+	std::shared_ptr<point> position = parse_position(cam.child("position"));
+	std::shared_ptr<point> lookat = parse_position(cam.child("lookat"));
+	std::shared_ptr<direction> up = parse_direction(cam.child("up"));
+	std::array<unsigned long, 2> resolution = {std::strtoul(cam.child("resolution").attribute("horizontal").value(),
+															nullptr, 10),
+											   std::strtoul(cam.child("resolution").attribute("vertical").value(),
+															nullptr, 10)};
+	float stepwidth = std::tan(
+			helper::to_radians(std::strtof(cam.child("horizontal_fov").attribute("angle").value(), nullptr))) /
+					  (resolution[0] / 2);
+	std::shared_ptr<sampler> s = parse_sampler(cam.child("sampling"), stepwidth);
+	std::shared_ptr<realistic_camera> out(new realistic_camera(*position, *lookat, *up, resolution,
+															   std::strtoul(cam.child("max_bounces").attribute(
+																	   "n").value(), nullptr, 10), std::strtof(
+					cam.child("horizontal_fov").attribute("angle").value(), nullptr), s,
+															   std::strtof(cam.child("focus").attribute("d").value(),
+																		   nullptr) == 0
+															   ? std::numeric_limits<float>::max() : std::strtof(
+																	   cam.child("focus").attribute("d").value(),
+																	   nullptr)));
+	return out;
 }
 
 std::shared_ptr<std::vector<std::shared_ptr<light>>> parser::parse_lights(const pugi::xml_node &lights) {
@@ -266,5 +294,5 @@ std::shared_ptr<sampler> parser::parse_random_sampler(const pugi::xml_node &node
 
 	return std::shared_ptr<sampler>(
 			new random_sampler(stepwidth, stepwidth, std::strtoul(node.attribute("n").value(),
-																		nullptr, 10)));
+																  nullptr, 10)));
 }

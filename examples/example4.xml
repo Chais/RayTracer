@@ -3,14 +3,15 @@
 
 <scene output_file="example4.png">
 	<background_color r="0.0" g="0.0" b="0.0"/>
-	<camera type="perspective">
+	<camera type="realistic">
 		<position x="0.0" y="2.0" z="1.0"/>
 		<lookat x="0.0" y="0.0" z="-2.5"/>
 		<up x="0.0" y="1.0" z="0.0"/>
 		<horizontal_fov angle="45"/>
 		<resolution horizontal="512" vertical="512"/>
 		<max_bounces n="8"/>
-		<sampling type="random" n="8"/>
+		<sampling type="random" n="32"/>
+		<focus d="2"/>
 	</camera>
 	<lights>
 		<ambient_light>
