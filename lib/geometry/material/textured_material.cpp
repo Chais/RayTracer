@@ -32,7 +32,11 @@ std::shared_ptr<color> textured_material::shade(const color &lcol, const directi
 	color lh = (*texture)[lv][hu];
 	color hl = (*texture)[hv][lu];
 	color hh = (*texture)[hv][hu];
-	color out = 0.5*(0.5*(ll+lh)+0.5*(hl+hh));
+	ll=(hu-U)*ll;
+	lh=(U-lu)*lh;
+	hl=(hu-U)*hl;
+	hh=(U-lu)*hh;
+	color out = (hv-V)*(ll+lh)+(V-lv)*(hl+hh);
 	if (l != direction()) {
 		// Directional light
 		if (!internal) {

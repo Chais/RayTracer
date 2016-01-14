@@ -7,6 +7,7 @@
 
 #include "whitted_rt.h"
 #include "camera/perspective_camera.h"
+#include "camera/realistic_camera.h"
 #include "light/ambient_light.h"
 #include "light/parallel_light.h"
 #include "light/point_light.h"

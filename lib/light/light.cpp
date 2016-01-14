@@ -4,7 +4,7 @@
 
 #include "light.h"
 
-light::light(const std::shared_ptr<color> col) : col(col), dir(new direction()) { }
+light::light(const std::shared_ptr<color> col) : emit_color(col), emit_dir(new direction()) { }
 
 light::light(const std::shared_ptr<color> col, const std::shared_ptr<direction> dir)
-	: col(col), dir(new direction(normalise(*dir))) { }
+	: emit_color(col), emit_dir(new direction(normalise(*dir))) { }

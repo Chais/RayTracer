@@ -18,8 +18,8 @@
  */
 class light {
 protected:
-	const std::shared_ptr<color> col;
-	const std::shared_ptr<direction> dir;
+	const std::shared_ptr<color> emit_color;
+	const std::shared_ptr<direction> emit_dir;
 
 	/**
 	 * @brief Minimal constructor
@@ -42,14 +42,14 @@ public:
 	 * @param pos The \ref point (in world coordinates) to shine light on
 	 * @return    The \ref direction the light is going to reach \p pos
 	 */
-	virtual const std::shared_ptr<direction> get_direction(const point &pos) = 0;
+	virtual const std::shared_ptr<direction> get_direction(const point &pos) const = 0;
 
 	/**
 	 * @brief Returns the color the light is emitting in the direction \p dir.
 	 * @param dir The \ref direction to emit to
 	 * @return    The \ref color of the emitted light
 	 */
-	virtual const std::shared_ptr<color> emit(const direction &dir) = 0;
+	virtual const std::shared_ptr<color> emit(const direction &dir) const = 0;
 };
 
 #endif //RAY_TRACER_LIGHT_H

@@ -30,7 +30,7 @@ public:
 	 * Returns the 0 vector stored in \p light::dir
 	 * @copydetails light::get_direction()
 	 */
-	virtual const std::shared_ptr<direction> get_direction(const point &pos);
+	virtual const std::shared_ptr<direction> get_direction(const point &pos) const;
 
 	/**
 	 * @copybrief light::emit()
@@ -38,7 +38,7 @@ public:
 	 * Returns the color stored in \p light::col
 	 * @copydetails light::emit()
 	 */
-	virtual const std::shared_ptr<color> emit(const direction &dir);
+	virtual const std::shared_ptr<color> emit(const direction &dir) const;
 };
 
 #endif //RAY_TRACER_AMBIENT_LIGHT_H

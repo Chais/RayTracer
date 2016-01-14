@@ -3,7 +3,6 @@
 //
 
 #include "parser.h"
-#include "camera/realistic_camera.h"
 
 std::shared_ptr<whitted_rt> parser::parse(const char *in_path, std::string &out_path) {
 	pugi::xml_document doc;
@@ -90,7 +89,7 @@ std::shared_ptr<parallel_light> parser::parse_parallel_light(const pugi::xml_nod
 
 std::shared_ptr<point_light> parser::parse_point_light(const pugi::xml_node &l) {
 	return std::make_shared<point_light>(point_light(parse_color(l.child("color")),
-													 parse_position(l.child("position"))));
+													 parse_direction(l.child("position"))));
 }
 
 std::shared_ptr<std::vector<std::shared_ptr<shape>>> parser::parse_surfaces(const pugi::xml_node &surfaces) {
