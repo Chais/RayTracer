@@ -58,11 +58,11 @@ color scale(const color &col, const color &sf) {
 	return color(col[0]*sf[0], col[1]*sf[1], col[2]*sf[2]);
 }
 
-std::array<int, 3> rgb(const color &col) {
-	std::array<int, 3> out = {{
-								  col[0] > 1 ? 255 : int(std::round(col[0]*255)),
-								  col[1] > 1 ? 255 : int(std::round(col[1]*255)),
-								  col[2] > 1 ? 255 : int(std::round(col[2]*255))
+std::array<unsigned char, 3> rgb(const color &col) {
+	std::array<unsigned char, 3> out = {{
+												static_cast<unsigned char>(col[0] > 1 ? 255 : std::round(col[0]*255)),
+												static_cast<unsigned char>(col[1] > 1 ? 255 : std::round(col[1]*255)),
+												static_cast<unsigned char>(col[2] > 1 ? 255 : std::round(col[2]*255))
 							  }};
 	return out;
 }

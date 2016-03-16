@@ -124,5 +124,5 @@ color scale(const color &col, const color &sf);
  * @param col The color to convert
  * @return    An array of three integers ranging from 0 to 255
  */
-std::array<int, 3> rgb(const color &col);
+std::array<unsigned char, 3> rgb(const color &col);
 #endif //RAY_TRACER_COLOR_H

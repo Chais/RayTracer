@@ -10,6 +10,8 @@
 		<horizontal_fov angle="45"/>
 		<resolution horizontal="512" vertical="512"/>
 		<max_bounces n="8"/>
+		<sampling type="random" n="64"/>
+		<focus d="2"/>
 	</camera>
 	<lights>
 		<ambient_light>

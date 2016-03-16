@@ -27,5 +27,5 @@ set(SOURCE_FILES lib/whitted_rt.cpp lib/whitted_rt.h lib/math/vec4.cpp lib/math/
         lib/geometry/material/transparent_material.cpp lib/geometry/material/transparent_material.h lib/sampler/sampler.h lib/sampler/random_sampler.cpp lib/sampler/random_sampler.h lib/sampler/sampler.cpp lib/camera/realistic_camera.cpp lib/camera/realistic_camera.h)
 add_executable(Ray_Tracer ${SOURCE_FILES} main.cpp)
 add_executable(Test ${SOURCE_FILES} test.cpp)
-target_link_libraries(Ray_Tracer png16 pugixml)
-target_link_libraries(Test png16 pugixml)
+target_link_libraries(Ray_Tracer X11 png pugixml)
+target_link_libraries(Test X11 png pugixml)

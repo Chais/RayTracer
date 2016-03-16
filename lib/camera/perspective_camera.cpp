@@ -20,8 +20,7 @@ std::shared_ptr<std::vector<ray>> perspective_camera::get_rays(const unsigned lo
 	std::shared_ptr<std::vector<ray>> out(new std::vector<ray>());
 	direction d =
 			this->start + direction(-1, 0, 0) * (this->stepwidth * x) + direction(0, -1, 0) * (this->stepwidth * y);
-	for (vec2 o : *offsets) {
-		out->push_back(this->transforms(ray(point(o[0], o[1], 0)+d, d)));
-	}
+	for (vec2 o : *offsets)
+		out->push_back(transforms(ray(point(o[0], o[1], 0), d + direction(o[0], o[1], 0))));
 	return out;
 }
