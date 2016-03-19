@@ -5,8 +5,6 @@
 #ifndef RAY_TRACER_TEXTURED_MATERIAL_H
 #define RAY_TRACER_TEXTURED_MATERIAL_H
 
-#include <string>
-#include <png++/image.hpp>
 #include "phong_material.h"
 
 class textured_material: public phong_material {

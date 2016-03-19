@@ -23,7 +23,7 @@ public:
 		reflect(const direction &i, const normal &n, const point &x, const unsigned int &s) const;
 
 	virtual std::shared_ptr<std::vector<ray>>
-		refract(const direction &i, const normal &n, const point &x, const unsigned int &s, const bool internal) const;
+		refract(const direction &i, const normal &n, const point &x, const bool internal) const;
 
 	virtual const float get_reflectance() const;
 

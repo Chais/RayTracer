@@ -7,14 +7,12 @@
 
 #include "sampler.h"
 
-class random_sampler: public sampler {
+class random_sampler : public sampler {
 public:
-	random_sampler() : sampler(width, height, count) { }
+	random_sampler();
 
-	random_sampler(const float &width, const float &height, const unsigned long &count) : sampler(width, height,
-																								  count) { }
-
-	virtual std::shared_ptr<std::vector<vec2>> get_samples() override;
+	virtual std::shared_ptr<std::vector<vec2>> get_samples(const float &width, const float &height,
+														   const unsigned long &count) const override;
 };
 
 

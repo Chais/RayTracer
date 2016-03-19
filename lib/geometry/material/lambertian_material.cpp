@@ -40,7 +40,7 @@ std::shared_ptr<std::vector<ray>> lambertian_material::reflect(const direction &
 }
 
 std::shared_ptr<std::vector<ray>> lambertian_material::refract(const direction &i, const normal &n, const point &x,
-															   const unsigned int &s, const bool internal) const {
+															   const bool internal) const {
 	return std::shared_ptr<std::vector<ray>>();
 }
 

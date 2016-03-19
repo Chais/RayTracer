@@ -33,14 +33,13 @@ std::shared_ptr<camera> parser::parse_perspective_camera(const pugi::xml_node &c
 															nullptr, 10),
 											   std::strtoul(cam.child("resolution").attribute("vertical").value(),
 															nullptr, 10)};
-	float stepwidth = std::tan(
-			helper::to_radians(std::strtof(cam.child("horizontal_fov").attribute("angle").value(), nullptr))) /
-					  (resolution[0] / 2);
-	std::shared_ptr<sampler> s = parse_sampler(cam.child("sampling"), stepwidth);
-	std::shared_ptr<perspective_camera> out(new perspective_camera(*position, *lookat, *up, resolution,
-																   std::strtoul(cam.child("max_bounces").attribute(
-																		   "n").value(), nullptr, 10), std::strtof(
-					cam.child("horizontal_fov").attribute("angle").value(), nullptr), s));
+	unsigned long max_bounces = std::strtoul(cam.child("max_bounces").attribute("n").value(), nullptr, 10);
+	float fov = std::strtof(cam.child("horizontal_fov").attribute("angle").value(), nullptr);
+	unsigned long samples = 0;
+	std::shared_ptr<sampler> s = parse_sampler(cam.child("sampling"), samples);
+	float defocus = std::strtof(cam.child("defocus").attribute("d").value(), nullptr);
+	std::shared_ptr<perspective_camera> out(
+			new perspective_camera(*position, *lookat, *up, resolution, max_bounces, fov, samples, s, defocus));
 	return out;
 }
 
@@ -52,19 +51,17 @@ std::shared_ptr<camera> parser::parse_realistic_camera(const pugi::xml_node &cam
 															nullptr, 10),
 											   std::strtoul(cam.child("resolution").attribute("vertical").value(),
 															nullptr, 10)};
-	float stepwidth = std::tan(
-			helper::to_radians(std::strtof(cam.child("horizontal_fov").attribute("angle").value(), nullptr))) /
-					  (resolution[0] / 2);
-	std::shared_ptr<sampler> s = parse_sampler(cam.child("sampling"), stepwidth);
-	std::shared_ptr<realistic_camera> out(new realistic_camera(*position, *lookat, *up, resolution,
-															   std::strtoul(cam.child("max_bounces").attribute(
-																	   "n").value(), nullptr, 10), std::strtof(
-					cam.child("horizontal_fov").attribute("angle").value(), nullptr), s,
-															   std::strtof(cam.child("focus").attribute("d").value(),
-																		   nullptr) == 0
-															   ? std::numeric_limits<float>::max() : std::strtof(
-																	   cam.child("focus").attribute("d").value(),
-																	   nullptr)));
+	unsigned long max_bounces = std::strtoul(cam.child("max_bounces").attribute("n").value(), nullptr, 10);
+	float fov = std::strtof(cam.child("horizontal_fov").attribute("angle").value(), nullptr);
+	unsigned long samples = 1;
+	std::shared_ptr<sampler> s = parse_sampler(cam.child("sampling"), samples);
+	float defocus = std::strtof(cam.child("defocus").attribute("d").value(), nullptr);
+	float focus = std::strtof(cam.child("focus").attribute("d").value(), nullptr);
+	focus = focus == 0 ? std::numeric_limits<float>::max() : focus;
+	float aperture = std::strtof(cam.child("aperture").attribute("d").value(), nullptr);
+	std::shared_ptr<realistic_camera> out(
+			new realistic_camera(*position, *lookat, *up, resolution, max_bounces, fov, samples, s, defocus, focus,
+								 aperture));
 	return out;
 }
 
@@ -184,10 +181,10 @@ std::shared_ptr<material> parser::parse_material(const pugi::xml_node &m) {
 	} else if (std::string(m.attribute("type").value()) == "lambertian") {
 		return std::make_shared<lambertian_material>(lambertian_material(*parse_color(m.child("color")),
 																		 std::strtof(m.child("lambertian").attribute(
-																							 "ka").value(),
+																				 "ka").value(),
 																					 nullptr),
 																		 std::strtof(m.child("lambertian").attribute(
-																							 "kd").value(),
+																				 "kd").value(),
 																					 nullptr)));
 	} else if (std::string(m.attribute("type").value()) == "specular") {
 		return std::make_shared<specular_material>(specular_material(*parse_color(m.child("color")),
@@ -201,34 +198,34 @@ std::shared_ptr<material> parser::parse_material(const pugi::xml_node &m) {
 																			 m.child("phong").attribute("ks").value(),
 																			 nullptr),
 																	 std::strtof(m.child("phong").attribute(
-																						 "exponent").value(),
+																			 "exponent").value(),
 																				 nullptr),
 																	 std::strtof(m.child("reflectance").attribute(
-																						 "r").value(),
+																			 "r").value(),
 																				 nullptr)));
 	} else if (std::string(m.attribute("type").value()) == "transparent") {
 		return std::make_shared<transparent_material>(transparent_material(*parse_color(m.child("color")),
 																		   std::strtof(m.child("phong").attribute(
-																							   "ka").value(),
+																				   "ka").value(),
 																					   nullptr),
 																		   std::strtof(m.child("phong").attribute(
-																							   "kd").value(),
+																				   "kd").value(),
 																					   nullptr),
 																		   std::strtof(m.child("phong").attribute(
-																							   "ks").value(),
+																				   "ks").value(),
 																					   nullptr),
 																		   std::strtof(m.child("phong").attribute(
-																							   "exponent").value(),
+																				   "exponent").value(),
 																					   nullptr),
 																		   std::strtof(m.child("reflectance").attribute(
-																							   "r").value(),
+																				   "r").value(),
 																					   nullptr),
 																		   std::strtof(
 																				   m.child("transmittance").attribute(
 																						   "t").value(),
 																				   nullptr),
 																		   std::strtof(m.child("refraction").attribute(
-																							   "iof").value(),
+																				   "iof").value(),
 																					   nullptr)));
 	} else if (std::string(m.attribute("type").value()) == "textured") {
 		return std::make_shared<textured_material>(
@@ -264,34 +261,27 @@ std::shared_ptr<direction> parser::parse_direction(const pugi::xml_node &d) {
 }
 
 std::shared_ptr<std::vector<std::vector<color>>> parser::load_image(const std::string path) {
-	png::image<png::rgb_pixel> img(path);
+	cimg_library::CImg<float> img(path.c_str());
 	std::shared_ptr<std::vector<std::vector<color>>> out(new std::vector<std::vector<color>>());
-	out->reserve(img.get_height());
-	for (unsigned long y = 0; y < img.get_height(); y++) {
+	out->reserve(static_cast<unsigned long>(img.height()));
+	for (unsigned int y = 0; y < img.height(); y++) {
 		out->push_back(std::vector<color>());
-		out->at(y).reserve(img.get_width());
-		for (unsigned long x = 0; x < img.get_width(); x++) {
-			png::rgb_pixel tmp = img.get_pixel(x, y);
-			out->at(y).push_back(color(static_cast<int>(tmp.red) / 255.0f,
-									   static_cast<int>(tmp.green) / 255.0f,
-									   static_cast<int>(tmp.blue) / 255.0f));
+		out->at(y).reserve(static_cast<unsigned long>(img.width()));
+		for (unsigned int x = 0; x < img.width(); x++) {
+			out->at(y).push_back(color(img(x, y, 0) / 255.0f, img(x, y, 1) / 255.0f, img(x, y, 2) / 255.0f));
 		}
 	}
 	return out;
 }
 
-std::shared_ptr<sampler> parser::parse_sampler(const pugi::xml_node &node,
-											   const float &stepwidth) {
+std::shared_ptr<sampler> parser::parse_sampler(const pugi::xml_node &node, unsigned long &samples) {
+	samples = std::strtoul(node.attribute("n").value(), nullptr, 10);
 	if (std::string(node.attribute("type").value()) == "random")
-		return parse_random_sampler(node, stepwidth);
+		return parse_random_sampler(node);
 	else
 		return std::shared_ptr<sampler>(new sampler());
 }
 
-std::shared_ptr<sampler> parser::parse_random_sampler(const pugi::xml_node &node,
-													  const float &stepwidth) {
-
-	return std::shared_ptr<sampler>(
-			new random_sampler(stepwidth, stepwidth, std::strtoul(node.attribute("n").value(),
-																  nullptr, 10)));
+std::shared_ptr<sampler> parser::parse_random_sampler(const pugi::xml_node &node) {
+	return std::shared_ptr<sampler>(new random_sampler());
 }

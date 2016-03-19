@@ -1,31 +1,67 @@
 cmake_minimum_required(VERSION 3.2)
 project(Ray_Tracer)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+# Prevent compilation in-source
+if (${CMAKE_BINARY_DIR} STREQUAL ${PROJECT_SOURCE_DIR})
+	Message(" ")
+	Message(FATAL_ERROR "Source and build  directories are the same.
+ Create an empty build directory,
+ change into it and re-invoke cmake")
+endif ()
+
+include(CheckCXXCompilerFlag)
+CHECK_CXX_COMPILER_FLAG("-std=c++11" COMPILER_SUPPORTS_CXX11)
+CHECK_CXX_COMPILER_FLAG("-std=c++0x" COMPILER_SUPPORTS_CXX0X)
+if (COMPILER_SUPPORTS_CXX11)
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+elseif (COMPILER_SUPPORTS_CXX0X)
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x")
+else ()
+	message(STATUS "The compiler ${CMAKE_CXX_COMPILER} has no C++11 support. Please use a different C++ compiler.")
+endif ()
+
+list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/extern)
 
 find_package(OpenMP)
 if (OPENMP_FOUND)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
 endif ()
 
-set(SOURCE_FILES lib/whitted_rt.cpp lib/whitted_rt.h lib/math/vec4.cpp lib/math/vec4.h lib/math/vec2.cpp lib/math/vec2.h
-        lib/math/mat4.cpp lib/math/mat4.h lib/camera/perspective_camera.cpp lib/camera/perspective_camera.h
-        lib/geometry/ray.h lib/geometry/shapes/sphere.cpp lib/geometry/shapes/sphere.h lib/geometry/shapes/shape.cpp
-        lib/geometry/shapes/shape.h lib/math/helper.cpp lib/math/helper.h lib/light/light.cpp lib/light/light.h
-        lib/light/parallel_light.cpp lib/light/parallel_light.h lib/geometry/material/material.h
-        lib/geometry/material/phong_material.cpp lib/geometry/material/phong_material.h
-        lib/geometry/material/solid_material.h lib/geometry/point.cpp lib/geometry/point.h lib/geometry/direction.cpp
-        lib/geometry/direction.h lib/geometry/normal.cpp lib/geometry/normal.h lib/geometry/transform.cpp
-        lib/geometry/transform.h lib/geometry/intersection.h lib/geometry/color.cpp lib/geometry/color.h
-        lib/geometry/material/lambertian_material.cpp lib/geometry/material/lambertian_material.h
-        lib/light/ambient_light.cpp lib/light/ambient_light.h lib/camera/camera.h lib/camera/camera.cpp
-        lib/geometry/ray.cpp lib/geometry/material/solid_material.cpp lib/light/point_light.cpp lib/light/point_light.h
-        lib/parser.cpp lib/parser.h lib/geometry/shapes/mesh.cpp lib/geometry/shapes/mesh.h
-        lib/geometry/shapes/triangle.cpp lib/geometry/shapes/triangle.h lib/tiny_obj_loader.cpp lib/tiny_obj_loader.h
-        lib/geometry/material/specular_material.cpp lib/geometry/material/specular_material.h
-        lib/geometry/material/textured_material.cpp lib/geometry/material/textured_material.h
-        lib/geometry/material/transparent_material.cpp lib/geometry/material/transparent_material.h lib/sampler/sampler.h lib/sampler/random_sampler.cpp lib/sampler/random_sampler.h lib/sampler/sampler.cpp lib/camera/realistic_camera.cpp lib/camera/realistic_camera.h)
-add_executable(Ray_Tracer ${SOURCE_FILES} main.cpp)
-add_executable(Test ${SOURCE_FILES} test.cpp)
-target_link_libraries(Ray_Tracer X11 png pugixml)
-target_link_libraries(Test X11 png pugixml)
+find_package(CImg REQUIRED)
+list(APPEND PROJ_INCLUDE_DIRS ${CImg_INCLUDE_DIRS})
+list(APPEND PROJ_LIBRARY_DIRS ${CImg_SYSTEM_LIBS_DIR})
+
+# Add CIMG Flags to Compilation Flags
+SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CIMG_CFLAGS}")
+
+link_directories(${CImg_SYSTEM_LIBS_DIR})
+include_directories(${CImg_INCLUDE_DIRS})
+
+find_package(pugixml REQUIRED)
+
+add_library(math STATIC lib/math/vec4.cpp lib/math/vec2.cpp lib/math/mat4.cpp lib/math/helper.cpp)
+
+add_library(sampler STATIC lib/sampler/random_sampler.cpp lib/sampler/sampler.cpp)
+target_link_libraries(sampler math)
+
+add_library(geometry STATIC lib/geometry/color.cpp lib/geometry/direction.cpp lib/geometry/normal.cpp
+		lib/geometry/point.cpp lib/geometry/ray.cpp lib/geometry/transform.cpp lib/geometry/intersection.h
+		lib/geometry/shapes/shape.cpp lib/geometry/shapes/sphere.cpp lib/geometry/shapes/triangle.cpp
+		lib/geometry/shapes/mesh.cpp lib/geometry/material/material.h lib/geometry/material/solid_material.cpp
+		lib/geometry/material/phong_material.cpp lib/geometry/material/lambertian_material.cpp
+		lib/geometry/material/specular_material.cpp lib/geometry/material/textured_material.cpp
+		lib/geometry/material/transparent_material.cpp)
+target_link_libraries(geometry math)
+
+add_library(light STATIC lib/light/light.cpp lib/light/ambient_light.cpp lib/light/parallel_light.cpp
+		lib/light/point_light.cpp)
+target_link_libraries(light geometry)
+
+add_library(camera STATIC lib/camera/camera.cpp lib/camera/perspective_camera.cpp lib/camera/realistic_camera.cpp)
+target_link_libraries(camera sampler geometry)
+
+add_library(whitted_rt STATIC lib/whitted_rt.cpp lib/parser.cpp lib/tiny_obj_loader.cpp)
+target_link_libraries(whitted_rt camera light pugixml ${CImg_SYSTEM_LIBS})
+
+add_executable(Ray_Tracer main.cpp)
+target_link_libraries(Ray_Tracer whitted_rt)

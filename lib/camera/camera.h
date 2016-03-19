@@ -8,7 +8,6 @@
 #include "../geometry/transform.h"
 #include "../geometry/ray.h"
 #include "../geometry/color.h"
-#include "../math/helper.h"
 #include "../sampler/sampler.h"
 
 class camera {
@@ -17,6 +16,7 @@ protected:
 	std::array<unsigned long, 2> resolution;
 	std::vector<std::vector<std::vector<color>>> data;
 	const unsigned long max_bounces = 0;
+	unsigned long samples;
 	std::shared_ptr<sampler> s;
 
 	camera() { };
@@ -39,7 +39,7 @@ protected:
 	 */
 	camera(const point &position, const point &look_at, const direction &up,
 		   const std::array<unsigned long, 2> &resolution, const unsigned long max_bounces,
-		   const std::shared_ptr<sampler> s);
+		   const unsigned long &samples, const std::shared_ptr<sampler> s);
 
 public:
 /**

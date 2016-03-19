@@ -1,6 +1,5 @@
 #include "lib/whitted_rt.h"
 #include "lib/parser.h"
-#include <CImg.h>
 
 using namespace std;
 

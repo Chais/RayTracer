@@ -6,8 +6,8 @@
 
 camera::camera(const point &position, const point &look_at, const direction &up,
 			   const std::array<unsigned long, 2> &resolution, const unsigned long max_bounces,
-			   const std::shared_ptr<sampler> s)
-		: resolution(resolution), max_bounces(max_bounces), s(s) {
+			   const unsigned long &samples, const std::shared_ptr<sampler> s)
+		: resolution(resolution), max_bounces(max_bounces), samples(samples), s(s) {
 	assert(resolution[0] > 0 && resolution[1] > 0);
 	direction dir = normalise(look_at - position);
 	direction left = cross(normalise(up), dir);
@@ -24,7 +24,7 @@ camera::camera(const point &position, const point &look_at, const direction &up,
 	for (auto &i : data) {
 		i.resize(resolution[1]);
 		for (auto &j : i)
-			j.resize(s->count);
+			j.resize(samples);
 	}
 }
 

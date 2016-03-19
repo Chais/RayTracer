@@ -7,7 +7,6 @@
 
 #include "light.h"
 #include "../geometry/shapes/shape.h"
-#include "../geometry/material/lambertian_material.h"
 
 /**
  * Models a parallel light source

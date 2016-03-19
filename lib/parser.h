@@ -25,6 +25,7 @@
 #include <cstring>
 #include <memory>
 #include <iostream>
+#include <CImg.h>
 
 /**
  * @brief A parser for input files
@@ -146,11 +147,9 @@ private:
 	 */
 	static std::shared_ptr<std::vector<std::vector<color>>> load_image(const std::string path);
 
-	static std::shared_ptr<sampler> parse_sampler(const pugi::xml_node &node,
-												  const float &stepwidth);
+	static std::shared_ptr<sampler> parse_sampler(const pugi::xml_node &node, unsigned long &samples);
 
-	static std::shared_ptr<sampler> parse_random_sampler(const pugi::xml_node &node,
-														 const float &stepwidth);
+	static std::shared_ptr<sampler> parse_random_sampler(const pugi::xml_node &node);
 
 public:
 	/**

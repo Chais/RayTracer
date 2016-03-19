@@ -40,7 +40,7 @@ public:
 			  const bool internal) const override;
 
 	virtual std::shared_ptr<std::vector<ray>> refract(const direction &i, const normal &n, const point &x,
-													  const unsigned int &s, const bool internal) const override;
+														  const bool internal) const override;
 
 	virtual const float get_transmittance() const override;
 };

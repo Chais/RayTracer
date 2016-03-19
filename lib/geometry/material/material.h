@@ -61,7 +61,7 @@ public:
 	 * @return The refracted ray(s)
   	 */
 	virtual std::shared_ptr<std::vector<ray>> refract(const direction &i, const normal &n, const point &x,
-													  const unsigned int &s, const bool internal) const = 0;
+													  const bool internal) const = 0;
 
   	/**
   	 * @brief Returns the reflectance

@@ -6,15 +6,14 @@
 
 sampler::sampler() { }
 
-sampler::sampler(const float &width, const float &height, const unsigned long &count) : width(width), height(height),
-																						count(count) {
-	assert(width > 0);
-	assert(height > 0);
+std::shared_ptr<std::vector<vec2>> sampler::get_samples(const float &width, const float &height,
+														const unsigned long &count) const {
+	assert(width >= 0);
+	assert(height >= 0);
 	assert(count > 0);
-}
-
-std::shared_ptr<std::vector<vec2>> sampler::get_samples() {
 	std::shared_ptr<std::vector<vec2>> out = std::make_shared<std::vector<vec2>>();
-	out->push_back(vec2());
+	for (int i = 0; i < count; i++) {
+		out->push_back(vec2());
+	}
 	return out;
 }

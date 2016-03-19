@@ -46,12 +46,9 @@ std::shared_ptr<std::vector<ray>> shape::reflect(const direction &i,
 	return this->matrl->reflect(i, n, x, s);
 }
 
-std::shared_ptr<std::vector<ray>> shape::refract(const direction &i,
-												 const normal &n,
-												 const point &x,
-												 const unsigned int &s,
+std::shared_ptr<std::vector<ray>> shape::refract(const direction &i, const normal &n, const point &x,
 												 const bool internal) const {
-	return this->matrl->refract(i, n, x, s, internal);
+	return this->matrl->refract(i, n, x, internal);
 }
 
 const float shape::get_reflectance() const {

@@ -6,12 +6,7 @@
 
 textured_material::textured_material(const float &ambient, const float &diffuse, const float &specular,
 									 const float &exponent, std::shared_ptr<std::vector<std::vector<color>>> texture)
-		: phong_material(color(),
-						 ambient,
-						 diffuse,
-						 specular,
-						 exponent),
-		  texture(texture) {
+		: phong_material(color(), ambient, diffuse, specular, exponent), texture(texture) {
 }
 
 std::shared_ptr<color> textured_material::shade(const color &lcol, const direction &l, const normal &n,

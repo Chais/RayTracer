@@ -46,7 +46,7 @@ std::shared_ptr<std::vector<ray>> specular_material::reflect(const direction &i,
 }
 
 std::shared_ptr<std::vector<ray>> specular_material::refract(const direction &i, const normal &n, const point &x,
-															 const unsigned int &s, const bool internal) const {
+															 const bool internal) const {
 	return std::shared_ptr<std::vector<ray>>();
 }
 

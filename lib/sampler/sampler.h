@@ -12,14 +12,10 @@
 
 class sampler {
 public:
-	const float width = 0.001953125, height = 0.001953125;
-	const unsigned long count = 1;
-
 	sampler();
 
-	sampler(const float &width, const float &height, const unsigned long &count);
-
-	virtual std::shared_ptr<std::vector<vec2>> get_samples();
+	virtual std::shared_ptr<std::vector<vec2>> get_samples(const float &width, const float &height,
+														   const unsigned long &count) const;
 };
 
 #endif //RAY_TRACER_SAMPLER_H
