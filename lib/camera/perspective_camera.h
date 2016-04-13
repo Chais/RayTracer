@@ -44,10 +44,11 @@ public:
 	 *
 	 * @param &fov the half horizontal field-of-view angle of the camera
 	 */
-	perspective_camera(const point &position, const point &look_at, const direction &up,
-					   const std::array<unsigned long, 2> &resolution, const unsigned long max_bounces,
-					   const float &fov, const unsigned long &samples, const std::shared_ptr<sampler> s,
-					   const float &defocus);
+	perspective_camera(const position &pos, const position &look_at, const direction &up,
+					   const std::array<unsigned long, 2> &resolution,
+					   const unsigned long max_bounces, const float &fov,
+					   const unsigned long &samples, const unsigned long &sr,
+					   const std::shared_ptr<sampler> s, const float &defocus);
 
 	virtual std::shared_ptr<std::vector<ray>> get_rays(const unsigned long &x, const unsigned long &y);
 };

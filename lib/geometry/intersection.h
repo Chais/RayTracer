@@ -6,7 +6,7 @@
 #define RAY_TRACER_INTERSECTION_H
 
 #include "normal.h"
-#include "point.h"
+#include "position.h"
 #include "../math/vec2.h"
 #include <memory>
 
@@ -19,15 +19,15 @@ struct intersection {
 	/**
 	 * The intersected \ref shape
 	 */
-	std::shared_ptr<shape> object;
+	std::shared_ptr<const shape> object;
 	/**
-	 * The normal at the intersection point
+	 * The normal at the intersection position
 	 */
 	std::shared_ptr<normal> norm;
 	/**
 	 * The \ref point "position" of the intersection in world coordinates
 	 */
-	std::shared_ptr<point> pos;
+	std::shared_ptr<position> pos;
 	/**
 	 * The local (UV) coordinates at the intersection point.
 	 */

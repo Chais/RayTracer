@@ -101,7 +101,7 @@ static inline int parseInt(const char *&token) {
 	return i;
 }
 
-// Tries to parse a floating point number located at s.
+// Tries to parse a floating position number located at s.
 //
 // s_end should be a location in the string where reading should absolutely
 // stop. For example at the end of the string, to prevent buffer overflows.

@@ -9,15 +9,12 @@
 #include "../geometry/ray.h"
 #include "../geometry/color.h"
 #include "../sampler/sampler.h"
+#include "../sampler/random_sampler.h"
 
 class camera {
 protected:
 	transform transforms;
-	std::array<unsigned long, 2> resolution;
 	std::vector<std::vector<std::vector<color>>> data;
-	const unsigned long max_bounces = 0;
-	unsigned long samples;
-	std::shared_ptr<sampler> s;
 
 	camera() { };
 
@@ -37,11 +34,16 @@ protected:
 	 *
 	 * @param &samples the number of samples per pixel
 	 */
-	camera(const point &position, const point &look_at, const direction &up,
+	camera(const position &pos, const position &look_at, const direction &up,
 		   const std::array<unsigned long, 2> &resolution, const unsigned long max_bounces,
-		   const unsigned long &samples, const std::shared_ptr<sampler> s);
+		   const unsigned long &samples, const unsigned long &sr, const std::shared_ptr<sampler> s);
 
 public:
+	const std::array<unsigned long, 2> resolution = {{1024, 768}};
+	const unsigned long max_bounces = 0;
+	const unsigned long samples = 1;
+	const unsigned long shadow_rays = 1;
+	const std::shared_ptr<sampler> s;
 /**
 	 * @brief Grants access to the initial rays of the camera
 	 *
@@ -78,10 +80,6 @@ public:
 	 * @return the final color of the pixel with the given coordinates
 	 */
 	std::shared_ptr<color> get_pixel(const unsigned long &x, const unsigned long &y) const;
-
-	const std::array<unsigned long, 2> &get_resolution() const;
-
-	const unsigned long get_max_bounces() const;
 };
 
 #endif //RAY_TRACER_CAMERA_H

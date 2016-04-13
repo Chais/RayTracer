@@ -33,7 +33,7 @@ digraph Classes {
 		label = "{intersection|
 				+ object : shape *\l
 				+ dir : normal *\l
-				+ pos : point *\l
+				+ pos : position *\l
 				+ local_pos : vec2 *\l
 		}"
 	]
@@ -42,8 +42,8 @@ digraph Classes {
 				# transforms : transform\l
 				# resolution : std::array\<unsigned long, 2\>\l
 				# data : std::vector\<std::vector\<std::vector\<color\>\>\>\l|
-				# camera(position : point &,
-						 look_at : point &,
+				# camera(position : position &,
+						 look_at : position &,
 						 up : direction &,
 						 resolution : std::array<unsigned long, 2> &,
 						 samples : unsigned long &)\l
@@ -57,8 +57,8 @@ digraph Classes {
 		label = "{perspective_camera|
 				# fov : float\l|
 				+ perspective_camera()\l
-				+ perspective_camera(position : point &,
-						 look_at : point &,
+				+ perspective_camera(position : position &,
+						 look_at : position &,
 						 up : direction &,
 						 fov : float &,
 						 resolution : std::array<unsigned long, 2> &,
@@ -67,9 +67,9 @@ digraph Classes {
 	]
 	ray [
 		label = "{ray|
-				+ o : point\l
+				+ o : position\l
 				+ d : direction\l|
-				+ ray(o : point &, d : direction &)\l
+				+ ray(o : position &, d : direction &)\l
 		}"
 	]
 	shape_ [
@@ -146,7 +146,7 @@ digraph Classes {
 			parallel_light|
 			- transforms : transform\l|
 			+ parallel_light(col : color, dir : direction &)\l
-			+ get_direction() : direction &\l
+			+ get_directions() : direction &\l
 		}"
 	]
 	transform [
@@ -158,7 +158,7 @@ digraph Classes {
 			+ transform(trans : mat4 &, inv_trans : mat4 &)\l
 			+ transform(in : transform &)\l
 			+ operator()(t : transform &) : transform\l
-			+ operator()(p : point &) : point\l
+			+ operator()(p : position &) : position\l
 			+ operator()(v : direction &) : direction\l
 			+ operator()(n : normal &) : normal\l
 			+ translate(t : direction &) : void\l
@@ -181,11 +181,11 @@ digraph Classes {
 	]
 	point_ [
 		label = "{
-			point||
-			+ point()\l
-			+ point(x : float &, y : float &, z : float &)\l
-			+ point(v : vec4 &)\l
-			+ point(in : point)\l
+			position||
+			+ position()\l
+			+ position(x : float &, y : float &, z : float &)\l
+			+ position(v : vec4 &)\l
+			+ position(in : position)\l
 			+ operator[](i : int) : float\l
 		}"
 	]

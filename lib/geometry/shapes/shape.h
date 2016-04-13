@@ -14,10 +14,9 @@
 /**
  * Models properties common to all geometry objects
  */
-class shape: public std::enable_shared_from_this<shape> {
-private:
-	shape() { };
+class shape : public std::enable_shared_from_this<shape> {
 protected:
+	shape() { };
 	/**
 	 * Stores the transformations necessary to convert object space into world space. Since this is a transform it also stores its inverse. However for ease of use and lower cognitive load both matrices are also accessible through \p world_to_object.
 	 */
@@ -31,50 +30,48 @@ protected:
 	/**
 	 * This is an offset from the object coordinate origin. It is untracked in the \p object_to_world (and therefor also \p world_to_object). This effectively moves the center of rotation for the shape by \p -offset
 	 */
-	const std::shared_ptr<direction> offset;
+	const direction offset;
 
 	/**
 	 * The shape's material
 	 */
 	std::shared_ptr<material> matrl;
 
-	shape(std::shared_ptr<direction> offset, std::shared_ptr<material> matrl);
+	shape(const direction &offset, const std::shared_ptr<material> &matrl);
 
 public:
 	/**
 	 * Checks whether the given ray intersects the shape.
 	 * @param  r The ray
-	 * @return   An intersction containing the necessary information to continue calculations if the ray intersects. An intersection with null pointers if it doesn't
+	 * @return   An intersection containing the necessary information to continue calculations if the ray intersects. An intersection with null pointers if it doesn't
 	 */
-	virtual intersection intersect_full(const ray &r) = 0;
+	virtual intersection intersect_full(const ray &r) const = 0;
 
 	/**
-	 * Checks whether the given \ref point is shadows by the shape for light coming from \p o+d .
-	 * @param  o The \ref point (in world coordinates) to check
+	 * Checks whether the given \ref position is shadows by the shape for light coming from \p o+d .
+	 * @param  o The \ref position (in world coordinates) to check
 	 * @param  d The vector pointing to the light source
-	 * @return   true if the point is shadowed by the shape, false otherwise
+	 * @return   true if the position is shadowed by the shape, false otherwise
 	 */
-	virtual bool intersect_shadow(const point &o, const direction &d) const = 0;
+	virtual bool intersect_shadow(const position &o, const direction &d) const = 0;
 
 	/**
 	 * @copydoc material::shade()
 	 */
-	virtual std::shared_ptr<color>
-		shade(const color &lcol, const direction &l, const normal &n, const direction &v, const vec2 &pos,
-			  const bool internal);
+	virtual const std::shared_ptr<color> shade(const color &lcol, const direction &l, const normal &n,
+											   const direction &v,
+											   const vec2 &pos,
+											   const bool &internal) const;
 
 	/**
 	 * @copydoc material::reflect()
 	 */
-	std::shared_ptr<std::vector<ray>>
-		reflect(const direction &i, const normal &n, const point &x, const unsigned int &s) const;
+	std::shared_ptr<ray> reflect(const direction &i, const normal &n, const position &x) const;
 
 	/**
 	 * @copydoc material::refract()
 	 */
-	std::shared_ptr<std::vector<ray>>
-		refract(const direction &i, const normal &n, const point &x,
-					const bool internal) const;
+	std::shared_ptr<ray> refract(const direction &i, const normal &n, const position &x, const bool internal) const;
 
 	/**
 	 * Translates the shape according to the given \ref direction vector
@@ -88,7 +85,7 @@ public:
 	 * Scales the shape according to the given factors
 	 * @param sf The array of scaling factors
 	 */
-	void scale(const std::array<float, 3> sf);
+	void scale(const std::array<float, 3> &sf);
 
 	/**
 	 * @brief X rotation

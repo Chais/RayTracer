@@ -6,7 +6,7 @@
 #define RAY_TRACER_TRANSFORM_H
 
 #include "../math/mat4.h"
-#include "point.h"
+#include "position.h"
 #include "normal.h"
 #include <array>
 #include <memory>
@@ -71,13 +71,13 @@ public:
 	transform operator()(const transform &t) const;
 
 	/**
-	 * @brief Transform application to point
+	 * @brief Transform application to position
 	 *
-	 * Applies its transformations from the left to the given point.
-	 * @param p The point to be transformed
-	 * @return  The new, transformed point
+	 * Applies its transformations from the left to the given position.
+	 * @param p The position to be transformed
+	 * @return  The new, transformed position
 	 */
-	point operator()(const point &p) const;
+	position operator()(const position &p) const;
 
 	/**
 	 * @brief Transform application to direction

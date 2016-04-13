@@ -4,4 +4,4 @@
 
 #include "ray.h"
 
-ray::ray(const point &o, const direction &d) : o(o), d(normalise(d)) { }
+ray::ray(const position &o, const direction &d) : o(o), d(normalise(d)) { }

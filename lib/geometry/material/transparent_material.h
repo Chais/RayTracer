@@ -10,7 +10,7 @@
 /**
  * Models a transparent material with a smooth surface. It reflects light and refracts it according to its index of refraction. It is assumed that outside the geometry there is vacuum, with an index of refraction of 1. Inclusion of geometry (e.g. a sphere inside a sphere) is not currently supported and will give incorrect results. Beer's law is not currently implemented.
  */
-class transparent_material: public specular_material {
+class transparent_material : public specular_material {
 protected:
 	/**
 	 * The factor by which the colour resulting from transmitted (refracted) rays is scaled. \p transmittance + \p reflectance must be <= 1
@@ -32,15 +32,17 @@ public:
 	 * @param transmittance The scaling factor for refracted rays
 	 * @param ior           The index of refraction
 	 */
-	transparent_material(const color &col, const float &ambient, const float &diffuse, const float &specular,
-						 const float &exponent, const float reflectance, const float transmittance, const float ior);
+	transparent_material(const std::shared_ptr<color> emit_col, const std::shared_ptr<color> col, const float &ambient,
+						 const float &diffuse,
+						 const float &specular, const float &exponent, const float &reflectance,
+						 const float &transmittance, const float &ior);
 
-	virtual std::shared_ptr<color>
-		shade(const color &lcol, const direction &l, const normal &n, const direction &v, const vec2 &pos,
-			  const bool internal) const override;
+	virtual const std::shared_ptr<color> shade(const color &lcol, const direction &l, const normal &n,
+											   const direction &v, const vec2 &pos,
+											   const bool &internal) const override;
 
-	virtual std::shared_ptr<std::vector<ray>> refract(const direction &i, const normal &n, const point &x,
-														  const bool internal) const override;
+	virtual std::shared_ptr<ray> refract(const direction &i, const normal &n, const position &x,
+										 const bool &internal) const override;
 
 	virtual const float get_transmittance() const override;
 };

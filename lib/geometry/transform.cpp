@@ -19,8 +19,8 @@ transform transform::operator()(const transform &t) const {
 					 std::shared_ptr<mat4>(new mat4(*t.inv_trans*(*this->inv_trans))));
 }
 
-point transform::operator()(const point &p) const {
-	return point(*this->trans*p);
+position transform::operator()(const position &p) const {
+	return position(*this->trans*p);
 }
 
 direction transform::operator()(const direction &v) const {

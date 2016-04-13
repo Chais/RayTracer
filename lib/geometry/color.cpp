@@ -18,12 +18,12 @@ color::color(const color &in) {
 
 float &color::operator[](const unsigned long i) {
 	assert(0 <= i && i <= 2);
-	return this->v[i];
+	return v[i];
 }
 
 const float &color::operator[](const unsigned long i) const {
 	assert(0 <= i && i <= 2);
-	return this->v[i];
+	return v[i];
 }
 
 std::ostream &operator<<(std::ostream &out, const color &a) {
@@ -43,26 +43,26 @@ color &operator+=(color &lhs, const color &rhs) {
 }
 
 color operator*(const color &lhs, const float &rhs) {
-	return color(lhs[0]*rhs, lhs[1]*rhs, lhs[2]*rhs);
+	return color(lhs[0] * rhs, lhs[1] * rhs, lhs[2] * rhs);
 }
 
 color operator*(const float &lhs, const color &rhs) {
-	return color(lhs*rhs[0], lhs*rhs[1], lhs*rhs[2]);
+	return color(lhs * rhs[0], lhs * rhs[1], lhs * rhs[2]);
 }
 
 color scale(const color &col, const std::array<float, 3> &sf) {
-	return color(col[0]*sf[0], col[1]*sf[1], col[2]*sf[2]);
+	return color(col[0] * sf[0], col[1] * sf[1], col[2] * sf[2]);
 }
 
 color scale(const color &col, const color &sf) {
-	return color(col[0]*sf[0], col[1]*sf[1], col[2]*sf[2]);
+	return color(col[0] * sf[0], col[1] * sf[1], col[2] * sf[2]);
 }
 
 std::array<unsigned char, 3> rgb(const color &col) {
 	std::array<unsigned char, 3> out = {{
-												static_cast<unsigned char>(col[0] > 1 ? 255 : std::round(col[0]*255)),
-												static_cast<unsigned char>(col[1] > 1 ? 255 : std::round(col[1]*255)),
-												static_cast<unsigned char>(col[2] > 1 ? 255 : std::round(col[2]*255))
-							  }};
+												static_cast<unsigned char>(col[0] > 1 ? 255 : std::round(col[0] * 255)),
+												static_cast<unsigned char>(col[1] > 1 ? 255 : std::round(col[1] * 255)),
+												static_cast<unsigned char>(col[2] > 1 ? 255 : std::round(col[2] * 255))
+										}};
 	return out;
 }

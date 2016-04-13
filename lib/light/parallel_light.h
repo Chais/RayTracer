@@ -6,17 +6,18 @@
 #define RAY_TRACER_PARALLEL_LIGHT_H
 
 #include "light.h"
-#include "../geometry/shapes/shape.h"
+#include "../geometry/shapes/point.h"
+#include "../geometry/material/solid_material.h"
 
 /**
  * Models a parallel light source
  */
-class parallel_light: public light, public shape {
+class parallel_light : public light, public point {
 public:
 	/**
 	 * @copydoc light::light()
 	 */
-	parallel_light(const std::shared_ptr<color> &col, const std::shared_ptr<direction> &dir);
+	parallel_light(const std::shared_ptr<color> emit_col, const direction &emit_dir);
 
 	friend std::ostream &operator<<(std::ostream &out, const parallel_light &a);
 
@@ -24,18 +25,19 @@ public:
 	 * @copybrief light::get_direction()
 	 *
 	 * Returns the \ref direction stored in \p light::dir
-	 * @copydetails light::get_direction()
+	 * @copydetails light::get_directions()
 	 */
-	virtual const std::shared_ptr<direction> get_direction(const point &pos) const;
+	virtual const std::shared_ptr<std::vector<direction>> get_directions(const position &pos,
+																		 const unsigned long &samples) const;
 
 	/**
 	 * @copydoc ambient_light::emit()
 	 */
 	virtual const std::shared_ptr<color> emit(const direction &dir) const;
 
-	virtual intersection intersect_full(const ray &r) override;
+	virtual intersection intersect_full(const ray &r) const override;
 
-	virtual bool intersect_shadow(const point &o, const direction &d) const override;
+	virtual bool intersect_shadow(const position &o, const direction &d) const override;
 };
 
 #endif //RAY_TRACER_PARALLEL_LIGHT_H

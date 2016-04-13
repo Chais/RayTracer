@@ -11,7 +11,9 @@
 		<resolution horizontal="512" vertical="512"/>
 		<max_bounces n="8"/>
 		<sampling type="random" n="16"/>
-		<focus d="2"/>
+		<focus d="10"/>
+		<defocus d="4"/>
+		<aperture d="0.2"/>
 	</camera>
 	<lights>
 		<ambient_light>
@@ -24,9 +26,9 @@
 	</lights>
 	<surfaces>
 		<mesh name="plane_small.obj">
-			<material type="phong">
+			<material type="lambertian">
 				<color r="1.0" g="1.0" b="1.0"/>
-				<phong ka="0.3" kd="0.9" ks="1.0" exponent="20"/>
+				<lambertian ka="0.3" kd="0.9"/>
 			</material>
 			<transform>
 				<scale x="5.1" y="5.1" z="1.0"/>
@@ -34,9 +36,9 @@
 			</transform>
 		</mesh>
 		<mesh name="plane_small.obj">
-			<material type="phong">
+			<material type="lambertian">
 				<color r="1.0" g="1.0" b="1.0"/>
-				<phong ka="0.3" kd="0.9" ks="1.0" exponent="20"/>
+				<lambertian ka="0.3" kd="0.9"/>
 			</material>
 			<transform>
 				<scale x="5.1" y="5.1" z="1.0"/>
@@ -45,9 +47,9 @@
 			</transform>
 		</mesh>
 		<mesh name="plane_small.obj">
-			<material type="phong">
+			<material type="lambertian">
 				<color r="1.0" g="1.0" b="1.0"/>
-				<phong ka="0.3" kd="0.9" ks="1.0" exponent="20"/>
+				<lambertian ka="0.3" kd="0.9"/>
 			</material>
 			<transform>
 				<scale x="5.1" y="5.1" z="1.0"/>
@@ -56,9 +58,19 @@
 			</transform>
 		</mesh>
 		<mesh name="plane_small.obj">
-			<material type="phong">
+			<material type="lambertian">
+				<color r="1.0" g="1.0" b="1.0"/>
+				<lambertian ka="0.3" kd="0.9"/>
+			</material>
+			<transform>
+				<scale x="5.1" y="5.1" z="1.0"/>
+				<rotateX theta="180.0"/>
+			</transform>
+		</mesh>
+		<mesh name="plane_small.obj">
+			<material type="lambertian">
 				<color r="1.0" g="0.0" b="0.0"/>
-				<phong ka="0.3" kd="0.9" ks="1.0" exponent="20"/>
+				<lambertian ka="0.3" kd="0.9"/>
 			</material>
 			<transform>
 				<scale x="5.1" y="5.1" z="1.0"/>
@@ -67,9 +79,9 @@
 			</transform>
 		</mesh>
 		<mesh name="plane_small.obj">
-			<material type="phong">
+			<material type="lambertian">
 				<color r="0.0" g="1.0" b="0.0"/>
-				<phong ka="0.3" kd="0.9" ks="1.0" exponent="20"/>
+				<lambertian ka="0.3" kd="0.9"/>
 			</material>
 			<transform>
 				<scale x="5.1" y="5.1" z="1.0"/>

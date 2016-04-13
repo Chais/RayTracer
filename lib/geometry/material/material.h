@@ -20,7 +20,11 @@
  */
 class material {
 protected:
-	material() { };
+	const std::shared_ptr<color> emit_col;
+	const std::shared_ptr<color> col;
+
+	material(const std::shared_ptr<color> emit_col, const std::shared_ptr<color> col);
+
 public:
 	/**
 	 * @brief Shades the material
@@ -29,15 +33,14 @@ public:
 	 * and viewing direction as well as the normal and whether the material is viewed from the inside or the outside.
 	 * @param lcol     The color of the light
 	 * @param l        The direction the light is in. Expected to be a 0 vector for ambient light.
-	 * @param n        The normal at the point that is being shaded
+	 * @param n        The normal at the position that is being shaded
 	 * @param v        The direction the ray is coming from
 	 * @param pos      The texture coordinates as calculated by shape::intersect_full
 	 * @param internal A flag denoting whether the ray originated from inside (true) or outside (false) the shape this material belongs to.
 	 * @return         The base color multiplied by a factor according to the viewing situation
 	 */
-	virtual std::shared_ptr<color> shade
-		(const color &lcol, const direction &l, const normal &n, const direction &v, const vec2 &pos,
-		 const bool internal) const = 0;
+	virtual const std::shared_ptr<color> shade(const color &lcol, const direction &l, const normal &n,
+											   const direction &v, const vec2 &pos, const bool &internal) const = 0;
 
 	/**
 	 * @brief Reflects a ray
@@ -47,8 +50,7 @@ public:
 	 * @param s The number of samples
 	 * @return The reflected ray(s)
 	 */
-	virtual std::shared_ptr<std::vector<ray>> reflect(const direction &i, const normal &n, const point &x,
-													  const unsigned int &s) const = 0;
+	virtual std::shared_ptr<ray> reflect(const direction &i, const normal &n, const position &x) const = 0;
 
 	/**
   	 * @brief Refracts a ray according to Snell's law
@@ -60,13 +62,13 @@ public:
 	 * @param internal A flag denoting whether the ray originated from inside (true) or outside (false) the shape this material belongs
 	 * @return The refracted ray(s)
   	 */
-	virtual std::shared_ptr<std::vector<ray>> refract(const direction &i, const normal &n, const point &x,
-													  const bool internal) const = 0;
+	virtual std::shared_ptr<ray> refract(const direction &i, const normal &n, const position &x,
+										 const bool &internal) const = 0;
 
-  	/**
-  	 * @brief Returns the reflectance
-  	 * @return The reflectance
-  	 */
+	/**
+	 * @brief Returns the reflectance
+	 * @return The reflectance
+	 */
 	virtual const float get_reflectance() const = 0;
 
 	/**
@@ -74,6 +76,8 @@ public:
 	 * @return The transmittance
 	 */
 	virtual const float get_transmittance() const = 0;
+
+	const std::shared_ptr<color> get_emit_col() const;
 };
 
 #endif //RAY_TRACER_MATERIAL_H

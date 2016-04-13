@@ -1,7 +1,7 @@
 <?xml version="1.0" standalone="no" ?>
 <!DOCTYPE scene SYSTEM "scene.dtd">
 
-<scene output_file="example7.png">
+<scene output_file="example7.png" renderer="pathtracer">
 	<background_color r="0.0" g="0.0" b="0.0"/>
 	<camera type="realistic">
 		<position x="0.0" y="0.0" z="5.0"/>
@@ -10,24 +10,32 @@
 		<horizontal_fov angle="45"/>
 		<resolution horizontal="512" vertical="512"/>
 		<max_bounces n="8"/>
-		<sampling type="random" n="64"/>
-		<focus d="8"/>
-		<defocus d="0.002"/>
+		<shadow_rays n="1"/>
+		<sampling type="random" n="32"/>
+		<focus d="13"/>
+		<defocus d="4"/>
 		<aperture d="0.2"/>
 	</camera>
 	<lights>
-		<ambient_light>
-			<color r="1.0" g="1.0" b="1.0"/>
-		</ambient_light>
-		<point_light>
+		<sphere_light>
 			<color r="0.8" g="0.8" b="0.8"/>
-			<position x="0.0" y="4.8" z="-5.0"/>
-		</point_light>
+			<position x="0.0" y="0.0" z="0.0"/>
+			<sphere radius="1">
+				<material type="solid">
+					<emit r="0.8" g="0.8" b="0.8"/>
+					<color r="0.8" g="0.8" b="0.8"/>
+				</material>
+				<transform>
+					<translate x="0.0" y="5.0" z="-5.0"/>
+				</transform>
+			</sphere>
+		</sphere_light>
 	</lights>
 	<surfaces>
 		<mesh name="plane_small.obj">
 			<material type="lambertian">
 				<color r="1.0" g="1.0" b="1.0"/>
+				<emit r="0.0" g="0.0" b="0.0"/>
 				<lambertian ka="0.3" kd="0.9"/>
 			</material>
 			<transform>
@@ -38,6 +46,7 @@
 		<mesh name="plane_small.obj">
 			<material type="lambertian">
 				<color r="1.0" g="1.0" b="1.0"/>
+				<emit r="0.0" g="0.0" b="0.0"/>
 				<lambertian ka="0.3" kd="0.9"/>
 			</material>
 			<transform>
@@ -49,6 +58,7 @@
 		<mesh name="plane_small.obj">
 			<material type="lambertian">
 				<color r="1.0" g="1.0" b="1.0"/>
+				<emit r="0.0" g="0.0" b="0.0"/>
 				<lambertian ka="0.3" kd="0.9"/>
 			</material>
 			<transform>
@@ -60,6 +70,7 @@
 		<mesh name="plane_small.obj">
 			<material type="lambertian">
 				<color r="1.0" g="1.0" b="1.0"/>
+				<emit r="0.0" g="0.0" b="0.0"/>
 				<lambertian ka="0.3" kd="0.9"/>
 			</material>
 			<transform>
@@ -70,6 +81,7 @@
 		<mesh name="plane_small.obj">
 			<material type="lambertian">
 				<color r="1.0" g="0.0" b="0.0"/>
+				<emit r="0.0" g="0.0" b="0.0"/>
 				<lambertian ka="0.3" kd="0.9"/>
 			</material>
 			<transform>
@@ -81,6 +93,7 @@
 		<mesh name="plane_small.obj">
 			<material type="lambertian">
 				<color r="0.0" g="1.0" b="0.0"/>
+				<emit r="0.0" g="0.0" b="0.0"/>
 				<lambertian ka="0.3" kd="0.9"/>
 			</material>
 			<transform>
@@ -92,6 +105,7 @@
 		<sphere radius="2">
 			<material type="specular">
 				<color r="0.1" g="0.1" b="0.1"/>
+				<emit r="0.0" g="0.0" b="0.0"/>
 				<phong ka="0.3" kd="0.9" ks="1.0" exponent="200"/>
 				<reflectance r="0.9"/>
 			</material>
@@ -102,9 +116,10 @@
 		<sphere radius="2">
 			<material type="transparent">
 				<color r="0.1" g="0.1" b="0.1"/>
+				<emit r="0.0" g="0.0" b="0.0"/>
 				<phong ka="0.3" kd="0.9" ks="1.0" exponent="200"/>
-				<reflectance r="0"/>
-				<transmittance t="0.9"/>
+				<reflectance r="0.1"/>
+				<transmittance t="0.8"/>
 				<refraction iof="1.52"/>
 			</material>
 			<transform>

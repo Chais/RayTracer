@@ -22,12 +22,13 @@ public:
 	 * @param exponent The specular exponent
 	 * @param texture  The texture data
 	 */
-	textured_material(const float &ambient, const float &diffuse, const float &specular,
+	textured_material(const std::shared_ptr<color> emit_col, const float &ambient, const float &diffuse,
+					  const float &specular,
 					  const float &exponent, std::shared_ptr<std::vector<std::vector<color>>> texture);
 
-	virtual std::shared_ptr<color>
-		shade(const color &lcol, const direction &l, const normal &n, const direction &v, const vec2 &pos,
-			  const bool internal) const override;
+	virtual const std::shared_ptr<color> shade(const color &lcol, const direction &l, const normal &n,
+											   const direction &v,
+											   const vec2 &pos, const bool &internal) const override;
 };
 
 #endif //RAY_TRACER_TEXTURED_MATERIAL_H

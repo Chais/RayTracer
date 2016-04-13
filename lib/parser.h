@@ -5,12 +5,16 @@
 #ifndef RAY_TRACER_PARSER_H
 #define RAY_TRACER_PARSER_H
 
-#include "whitted_rt.h"
+#include "renderer/whitted_rt.h"
+#include "renderer/pathtracer.h"
 #include "camera/perspective_camera.h"
 #include "camera/realistic_camera.h"
 #include "light/ambient_light.h"
 #include "light/parallel_light.h"
 #include "light/point_light.h"
+#include "light/lambertian_light.h"
+#include "light/mesh_light.h"
+#include "light/sphere_light.h"
 #include "geometry/shapes/sphere.h"
 #include "geometry/shapes/mesh.h"
 #include "geometry/material/phong_material.h"
@@ -70,11 +74,17 @@ private:
 	static std::shared_ptr<parallel_light> parse_parallel_light(const pugi::xml_node &l);
 
 	/**
-	 * @brief Parses a point light
+	 * @brief Parses a position light
 	 * @param l The \<point_light\> node
 	 * @return  A shared_ptr to a point_light object
 	 */
 	static std::shared_ptr<point_light> parse_point_light(const pugi::xml_node &l);
+
+	static std::shared_ptr<lambertian_light> parse_lambertian_light(const pugi::xml_node &l);
+
+	static std::shared_ptr<mesh_light> parse_mesh_light(const pugi::xml_node &l);
+
+	static std::shared_ptr<sphere_light> parse_sphere_light(const pugi::xml_node &l);
 
 	/**
 	 * @brief Parses all surfaces into a vector
@@ -90,7 +100,7 @@ private:
 	 * @param s The \<sphere\> node
 	 * @return  A shared_ptr to a sphere object
 	 */
-	static std::shared_ptr<sphere> parse_sphere(pugi::xml_node &s);
+	static std::shared_ptr<sphere> parse_sphere(const pugi::xml_node &s);
 
 	/**
 	 * @brief Parses a mesh
@@ -127,16 +137,16 @@ private:
 	/**
 	 * @brief Parses a position
 	 * @param p The \<position\> node
-	 * @return  A shared_ptr to a point object
+	 * @return  A shared_ptr to a position object
 	 */
-	static std::shared_ptr<point> parse_position(const pugi::xml_node &p);
+	static position parse_position(const pugi::xml_node &p);
 
 	/**
 	 * @brief Parses a direction
 	 * @param d The \<direction\> node
 	 * @return  A shared_ptr to a direction object
 	 */
-	static std::shared_ptr<direction> parse_direction(const pugi::xml_node &d);
+	static direction parse_direction(const pugi::xml_node &d);
 
 	/**
 	 * @brief Loads an image from the disk
@@ -151,6 +161,7 @@ private:
 
 	static std::shared_ptr<sampler> parse_random_sampler(const pugi::xml_node &node);
 
+	static std::shared_ptr<whitted_rt> parse_whitted_rt(const pugi::xml_node &scene);
 public:
 	/**
 	 * @brief Parses an XML file
@@ -158,7 +169,9 @@ public:
 	 * @param out_path The variable to store the output path (specified in the XML file)
 	 * @return         A shared_ptr to a whitted_rt object that complies to the specifications in the XML file
 	 */
-	static std::shared_ptr<whitted_rt> parse(const char *in_path, std::string &out_path);
+	static std::shared_ptr<renderer> parse(const char *in_path, std::string &out_path);
+
+	static std::shared_ptr<renderer> parse_pathtracer(const pugi::xml_node &scene);
 };
 
 #endif //RAY_TRACER_PARSER_H
