@@ -15,24 +15,24 @@ transform::transform(const transform &in) : trans(in.trans), inv_trans(in.inv_tr
 
 
 transform transform::operator()(const transform &t) const {
-	return transform(std::shared_ptr<mat4>(new mat4(*this->trans*(*t.trans))),
-					 std::shared_ptr<mat4>(new mat4(*t.inv_trans*(*this->inv_trans))));
+	return transform(std::shared_ptr<mat4>(new mat4(*trans*(*t.trans))),
+					 std::shared_ptr<mat4>(new mat4(*t.inv_trans*(*inv_trans))));
 }
 
 position transform::operator()(const position &p) const {
-	return position(*this->trans*p);
+	return position(*trans*p);
 }
 
 direction transform::operator()(const direction &v) const {
-	return direction(*this->trans*v);
+	return direction(*trans*v);
 }
 
 normal transform::operator()(const normal &n) const {
-	return normal(transpose(*this->inv_trans)*n);
+	return normal(transpose(*inv_trans)*n);
 }
 
 ray transform::operator()(const ray &r) const {
-	return ray(*this->trans*r.o, *this->trans*r.d);
+	return ray(*trans*r.o, *trans*r.d);
 }
 
 std::ostream &operator<<(std::ostream &out, const transform &a) {
@@ -53,8 +53,8 @@ void transform::translate(const direction t) {
 													{0, 0, 1, -t[2]},
 													{0, 0, 0, 1}
 												}};
-	*this->trans = mat4(tmp)*(*this->trans);
-	*this->inv_trans = *this->inv_trans*mat4(itmp);
+	*trans = mat4(tmp)*(*trans);
+	*inv_trans = *inv_trans*mat4(itmp);
 }
 
 void transform::scale(const std::array<float, 3> sf) {
@@ -70,8 +70,8 @@ void transform::scale(const std::array<float, 3> sf) {
 													{0, 0, 1/sf[2], 0},
 													{0, 0, 0, 1}
 												}};
-	*this->trans = mat4(tmp)*(*this->trans);
-	*this->inv_trans = *this->inv_trans*mat4(itmp);
+	*trans = mat4(tmp)*(*trans);
+	*inv_trans = *inv_trans*mat4(itmp);
 }
 
 void transform::rotateX(const float &angle) {
@@ -102,8 +102,8 @@ void transform::rotateX(const float &angle) {
 													{0, -s, c, 0},
 													{0, 0, 0, 1}
 												}};
-	*this->trans = mat4(tmp)*(*this->trans);
-	*this->inv_trans = *this->inv_trans*mat4(itmp);
+	*trans = mat4(tmp)*(*trans);
+	*inv_trans = *inv_trans*mat4(itmp);
 }
 
 void transform::rotateY(const float &angle) {
@@ -134,8 +134,8 @@ void transform::rotateY(const float &angle) {
 													{s, 0, c, 0},
 													{0, 0, 0, 1}
 												}};
-	*this->trans = mat4(tmp)*(*this->trans);
-	*this->inv_trans = *this->inv_trans*mat4(itmp);
+	*trans = mat4(tmp)*(*trans);
+	*inv_trans = *inv_trans*mat4(itmp);
 }
 
 void transform::rotateZ(const float &angle) {
@@ -166,6 +166,6 @@ void transform::rotateZ(const float &angle) {
 													{0, 0, 1, 0},
 													{0, 0, 0, 1}
 												}};
-	*this->trans = mat4(tmp)*(*this->trans);
-	*this->inv_trans = *this->inv_trans*mat4(itmp);
+	*trans = mat4(tmp)*(*trans);
+	*inv_trans = *inv_trans*mat4(itmp);
 }

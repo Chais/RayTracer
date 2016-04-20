@@ -9,7 +9,7 @@ sphere_light::sphere_light(const direction &emit_dir, const direction &offset, c
 
 sphere_light::sphere_light(const std::shared_ptr<sphere> s) : light(direction()), sphere(*s) { }
 
-intersection sphere_light::find_farthest(const ray &r) const {
+intersection sphere_light::intersect_self(const ray &r) const {
 	ray tr = sphere::world_to_object(r);
 	direction c = position(-tr.o) + offset;
 	float a = std::max(float(0.0), dot(tr.d, c));
@@ -40,9 +40,9 @@ const std::shared_ptr<std::vector<direction>> sphere_light::get_directions(const
 	for (unsigned long i = 0; i < samples; i++) {
 		c[i][1] = std::acos(2 * c[i][1] - 1);
 		position lpos = object_to_world(
-				position(std::cos(c[i][0]) * std::sin(c[i][1]), std::sin(c[i][0]) * std::sin(c[i][1]),
-						 std::cos(c[i][1])));
-		intersection closest = find_farthest(ray(lpos, pos - lpos));
+				position(radius * std::cos(c[i][0]) * std::sin(c[i][1]), radius * std::sin(c[i][0]) * std::sin(c[i][1]),
+						 radius * std::cos(c[i][1])));
+		intersection closest = intersect_self(ray(lpos, pos - lpos));
 		if (closest.object)
 			out->push_back(pos - *closest.pos);
 		else

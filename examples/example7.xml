@@ -3,7 +3,7 @@
 
 <scene output_file="example7.png" renderer="pathtracer">
 	<background_color r="0.0" g="0.0" b="0.0"/>
-	<camera type="realistic">
+	<camera type="perspective">
 		<position x="0.0" y="0.0" z="5.0"/>
 		<lookat x="0.0" y="0.0" z="4.0"/>
 		<up x="0.0" y="1.0" z="0.0"/>
@@ -13,23 +13,24 @@
 		<shadow_rays n="1"/>
 		<sampling type="random" n="32"/>
 		<focus d="13"/>
-		<defocus d="4"/>
+		<defocus d="0.002"/>
 		<aperture d="0.2"/>
 	</camera>
 	<lights>
-		<sphere_light>
+		<mesh_light>
 			<color r="0.8" g="0.8" b="0.8"/>
 			<position x="0.0" y="0.0" z="0.0"/>
-			<sphere radius="1">
+			<mesh name="box.obj">
 				<material type="solid">
 					<emit r="0.8" g="0.8" b="0.8"/>
 					<color r="0.8" g="0.8" b="0.8"/>
 				</material>
 				<transform>
-					<translate x="0.0" y="5.0" z="-5.0"/>
+					<scale x="1.0" y="0.2" z="1.0"/>
+					<translate x="0.0" y="4.8" z="-5.0"/>
 				</transform>
-			</sphere>
-		</sphere_light>
+			</mesh>
+		</mesh_light>
 	</lights>
 	<surfaces>
 		<mesh name="plane_small.obj">

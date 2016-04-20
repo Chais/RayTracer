@@ -10,7 +10,6 @@
 class pathtracer : public renderer {
 protected:
 	virtual color cast_ray(ray r, int step, bool internal) override;
-	virtual std::shared_ptr<direction> rnd_in_cone(const direction &center, const float &angle) const;
 
 public:
 	pathtracer(const std::shared_ptr<color> &background_color, const std::shared_ptr<camera> &cam,

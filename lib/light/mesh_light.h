@@ -11,7 +11,7 @@
 
 class mesh_light : public light, public mesh {
 protected:
-	virtual intersection find_farthest(const ray &r) const;
+	virtual intersection intersect_self(const ray &r) const;
 
 public:
 	mesh_light(const direction &offset, const std::shared_ptr<material> &matrl,

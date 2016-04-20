@@ -33,7 +33,7 @@ intersection renderer::find_nearest(ray r) {
 	return out;
 }
 
-std::shared_ptr<color> renderer::get_pixel(const unsigned long &x, const unsigned long &y) const {
+const color &renderer::get_pixel(const unsigned long &x, const unsigned long &y) const {
 	return cam->get_pixel(x, y);
 }
 
@@ -53,13 +53,13 @@ void renderer::render() {
 #endif
 		for (unsigned long x = 0; x < resolution[0]; x++) {
 			std::shared_ptr<std::vector<ray>> rays = cam->get_rays(x, y);
-			std::vector<color> data;
-			data.reserve(rays->size());
-			for (auto &r : *rays)
-				data.push_back(cast_ray(r, 0, false));
-			cam->set_data(x, y, data);
+			color data = cam->get_pixel(x, y);
+			for (unsigned long i = 0; i<rays->size(); i++)
+				data = (data * i + cast_ray(rays->at(i), 0, false)) * (1.0f / (i + 1));
+			cam->set_pixel(x, y, data);
 		}
 		std::cout << '\r' << std::setw(6) << std::fixed << std::setprecision(2) << (completed+=perline) << " %";
 		std::cout.flush();
 	}
+	std::cout << std::endl;
 }

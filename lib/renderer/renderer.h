@@ -59,7 +59,7 @@ public:
 	 * @param y the y-coordinate of the pixel
 	 * @return The color of the pixel
 	 */
-	std::shared_ptr<color> get_pixel(const unsigned long &x, const unsigned long &y) const;
+	const color & get_pixel(const unsigned long &x, const unsigned long &y) const;
 
 	/**
 	 * @brief Returns the resolution of the camera and thus the image

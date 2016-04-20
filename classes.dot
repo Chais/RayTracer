@@ -49,7 +49,7 @@ digraph Classes {
 						 samples : unsigned long &)\l
 				+ camera()\l
 				+ get_rays(x : int, y : int) : ray &\l
-				+ set_data(x : unsigned long, y : unsigned long, data : std::vector\<color\>) : void\l
+				+ set_pixel(x : unsigned long, y : unsigned long, data : std::vector\<color\>) : void\l
 				+ get_pixel(x : int, y : int) : color\l
 		}"
 	]

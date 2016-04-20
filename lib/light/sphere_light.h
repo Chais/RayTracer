@@ -11,7 +11,7 @@
 
 class sphere_light : public light, public sphere {
 protected:
-	virtual intersection find_farthest(const ray &r) const;
+	virtual intersection intersect_self(const ray &r) const;
 public:
 	sphere_light(const direction &emit_dir, const direction &offset, const std::shared_ptr<material> &matrl,
 				 const float &radius);

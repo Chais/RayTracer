@@ -6,6 +6,7 @@
 #define RAY_TRACER_RANDOM_SAMPLER_H
 
 #include "sampler.h"
+#include "../math/mat4.h"
 
 class random_sampler : public sampler {
 public:
@@ -23,5 +24,8 @@ public:
 	virtual std::shared_ptr<std::vector<vec2>> get_2d_samples(const float &lowerx, const float &upperx,
 															  const float &lowery, const float &uppery,
 															  const unsigned long &count) const override;
+
+	virtual std::shared_ptr<std::vector<direction>> get_solid_angle_samples(const direction &centre, const float &phi,
+																			const unsigned long &count) const override;
 };
 #endif //RAY_TRACER_RANDOM_SAMPLER_H

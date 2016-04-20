@@ -8,11 +8,11 @@ mesh::mesh(const direction &offset, const std::shared_ptr<material> &matrl,
 		   std::shared_ptr<std::vector<std::shared_ptr<triangle>>> faces) : shape(offset, matrl), faces(faces) {
 	assert(faces->size() > 0);
 	aabb[0] = position(std::numeric_limits<float>::infinity(),
-					std::numeric_limits<float>::infinity(),
-					std::numeric_limits<float>::infinity());
+					   std::numeric_limits<float>::infinity(),
+					   std::numeric_limits<float>::infinity());
 	aabb[1] = position(-std::numeric_limits<float>::infinity(),
-					-std::numeric_limits<float>::infinity(),
-					-std::numeric_limits<float>::infinity());
+					   -std::numeric_limits<float>::infinity(),
+					   -std::numeric_limits<float>::infinity());
 	for (std::shared_ptr<triangle> t : *faces) {
 		std::array<position, 2> box = t->get_aabb();
 		aabb[0][0] = std::min(aabb[0][0], box[0][0]);
@@ -27,20 +27,20 @@ mesh::mesh(const direction &offset, const std::shared_ptr<material> &matrl,
 bool mesh::intersect_quick(const position &o, const direction &inv_d) const {
 	float tmin = -std::numeric_limits<float>::infinity(), tmax = std::numeric_limits<float>::infinity();
 	if (inv_d[0] != 0) {
-		float tx1 = (aabb[0][0] - o[0])*inv_d[0];
-		float tx2 = (aabb[1][0] - o[0])*inv_d[0];
+		float tx1 = (aabb[0][0] - o[0]) * inv_d[0];
+		float tx2 = (aabb[1][0] - o[0]) * inv_d[0];
 		tmin = std::max(tmin, std::min(tx1, tx2));
 		tmax = std::min(tmax, std::max(tx1, tx2));
 	}
 	if (inv_d[1] != 0) {
-		float tx1 = (aabb[0][1] - o[1])*inv_d[1];
-		float tx2 = (aabb[1][1] - o[1])*inv_d[1];
+		float tx1 = (aabb[0][1] - o[1]) * inv_d[1];
+		float tx2 = (aabb[1][1] - o[1]) * inv_d[1];
 		tmin = std::max(tmin, std::min(tx1, tx2));
 		tmax = std::min(tmax, std::max(tx1, tx2));
 	}
 	if (inv_d[2] != 0) {
-		float tx1 = (aabb[0][2] - o[2])*inv_d[2];
-		float tx2 = (aabb[1][2] - o[2])*inv_d[2];
+		float tx1 = (aabb[0][2] - o[2]) * inv_d[2];
+		float tx2 = (aabb[1][2] - o[2]) * inv_d[2];
 		tmin = std::max(tmin, std::min(tx1, tx2));
 		tmax = std::min(tmax, std::max(tx1, tx2));
 	}
@@ -51,7 +51,7 @@ intersection mesh::intersect_full(const ray &r) const {
 	intersection out = intersection();
 	ray tr = world_to_object(r);
 	tr.o = tr.o - offset;
-	const direction inv_d = direction(1/tr.d[0], 1/tr.d[1], 1/tr.d[2]);
+	const direction inv_d = direction(1 / tr.d[0], 1 / tr.d[1], 1 / tr.d[2]);
 	if (!intersect_quick(tr.o, inv_d))
 		return out;
 	float dist = std::numeric_limits<float>::max();
@@ -82,7 +82,7 @@ bool mesh::intersect_shadow(const position &o, const direction &d) const {
 	position to = world_to_object(o);
 	direction td = world_to_object(d);
 	to -= offset;
-	const direction inv_d = direction(1/td[0], 1/td[1], 1/td[2]);
+	const direction inv_d = direction(1 / td[0], 1 / td[1], 1 / td[2]);
 	if (!intersect_quick(to, inv_d))
 		return false;
 	for (std::shared_ptr<triangle> t : *faces)

@@ -14,7 +14,7 @@
 class camera {
 protected:
 	transform transforms;
-	std::vector<std::vector<std::vector<color>>> data;
+	std::vector<std::vector<color>> data;
 
 	camera() { };
 
@@ -66,7 +66,7 @@ public:
 	 *
 	 * @param &data the std::vector of colors contributing the the pixel
 	 */
-	void set_data(const unsigned long &x, const unsigned long &y, const std::vector<color> data);
+	void set_pixel(const unsigned long &x, const unsigned long &y, const color &data);
 
 	/**
 	 * @brief Returns the color of a pixel
@@ -79,7 +79,7 @@ public:
 	 *
 	 * @return the final color of the pixel with the given coordinates
 	 */
-	std::shared_ptr<color> get_pixel(const unsigned long &x, const unsigned long &y) const;
+	const color & get_pixel(const unsigned long &x, const unsigned long &y) const;
 };
 
 #endif //RAY_TRACER_CAMERA_H

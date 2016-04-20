@@ -21,21 +21,17 @@ camera::camera(const position &pos, const position &look_at, const direction &up
 	std::shared_ptr<mat4> m(new mat4(d));
 	transforms = transform(m);
 	data.resize(resolution[0]);
-	for (auto &i : data) {
+	for (std::vector<color> &i : data) {
 		i.resize(resolution[1]);
-		for (auto &j : i)
-			j.resize(samples);
+		for (color &j : i)
+			j = color();
 	}
 }
 
-void camera::set_data(const unsigned long &x, const unsigned long &y, const std::vector<color> data) {
+void camera::set_pixel(const unsigned long &x, const unsigned long &y, const color &data) {
 	this->data[x][y] = data;
 }
 
-std::shared_ptr<color> camera::get_pixel(const unsigned long &x, const unsigned long &y) const {
-	std::shared_ptr<color> out(new color());
-	for (auto &i : data[x][y])
-		*out += i;
-	*out = *out * (1.0f / data[x][y].size());
-	return out;
+const color &camera::get_pixel(const unsigned long &x, const unsigned long &y) const {
+	return data[x][y];
 }
