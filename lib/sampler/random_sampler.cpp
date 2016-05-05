@@ -66,8 +66,8 @@ std::shared_ptr<std::vector<direction>> random_sampler::get_solid_angle_samples(
 	else
 		ax[2] = 1;
 	direction u = normalise(cross(c, ax)), v = cross(u, c);
-	std::vector<vec2> samples = *get_2d_samples(0, static_cast<float>(2 * M_PI), phi / static_cast<float>(M_PI), 1,
-												count);
+	std::vector<vec2> samples = *get_2d_samples(0, static_cast<float>(2 * M_PI), (1 - phi / static_cast<float>(M_PI)),
+												1, count);
 	std::shared_ptr<std::vector<direction>> out = std::shared_ptr<std::vector<direction>>(new std::vector<direction>());
 	for (vec2 s : samples) {
 		s[1] = std::acos(2 * s[1] - 1);

@@ -40,6 +40,8 @@ public:
 	 * @copydetails light::emit()
 	 */
 	virtual const std::shared_ptr<color> emit(const direction &dir) const;
+
+	virtual const std::shared_ptr<std::vector<ray>> shed(unsigned long samples) const override;
 };
 
 #endif //RAY_TRACER_AMBIENT_LIGHT_H

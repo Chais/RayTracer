@@ -23,6 +23,8 @@ public:
 																		 const unsigned long &samples) const override;
 
 	virtual const std::shared_ptr<color> emit(const direction &dir) const override;
+
+	virtual const std::shared_ptr<std::vector<ray>> shed(unsigned long samples) const override;
 };
 
 #endif //RAY_TRACER_MESH_LIGHT_H

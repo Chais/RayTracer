@@ -1,7 +1,7 @@
 <?xml version="1.0" standalone="no" ?>
 <!DOCTYPE scene SYSTEM "scene.dtd">
 
-<scene output_file="example3.png">
+<scene output_file="example3.png" renderer="raytracer">
 	<background_color r="0.0" g="0.0" b="0.0"/>
 	<camera type="perspective">
 		<position x="0.0" y="0.0" z="1.0"/>
@@ -10,8 +10,11 @@
 		<horizontal_fov angle="45"/>
 		<resolution horizontal="512" vertical="512"/>
 		<max_bounces n="8"/>
-		<sampling type="random" n="64"/>
-		<focus d="2"/>
+		<shadow_rays n="1"/>
+		<sampling type="random" n="1"/>
+		<focus d="13"/>
+		<defocus d="0.002"/>
+		<aperture d="0.2"/>
 	</camera>
 	<lights>
 		<ambient_light>
@@ -32,9 +35,9 @@
 		</sphere>
 		<sphere radius="1.0">
 			<position x="0.0" y="0.0" z="-3.0"/>
-			<material type="lambertian">
+			<material type="phong">
 				<color r="0.5" g="0.17" b="0.18"/>
-				<lambertian ka="0.3" kd="0.9"/> <!--ks="1.0" exponent="200"/>-->
+				<phong ka="0.3" kd="0.9" ks="1.0" exponent="200"/>
 			</material>
 		</sphere>
 		<sphere radius="1.0">

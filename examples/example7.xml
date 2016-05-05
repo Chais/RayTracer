@@ -1,7 +1,7 @@
 <?xml version="1.0" standalone="no" ?>
 <!DOCTYPE scene SYSTEM "scene.dtd">
 
-<scene output_file="example7.png" renderer="pathtracer">
+<scene output_file="example7.png" renderer="vpl">
 	<background_color r="0.0" g="0.0" b="0.0"/>
 	<camera type="perspective">
 		<position x="0.0" y="0.0" z="5.0"/>
@@ -11,7 +11,7 @@
 		<resolution horizontal="512" vertical="512"/>
 		<max_bounces n="8"/>
 		<shadow_rays n="1"/>
-		<sampling type="random" n="32"/>
+		<sampling type="none" n="1"/>
 		<focus d="13"/>
 		<defocus d="0.002"/>
 		<aperture d="0.2"/>
@@ -19,15 +19,15 @@
 	<lights>
 		<mesh_light>
 			<color r="0.8" g="0.8" b="0.8"/>
-			<position x="0.0" y="0.0" z="0.0"/>
-			<mesh name="box.obj">
+			<position x="0.0" y="4.5" z="-5.0"/>
+			<mesh name="plane_small.obj">
 				<material type="solid">
 					<emit r="0.8" g="0.8" b="0.8"/>
 					<color r="0.8" g="0.8" b="0.8"/>
 				</material>
 				<transform>
-					<scale x="1.0" y="0.2" z="1.0"/>
-					<translate x="0.0" y="4.8" z="-5.0"/>
+					<rotateX theta="90"/>
+					<translate x="0.0" y="4.999" z="-5.0"/>
 				</transform>
 			</mesh>
 		</mesh_light>
@@ -104,10 +104,10 @@
 			</transform>
 		</mesh>
 		<sphere radius="2">
-			<material type="specular">
-				<color r="0.1" g="0.1" b="0.1"/>
+			<material type="lambertian">
+				<color r="1.0" g="1.0" b="1.0"/>
 				<emit r="0.0" g="0.0" b="0.0"/>
-				<phong ka="0.3" kd="0.9" ks="1.0" exponent="200"/>
+				<lambertian ka="0.3" kd="0.9" ks="1.0" exponent="200"/>
 				<reflectance r="0.9"/>
 			</material>
 			<transform>
@@ -115,10 +115,10 @@
 			</transform>
 		</sphere>
 		<sphere radius="2">
-			<material type="transparent">
-				<color r="0.1" g="0.1" b="0.1"/>
+			<material type="lambertian">
+				<color r="1.0" g="1.0" b="1.0"/>
 				<emit r="0.0" g="0.0" b="0.0"/>
-				<phong ka="0.3" kd="0.9" ks="1.0" exponent="200"/>
+				<lambertian ka="0.3" kd="0.9" ks="1.0" exponent="200"/>
 				<reflectance r="0.1"/>
 				<transmittance t="0.8"/>
 				<refraction iof="1.52"/>

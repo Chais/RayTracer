@@ -2,7 +2,6 @@
 // Created by chais on 01/04/16.
 //
 
-#include <iomanip>
 #include "renderer.h"
 
 renderer::renderer(const std::shared_ptr<color> &background_color, const std::shared_ptr<camera> &cam,
@@ -45,6 +44,7 @@ void renderer::render() {
 	const std::array<unsigned long, 2> resolution = cam->resolution;
 	float completed = 0;
 	float perline = 100.0f/resolution[1];
+	std::cout << "Rendering..." << std::endl;
 	std::cout << '\r' << std::setw(6) << std::fixed << std::setprecision(2) << completed << " %";
 	std::cout.flush();
 	for (unsigned long y = 0; y < resolution[1]; y++) {

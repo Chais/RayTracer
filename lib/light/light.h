@@ -8,6 +8,7 @@
 #include "../geometry/direction.h"
 #include "../geometry/position.h"
 #include "../geometry/color.h"
+#include "../geometry/ray.h"
 #include <memory>
 #include <ostream>
 
@@ -41,5 +42,7 @@ public:
 	 * @return    The \ref color of the emitted light
 	 */
 	virtual const std::shared_ptr<color> emit(const direction &dir) const = 0;
+
+	virtual const std::shared_ptr<std::vector<ray>> shed(unsigned long samples) const = 0;
 };
 #endif //RAY_TRACER_LIGHT_H

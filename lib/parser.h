@@ -7,12 +7,13 @@
 
 #include "renderer/whitted_rt.h"
 #include "renderer/pathtracer.h"
+#include "renderer/vpl.h"
 #include "camera/perspective_camera.h"
 #include "camera/realistic_camera.h"
 #include "light/ambient_light.h"
 #include "light/parallel_light.h"
 #include "light/point_light.h"
-#include "light/lambertian_light.h"
+#include "light/cosine_light.h"
 #include "light/mesh_light.h"
 #include "light/sphere_light.h"
 #include "geometry/shapes/sphere.h"
@@ -80,7 +81,7 @@ private:
 	 */
 	static std::shared_ptr<point_light> parse_point_light(const pugi::xml_node &l);
 
-	static std::shared_ptr<lambertian_light> parse_lambertian_light(const pugi::xml_node &l);
+	static std::shared_ptr<cosine_light> parse_lambertian_light(const pugi::xml_node &l);
 
 	static std::shared_ptr<mesh_light> parse_mesh_light(const pugi::xml_node &l);
 
@@ -162,6 +163,10 @@ private:
 	static std::shared_ptr<sampler> parse_random_sampler(const pugi::xml_node &node);
 
 	static std::shared_ptr<whitted_rt> parse_whitted_rt(const pugi::xml_node &scene);
+
+	static std::shared_ptr<pathtracer> parse_pathtracer(const pugi::xml_node &scene);
+
+	static std::shared_ptr<vpl> parse_vpl(const pugi::xml_node &scene);
 public:
 	/**
 	 * @brief Parses an XML file
@@ -170,8 +175,6 @@ public:
 	 * @return         A shared_ptr to a whitted_rt object that complies to the specifications in the XML file
 	 */
 	static std::shared_ptr<renderer> parse(const char *in_path, std::string &out_path);
-
-	static std::shared_ptr<renderer> parse_pathtracer(const pugi::xml_node &scene);
 };
 
 #endif //RAY_TRACER_PARSER_H

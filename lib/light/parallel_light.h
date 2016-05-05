@@ -38,6 +38,8 @@ public:
 	virtual intersection intersect_full(const ray &r) const override;
 
 	virtual bool intersect_shadow(const position &o, const direction &d) const override;
+
+	virtual const std::shared_ptr<std::vector<ray>> shed(unsigned long samples) const override;
 };
 
 #endif //RAY_TRACER_PARALLEL_LIGHT_H

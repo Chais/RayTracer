@@ -54,13 +54,15 @@ add_library(geometry STATIC lib/geometry/color.cpp lib/geometry/direction.cpp li
 target_link_libraries(geometry math)
 
 add_library(light STATIC lib/light/light.cpp lib/light/ambient_light.cpp lib/light/parallel_light.cpp
-		lib/light/point_light.cpp lib/light/lambertian_light.cpp lib/light/mesh_light.cpp lib/light/sphere_light.cpp)
+		lib/light/point_light.cpp lib/light/cosine_light.cpp lib/light/mesh_light.cpp lib/light/sphere_light.cpp
+		lib/light/hemisphere_light.cpp)
 target_link_libraries(light geometry)
 
 add_library(camera STATIC lib/camera/camera.cpp lib/camera/perspective_camera.cpp lib/camera/realistic_camera.cpp)
 target_link_libraries(camera sampler geometry)
 
-add_library(renderer STATIC lib/renderer/renderer.cpp lib/renderer/whitted_rt.cpp lib/renderer/pathtracer.cpp)
+add_library(renderer STATIC lib/renderer/renderer.cpp lib/renderer/whitted_rt.cpp lib/renderer/pathtracer.cpp
+		lib/renderer/vpl.cpp)
 target_link_libraries(renderer camera light)
 
 add_library(parser STATIC lib/parser.cpp lib/tiny_obj_loader.cpp)

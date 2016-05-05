@@ -14,6 +14,8 @@ std::shared_ptr<renderer> parser::parse(const char *in_path, std::string &out_pa
 		return parse_whitted_rt(scene);
 	if (std::string(scene.attribute("renderer").value()) == "pathtracer")
 		return parse_pathtracer(scene);
+	if (std::string(scene.attribute("renderer").value()) == "vpl")
+		return parse_vpl(scene);
 	return std::shared_ptr<renderer>();
 }
 
@@ -27,7 +29,7 @@ std::shared_ptr<whitted_rt> parser::parse_whitted_rt(const pugi::xml_node &scene
 	return std::shared_ptr<whitted_rt>(new whitted_rt(background_color, cam, lights, geometry));
 }
 
-std::shared_ptr<renderer> parser::parse_pathtracer(const pugi::xml_node &scene) {
+std::shared_ptr<pathtracer> parser::parse_pathtracer(const pugi::xml_node &scene) {
 	const std::shared_ptr<color> background_color = parse_color(scene.child("background_color"));
 	std::shared_ptr<camera> cam = parse_camera(scene.child("camera"));
 	std::shared_ptr<std::vector<std::shared_ptr<light>>> lights = parse_lights(scene.child("lights"));
@@ -35,6 +37,16 @@ std::shared_ptr<renderer> parser::parse_pathtracer(const pugi::xml_node &scene) 
 	for (std::shared_ptr<light> l : *lights)
 		geometry->push_back(std::dynamic_pointer_cast<shape>(l));
 	return std::shared_ptr<pathtracer>(new pathtracer(background_color, cam, lights, geometry));
+}
+
+std::shared_ptr<vpl> parser::parse_vpl(const pugi::xml_node &scene) {
+	const std::shared_ptr<color> background_color = parse_color(scene.child("background_color"));
+	std::shared_ptr<camera> cam = parse_camera(scene.child("camera"));
+	std::shared_ptr<std::vector<std::shared_ptr<light>>> lights = parse_lights(scene.child("lights"));
+	std::shared_ptr<std::vector<std::shared_ptr<shape>>> geometry = parse_surfaces(scene.child("surfaces"));
+	for (std::shared_ptr<light> l : *lights)
+		geometry->push_back(std::dynamic_pointer_cast<shape>(l));
+	return std::shared_ptr<vpl>(new vpl(background_color, cam, lights, geometry));
 }
 
 std::shared_ptr<camera> parser::parse_camera(const pugi::xml_node &cam) {
@@ -95,7 +107,7 @@ std::shared_ptr<std::vector<std::shared_ptr<light>>> parser::parse_lights(const 
 		out->push_back(parse_parallel_light(l));
 	for (pugi::xml_node l : lights.children("point_light"))
 		out->push_back(parse_point_light(l));
-	for (pugi::xml_node l : lights.children("lambertian_light"))
+	for (pugi::xml_node l : lights.children("cosine_light"))
 		out->push_back(parse_lambertian_light(l));
 	for (pugi::xml_node l : lights.children("mesh_light"))
 		out->push_back(parse_mesh_light(l));
@@ -118,8 +130,8 @@ std::shared_ptr<point_light> parser::parse_point_light(const pugi::xml_node &l) 
 														parse_direction(l.child("position"))));
 }
 
-std::shared_ptr<lambertian_light> parser::parse_lambertian_light(const pugi::xml_node &l) {
-	return std::shared_ptr<lambertian_light>(new lambertian_light(parse_color(l.child("color")),
+std::shared_ptr<cosine_light> parser::parse_lambertian_light(const pugi::xml_node &l) {
+	return std::shared_ptr<cosine_light>(new cosine_light(parse_color(l.child("color")),
 																  parse_direction(l.child("direction")),
 																  parse_direction(l.child("position"))));
 }

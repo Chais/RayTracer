@@ -4,4 +4,4 @@
 
 #include "light.h"
 
-light::light(const direction &emit_dir) : emit_dir(emit_dir) { }
+light::light(const direction &emit_dir) : emit_dir(normalise(emit_dir)) { }

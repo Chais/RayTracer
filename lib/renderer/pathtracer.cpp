@@ -31,11 +31,12 @@ color pathtracer::cast_ray(ray r, int step, bool internal) {
 			out += lcol * (1.0f / dirs->size());
 	}
 	if (step < cam->max_bounces - 1) {
+		random_sampler s;
 		std::shared_ptr<ray> sctr_ray(
-				new ray(*is.pos, cam->s->get_solid_angle_samples(*is.norm, static_cast<float>(M_PI / 2), 1)->at(0)));
+				new ray(*is.pos, s.get_solid_angle_samples(*is.norm, static_cast<float>(M_PI / 2), 1)->at(0)));
 		color sctr_col = *is.object->shade(cast_ray(*sctr_ray, step + 1, internal), sctr_ray->d, *is.norm, -r.d,
 										   *is.local_pos, internal);
-		out += sctr_col;// * dot(*is.norm, sctr_ray->d);
+		out += sctr_col;
 		std::shared_ptr<ray> refl_ray = internal ? nullptr : is.object->reflect(-r.d, *is.norm, *is.pos);
 		if (refl_ray) {
 			color refl_col = cast_ray(*refl_ray, step + 1, internal);

@@ -8,6 +8,7 @@
 #include "light.h"
 #include "../geometry/shapes/point.h"
 #include "../geometry/material/solid_material.h"
+#include "../sampler/random_sampler.h"
 
 /**
  * Models a position light source
@@ -38,6 +39,8 @@ public:
 	virtual intersection intersect_full(const ray &r) const override;
 
 	virtual bool intersect_shadow(const position &o, const direction &d) const override;
+
+	virtual const std::shared_ptr<std::vector<ray>> shed(unsigned long samples) const override;
 };
 
 #endif //RAY_TRACER_POINT_LIGHT_H

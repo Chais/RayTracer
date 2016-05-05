@@ -10,6 +10,7 @@
 #include "../light/light.h"
 #include "../geometry/shapes/shape.h"
 #include <iostream>
+#include <iomanip>
 
 class renderer {
 protected:
@@ -67,7 +68,7 @@ public:
 	 */
 	const std::array<unsigned long, 2> &get_resolution() const;
 
-	void render();
+	virtual void render();
 };
 
 #endif //RAY_TRACER_RENDERER_H

@@ -41,7 +41,7 @@ const std::shared_ptr<std::vector<direction>> sphere_light::get_directions(const
 		c[i][1] = std::acos(2 * c[i][1] - 1);
 		position lpos = object_to_world(
 				position(radius * std::cos(c[i][0]) * std::sin(c[i][1]), radius * std::sin(c[i][0]) * std::sin(c[i][1]),
-						 radius * std::cos(c[i][1])));
+						 radius * std::cos(c[i][1])) + offset);
 		intersection closest = intersect_self(ray(lpos, pos - lpos));
 		if (closest.object)
 			out->push_back(pos - *closest.pos);
@@ -53,4 +53,18 @@ const std::shared_ptr<std::vector<direction>> sphere_light::get_directions(const
 
 const std::shared_ptr<color> sphere_light::emit(const direction &dir) const {
 	return matrl->get_emit_col();
+}
+
+const std::shared_ptr<std::vector<ray>> sphere_light::shed(unsigned long samples) const {
+	std::shared_ptr<std::vector<ray>> out(new std::vector<ray>());
+	random_sampler s;
+	std::vector<vec2> c = *s.get_2d_samples(0, static_cast<float>(2 * M_PI), 0, 1, samples);
+	for (vec2 l : c) {
+		l[1] = std::acos(2 * l[1] - 1);
+		position p = position(radius * std::cos(l[0]) * std::sin(l[1]), radius * std::sin(l[0]) * std::sin(l[1]),
+							  radius * std::cos(l[1]));
+		direction d = s.get_solid_angle_samples(direction(p), static_cast<float>(M_PI / 2), 1)->at(0);
+		out->push_back(object_to_world(ray(p + offset, d)));
+	}
+	return out;
 }

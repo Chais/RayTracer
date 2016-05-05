@@ -29,6 +29,7 @@ color whitted_rt::cast_ray(ray r, int step, bool internal) {
 		if (dirs->size() > 0)
 			out += lcol * (1.0f / dirs->size());
 	}
+	//out = out * (1.0f / lights->size());
 	if (step < cam->max_bounces-1) {
 		std::shared_ptr<ray> refl_ray = internal ? nullptr : is.object->reflect(-r.d, *is.norm, *is.pos);
 		if (refl_ray) {

@@ -1,29 +1,27 @@
 //
-// Created by chais on 15.09.15.
+// Created by chais on 21/03/16.
 //
 
-#include "point_light.h"
+#include "cosine_light.h"
 
-point_light::point_light(const std::shared_ptr<color> emit_col, const direction &offset) : light(direction()),
-																						   point(offset,
-																								 std::shared_ptr<material>(
-																										 new solid_material(
-																												 emit_col,
-																												 std::shared_ptr<color>(
-																														 new color())))) { }
+cosine_light::cosine_light(const std::shared_ptr<color> emit_col, const direction &emit_dir,
+								   const direction &offset) :
+		light(emit_dir), point(offset, std::shared_ptr<material>(
+		new solid_material(emit_col, std::shared_ptr<color>(new color())))) { }
 
-const std::shared_ptr<std::vector<direction>> point_light::get_directions(const position &pos,
-																		  const unsigned long &samples) const {
+const std::shared_ptr<std::vector<direction>> cosine_light::get_directions(const position &pos,
+																			   const unsigned long &samples) const {
 	std::shared_ptr<std::vector<direction>> out(new std::vector<direction>());
 	out->push_back(pos - object_to_world(position() + offset));
 	return out;
 }
 
-const std::shared_ptr<color> point_light::emit(const direction &dir) const {
-	return matrl->get_emit_col();
+const std::shared_ptr<color> cosine_light::emit(const direction &dir) const {
+	return std::make_shared<color>(
+			*matrl->get_emit_col() * std::max(dot(emit_dir, dir), 0.0f) * (1.0f / std::pow(length(dir), 2)));
 }
 
-intersection point_light::intersect_full(const ray &r) const {
+intersection cosine_light::intersect_full(const ray &r) const {
 	return intersection();
 	/*ray tr = world_to_object(r);
 	direction c = position(-tr.o) + offset;
@@ -50,15 +48,15 @@ intersection point_light::intersect_full(const ray &r) const {
 	return out;*/
 }
 
-bool point_light::intersect_shadow(const position &o, const direction &d) const {
+bool cosine_light::intersect_shadow(const position &o, const direction &d) const {
 	return false;
 }
 
-const std::shared_ptr<std::vector<ray>> point_light::shed(unsigned long samples) const {
+const std::shared_ptr<std::vector<ray>> cosine_light::shed(unsigned long samples) const {
 	random_sampler s;
 	std::shared_ptr<std::vector<ray>> out(new std::vector<ray>());
-	std::shared_ptr<std::vector<direction>> dirs = s.get_solid_angle_samples(direction(0, 1, 0),
-																			 static_cast<float>(M_PI), samples);
+	std::shared_ptr<std::vector<direction>> dirs = s.get_solid_angle_samples(emit_dir, static_cast<float>(M_PI / 2),
+																			 samples);
 	for (direction d : *dirs)
 		out->push_back(object_to_world(ray(offset, d)));
 	return out;

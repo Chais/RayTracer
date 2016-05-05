@@ -26,3 +26,7 @@ const std::shared_ptr<std::vector<direction>> ambient_light::get_directions(cons
 const std::shared_ptr<color> ambient_light::emit(const direction &dir) const {
 	return matrl->get_emit_col();
 }
+
+const std::shared_ptr<std::vector<ray>> ambient_light::shed(unsigned long samples) const {
+	return std::shared_ptr<std::vector<ray>>(new std::vector<ray>());
+}
