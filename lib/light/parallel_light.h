@@ -27,13 +27,13 @@ public:
 	 * Returns the \ref direction stored in \p light::dir
 	 * @copydetails light::get_directions()
 	 */
-	virtual const std::shared_ptr<std::vector<direction>> get_directions(const position &pos,
+	virtual const std::shared_ptr<std::vector<intersection>> get_directions(const position &pos,
 																		 const unsigned long &samples) const;
 
 	/**
 	 * @copydoc ambient_light::emit()
 	 */
-	virtual const std::shared_ptr<color> emit(const direction &dir) const;
+	virtual const std::shared_ptr<color> emit(const direction &dir, const intersection &is) const;
 
 	virtual intersection intersect_full(const ray &r) const override;
 

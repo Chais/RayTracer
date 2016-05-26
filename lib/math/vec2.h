@@ -9,6 +9,7 @@
 #define RAY_TRACER_vec2_H
 
 #include <ostream>
+#define _USE_MATH_DEFINES
 #include <cmath>
 #include <array>
 #include <cassert>

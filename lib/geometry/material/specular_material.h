@@ -12,6 +12,8 @@ protected:
 	const float reflectance;
 public:
 
+	virtual std::shared_ptr<ray> scatter(const direction &i, const normal &n, const position &x) const override;
+
 	specular_material(const std::shared_ptr<color> emit_col, const std::shared_ptr<color> col, const float &ambient,
 					  const float &diffuse,
 					  const float &specular, const float &exponent, const float &reflectance);

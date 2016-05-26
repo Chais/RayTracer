@@ -6,11 +6,14 @@
 #define RAY_TRACER_LAMBERTIAN_MATERIAL_H
 
 #include "solid_material.h"
+#include "../../sampler/random_sampler.h"
 
 class lambertian_material : public solid_material {
 private:
 	float ambient, diffuse;
 public:
+	virtual std::shared_ptr<ray> scatter(const direction &i, const normal &n, const position &x) const override;
+
 	lambertian_material(const std::shared_ptr<color> emit_col, const std::shared_ptr<color> col, const float &ambient,
 						const float &diffuse);
 

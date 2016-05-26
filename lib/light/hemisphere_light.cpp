@@ -9,14 +9,16 @@ hemisphere_light::hemisphere_light(const std::shared_ptr<color> emit_col, const 
 		light(emit_dir), point(offset, std::shared_ptr<material>(
 		new solid_material(emit_col, std::shared_ptr<color>(new color())))) { }
 
-const std::shared_ptr<std::vector<direction>> hemisphere_light::get_directions(const position &pos,
+const std::shared_ptr<std::vector<intersection>> hemisphere_light::get_directions(const position &pos,
 																			   const unsigned long &samples) const {
-	std::shared_ptr<std::vector<direction>> out(new std::vector<direction>());
-	out->push_back((pos - object_to_world(position() + offset)) * 0.999);
+	std::shared_ptr<std::vector<intersection>> out(new std::vector<intersection>());
+	intersection i;
+	i.pos = std::shared_ptr<position>(new position(object_to_world(position() + offset)));
+	out->push_back(i);
 	return out;
 }
 
-const std::shared_ptr<color> hemisphere_light::emit(const direction &dir) const {
+const std::shared_ptr<color> hemisphere_light::emit(const direction &dir, const intersection &is) const {
 	return dot(emit_dir, dir) > 0 ? std::make_shared<color>(*matrl->get_emit_col() * (1.0f / std::pow(length(dir), 2)))
 								  : std::shared_ptr<color>(new color());
 }

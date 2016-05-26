@@ -40,7 +40,14 @@ const std::shared_ptr<color> specular_material::shade(const color &lcol, const d
 }
 
 std::shared_ptr<ray> specular_material::reflect(const direction &i, const normal &n, const position &x) const {
-	return std::shared_ptr<ray>(new ray(x, (2 * dot(n, i)) * n - i));
+	if (reflectance > 0)
+		return std::shared_ptr<ray>(new ray(x, (2 * dot(n, i)) * n - i));
+	else
+		return std::shared_ptr<ray>();
+}
+
+std::shared_ptr<ray> specular_material::scatter(const direction &i, const normal &n, const position &x) const {
+	return std::shared_ptr<ray>();
 }
 
 std::shared_ptr<ray> specular_material::refract(const direction &i, const normal &n, const position &x,

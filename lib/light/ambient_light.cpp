@@ -16,14 +16,16 @@ std::ostream &operator<<(std::ostream &out, const ambient_light &a) {
 	return out;
 }
 
-const std::shared_ptr<std::vector<direction>> ambient_light::get_directions(const position &pos,
+const std::shared_ptr<std::vector<intersection>> ambient_light::get_directions(const position &pos,
 																			const unsigned long &samples) const {
-	std::shared_ptr<std::vector<direction>> out(new std::vector<direction>());
-	out->push_back(direction());
+	std::shared_ptr<std::vector<intersection>> out(new std::vector<intersection>());
+	intersection i;
+	i.pos = std::shared_ptr<position>(new position(pos));
+	out->push_back(i);
 	return out;
 }
 
-const std::shared_ptr<color> ambient_light::emit(const direction &dir) const {
+const std::shared_ptr<color> ambient_light::emit(const direction &dir, const intersection &is) const {
 	return matrl->get_emit_col();
 }
 

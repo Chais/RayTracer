@@ -30,7 +30,7 @@ public:
 	 * Returns the 0 vector stored in \p light::dir
 	 * @copydetails light::get_directions()
 	 */
-	virtual const std::shared_ptr<std::vector<direction>> get_directions(const position &pos,
+	virtual const std::shared_ptr<std::vector<intersection>> get_directions(const position &pos,
 																		 const unsigned long &samples) const;
 
 	/**
@@ -39,7 +39,7 @@ public:
 	 * Returns the color stored in \p light::col
 	 * @copydetails light::emit()
 	 */
-	virtual const std::shared_ptr<color> emit(const direction &dir) const;
+	virtual const std::shared_ptr<color> emit(const direction &dir, const intersection &is) const;
 
 	virtual const std::shared_ptr<std::vector<ray>> shed(unsigned long samples) const override;
 };

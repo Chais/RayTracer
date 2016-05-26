@@ -9,14 +9,16 @@ cosine_light::cosine_light(const std::shared_ptr<color> emit_col, const directio
 		light(emit_dir), point(offset, std::shared_ptr<material>(
 		new solid_material(emit_col, std::shared_ptr<color>(new color())))) { }
 
-const std::shared_ptr<std::vector<direction>> cosine_light::get_directions(const position &pos,
+const std::shared_ptr<std::vector<intersection>> cosine_light::get_directions(const position &pos,
 																			   const unsigned long &samples) const {
-	std::shared_ptr<std::vector<direction>> out(new std::vector<direction>());
-	out->push_back(pos - object_to_world(position() + offset));
+	std::shared_ptr<std::vector<intersection>> out(new std::vector<intersection>());
+	intersection i;
+	i.pos = std::shared_ptr<position>(new position(object_to_world(position() + offset)));
+	out->push_back(i);
 	return out;
 }
 
-const std::shared_ptr<color> cosine_light::emit(const direction &dir) const {
+const std::shared_ptr<color> cosine_light::emit(const direction &dir, const intersection &is) const {
 	return std::make_shared<color>(
 			*matrl->get_emit_col() * std::max(dot(emit_dir, dir), 0.0f) * (1.0f / std::pow(length(dir), 2)));
 }

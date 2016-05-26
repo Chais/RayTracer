@@ -52,6 +52,8 @@ public:
 	 */
 	virtual std::shared_ptr<ray> reflect(const direction &i, const normal &n, const position &x) const = 0;
 
+	virtual std::shared_ptr<ray> scatter(const direction &i, const normal &n, const position &x) const = 0;
+
 	/**
   	 * @brief Refracts a ray according to Snell's law
   	 * @details Calculates the origin and direction of refracted rays. Rays entering the material will be refracted towards the inverted normal. \f$\frac{\sin \sigma_i}{\sin \sigma_o}=\frac{1}{\mathtt{ior}}\f$. Conversely, rays leaving the material are refracted away from the normal. \f$\frac{\sin \sigma_i}{\sin \sigma_o}=\frac{\mathtt{ior}}{1}\f$. This results in total internal reflection angles greater than a critical angle that depends on \p ior.

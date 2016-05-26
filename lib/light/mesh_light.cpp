@@ -36,8 +36,8 @@ intersection mesh_light::intersect_self(const ray &r) const {
 	return out;
 }
 
-const std::shared_ptr<std::vector<direction>> mesh_light::get_directions(const position &pos,
-																		 const unsigned long &samples) const {
+const std::shared_ptr<std::vector<intersection>> mesh_light::get_directions(const position &pos,
+																			const unsigned long &samples) const {
 	std::vector<float> area = std::vector<float>(faces->size(), 0);
 	for (unsigned long i = 0; i < faces->size(); i++) {
 		const std::array<position, 3> v = *faces->at(i)->get_vertices();
@@ -59,7 +59,7 @@ const std::shared_ptr<std::vector<direction>> mesh_light::get_directions(const p
 	random_sampler s;
 	std::vector<unsigned long> f = *s.get_1d_samples(0, wheighted.size() - 1, samples);
 	std::vector<vec2> c = *s.get_2d_samples(0, 1, 0, 1, samples);
-	std::shared_ptr<std::vector<direction>> out(new std::vector<direction>());
+	std::shared_ptr<std::vector<intersection>> out(new std::vector<intersection>());
 	for (unsigned long i = 0; i < samples; i++) {
 		std::shared_ptr<triangle> face = faces->at(static_cast<unsigned long>(wheighted[f[i]]));
 		std::shared_ptr<vec2> lcoord(new vec2(c[i][0] + c[i][1] > 1 ? 1 - c[i][1] : c[i][0],
@@ -74,15 +74,15 @@ const std::shared_ptr<std::vector<direction>> mesh_light::get_directions(const p
 			closest.norm = std::make_shared<normal>(object_to_world(
 					*face->get_barycentric_normal(1 - (*lcoord)[0] - (*lcoord)[1], (*lcoord)[0], (*lcoord)[1])));
 		}
-		direction dir = (pos - *closest.pos) * 0.9999;
-		if (dot(*closest.norm, normalise(dir)) >= 0)
-			out->push_back(dir);
+		if (dot(*closest.norm, normalise(pos - *closest.pos)) >= 0)
+			out->push_back(closest);
 	}
 	return out;
 }
 
-const std::shared_ptr<color> mesh_light::emit(const direction &dir) const {
-	return std::make_shared<color>(*matrl->get_emit_col() * (1.0f / std::pow(length(dir), 2)));
+const std::shared_ptr<color> mesh_light::emit(const direction &dir, const intersection &is) const {
+	return std::make_shared<color>(*matrl->get_emit_col() * dot(normalise(dir), *is.norm) *
+								   (1.0f / std::pow(length(dir), 2)));
 }
 
 const std::shared_ptr<std::vector<ray>> mesh_light::shed(unsigned long samples) const {
@@ -92,11 +92,7 @@ const std::shared_ptr<std::vector<ray>> mesh_light::shed(unsigned long samples) 
 		const std::array<position, 3> v = *faces->at(i)->get_vertices();
 		direction e1 = object_to_world(v[0] - v[1]);
 		direction e2 = object_to_world(v[0] - v[2]);
-		float l1 = length(e1);
-		float l2 = length(e2);
-		float l3 = length(object_to_world(v[1] - v[2]));
-		float s = (l1 + l2 + l3) / 2;
-		area[i] = std::sqrt(s * (s - l1) * (s - l2) * (s - l3));
+		area[i] = 0.5f * dot(e1, e2);
 		n.push_back(normalise(cross(e1, e2)));
 	}
 	float m = area[std::distance(area.begin(), std::min_element(area.begin(), area.end()))];

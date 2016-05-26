@@ -14,23 +14,43 @@ color vpl::cast_ray(ray r, int step, bool internal) {
 	if (!is.object) // No intersection
 		return *background_color;
 	color out = color();
+	//random_sampler s;
+	//std::shared_ptr<light> l = lights->at(s.get_1d_samples(0, lights->size() - 1, 1)->at(0));
 	for (std::shared_ptr<light> l : *lights) {
 		color lcol = color();
-		if (is.object.get() == dynamic_cast<const shape *>(l.get())) {
+		if (is.object.get() == dynamic_cast<const shape *>(l.get()))
 			out += *is.object->shade(color(), direction(), *is.norm, -r.d, *is.local_pos, internal);
-			continue;
+		else {
+			const std::shared_ptr<std::vector<intersection>> dirs = l->get_directions(*is.pos, cam->shadow_rays);
+			for (intersection d : *dirs) {
+				direction light_dir = (*is.pos - *d.pos) * 0.999;
+				if (!cast_shadow(*is.pos, -light_dir)) {
+					//light_dir = normalise(light_dir);
+					lcol += *is.object->shade(*l->emit(light_dir, d), -normalise(light_dir), *is.norm, -r.d,
+											  *is.local_pos,
+											  internal);
+				}
+			}
+			if (dirs->size() > 0)
+				out += lcol * (1.0f / dirs->size());
 		}
-		const std::shared_ptr<std::vector<direction>> dirs = l->get_directions(*is.pos, cam->shadow_rays);
-		for (direction light_dir : *dirs)
+	}
+	//l = vpls->at(s.get_1d_samples(0, vpls->size() - 1, 1)->at(0));
+	color dc = color();
+	for (std::shared_ptr<hemisphere_light> l : *vpls) {
+		color lcol = color();
+		const std::shared_ptr<std::vector<intersection>> dirs = l->get_directions(*is.pos, cam->shadow_rays);
+		for (intersection d : *dirs) {
+			direction light_dir = (*is.pos - *d.pos) * 0.999;
 			if (!cast_shadow(*is.pos, -light_dir)) {
 				light_dir = normalise(light_dir);
-				lcol += *is.object->shade(*l->emit(light_dir), -light_dir, *is.norm, -r.d, *is.local_pos, internal);
+				lcol += *is.object->shade(*l->emit(light_dir, d), -light_dir, *is.norm, -r.d, *is.local_pos, internal);
 			}
+		}
 		if (dirs->size() > 0)
-			out += lcol * (1.0f / dirs->size());
+			dc += lcol * (1.0f / dirs->size());
 	}
-	out = out * (1.0f / lights->size());
-	return out;
+	return out * (1.0f / lights->size()) + dc * (1.0f / vpls->size());
 }
 
 void vpl::spread_light() {
@@ -46,37 +66,55 @@ void vpl::spread_light() {
 	std::vector<std::shared_ptr<hemisphere_light>> list = std::vector<std::shared_ptr<hemisphere_light>>();
 	for (std::shared_ptr<light> l : *lights) {
 		const std::shared_ptr<std::vector<ray>> rays = l->shed(samples);
-		for (unsigned long i = 0; i < samples; i++) {
+		for (unsigned long i = 0; i < rays->size(); i++) {
 			intersection step = find_nearest(rays->at(i));
+			intersection init = std::dynamic_pointer_cast<shape>(l)->intersect_full(
+					ray(rays->at(i).o + rays->at(i).d, -rays->at(i).d));
 			if (!step.object)
 				continue;
-			color lcol = *l->emit(normalise(*step.pos - rays->at(i).o));
-			while (true) {
-				ray next = ray(*step.pos,
-							   s.get_solid_angle_samples(*step.norm, static_cast<float>(M_PI / 2), 1)->at(0));
-				std::vector<direction> dir = *l->get_directions(*step.pos, 1);
-				color dc = color();
-				if (dir.size() > 0) {
-					direction d = normalise(dir.at(0));
-					dc = *step.object->shade(*l->emit(d), -d, *step.norm, next.d, *step.local_pos, false);
-				}
-				color c = *step.object->shade(lcol, -rays->at(i).d, *step.norm, next.d, *step.local_pos, false);
-				if (c[0] < 4e-3 && c[1] < 4e-3 && c[2] < 4e-3)
-					break;
-				list.push_back(std::shared_ptr<hemisphere_light>(
-						new hemisphere_light(std::make_shared<color>(c + dc), *step.norm, direction())));
-				std::dynamic_pointer_cast<point>(list.back())->translate(*step.pos);
-				step = find_nearest(next);
+			if (!init.object) {
+				init.object = std::dynamic_pointer_cast<shape>(l);
+				init.pos = std::make_shared<position>(rays->at(i).o);
+				//init.local_pos = std::shared_ptr<vec2>(new vec2());
+				//init.norm = std::shared_ptr<normal>(new normal());
+			}
+			direction d = *step.pos - rays->at(i).o;
+			std::shared_ptr<ray> next = step.object->scatter(-normalise(d), *step.norm, *step.pos);
+			//ray next = ray(*step.pos, s.get_solid_angle_samples(*step.norm, static_cast<float>(M_PI / 2), 1)->at(0));
+			color lcol = *step.object->shade(*l->emit(d, init), -normalise(d), *step.norm, next->d, *step.local_pos,
+											 false);
+			list.push_back(std::shared_ptr<hemisphere_light>(
+					new hemisphere_light(std::make_shared<color>(lcol), *step.norm, direction())));
+			for (unsigned long j = 0; j < cam->max_bounces - 1; j++) {
+				direction ddir = next->d;
+				step = find_nearest(*next);
 				if (!step.object)
 					break;
-				lcol = *list.back()->emit(normalise(*step.pos - next.o));
+				next = step.object->scatter(-ddir, *step.norm, *step.pos);
+				if (!next)
+					break;
+				//next = ray(*step.pos, s.get_solid_angle_samples(*step.norm, static_cast<float>(M_PI / 2), 1)->at(0));
+				std::vector<intersection> dir = *l->get_directions(*step.pos, 1);
+				color dc = color();
+				if (dir.size() > 0) {
+					d = *step.pos - *dir.at(0).pos;
+					dc = *step.object->shade(*l->emit(d, dir.at(0)), -normalise(d), *step.norm, next->d,
+											 *step.local_pos, false);
+				}
+				lcol = *step.object->shade(lcol, -ddir, *step.norm, next->d, *step.local_pos, false) *
+					   static_cast<float>(2 * M_PI) + dc;
+				if (lcol[0] < 4e-3 && lcol[1] < 4e-3 && lcol[2] < 4e-3)
+					break;
+				list.push_back(std::shared_ptr<hemisphere_light>(
+						new hemisphere_light(std::make_shared<color>(lcol), *step.norm, direction())));
+				std::dynamic_pointer_cast<point>(list.back())->translate(*step.pos);
 			}
 		}
 		std::cout << '\r' << std::setw(6) << std::fixed << std::setprecision(2) << (completed += perlight) << " %";
 		std::cout.flush();
 	}
 	std::cout << std::endl << "Created " << list.size() << " VPLs" << std::endl;
-	lights->insert(lights->end(), list.begin(), list.end());
+	vpls->insert(vpls->end(), list.begin(), list.end());
 	//scene->insert(scene->end(), list.begin(), list.end());
 }
 

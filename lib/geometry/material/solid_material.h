@@ -16,6 +16,8 @@
  */
 class solid_material : public material {
 public:
+	virtual std::shared_ptr<ray> scatter(const direction &i, const normal &n, const position &x) const override;
+
 	solid_material(const std::shared_ptr<color> emit_col, const std::shared_ptr<color> col);
 
 	virtual const std::shared_ptr<color> shade(const color &lcol, const direction &l, const normal &n,

@@ -17,10 +17,10 @@ public:
 				 const float &radius);
 	sphere_light(const std::shared_ptr<sphere> s);
 
-	virtual const std::shared_ptr<std::vector<direction>> get_directions(const position &pos,
+	virtual const std::shared_ptr<std::vector<intersection>> get_directions(const position &pos,
 																		 const unsigned long &samples) const override;
 
-	virtual const std::shared_ptr<color> emit(const direction &dir) const override;
+	virtual const std::shared_ptr<color> emit(const direction &dir, const intersection &is) const override;
 
 	virtual const std::shared_ptr<std::vector<ray>> shed(unsigned long samples) const override;
 };

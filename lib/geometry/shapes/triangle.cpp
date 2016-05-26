@@ -31,7 +31,7 @@ intersection triangle::intersect_full(const ray &r) const {
 	if (t < 2E-4 || x < 0 || y < 0 || x + y > 1)
 		return out;
 	out.object = shared_from_this();
-	out.pos = std::shared_ptr<position>(new position(r.o + r.d * (t - 1E-5)));
+	out.pos = std::shared_ptr<position>(new position(r.o + r.d * (t - 1E-3)));
 	out.local_pos = std::shared_ptr<vec2>(new vec2(
 			(1 - x - y) * (*texture_coords)[0][0] + x * (*texture_coords)[1][0] + y * (*texture_coords)[2][0],
 			(1 - x - y) * (*texture_coords)[0][1] + x * (*texture_coords)[1][1] + y * (*texture_coords)[2][1]));

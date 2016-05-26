@@ -37,7 +37,11 @@ const std::shared_ptr<color> phong_material::shade(const color &lcol, const dire
 }
 
 std::shared_ptr<ray> phong_material::reflect(const direction &i, const normal &n, const position &x) const {
-	return std::shared_ptr<ray>();
+	if (diffuse > 0) {
+		random_sampler s;
+		return std::shared_ptr<ray>(new ray(x, s.get_solid_angle_samples(n, static_cast<float>(M_PI / 2), 1)->at(0)));
+	} else
+		return std::shared_ptr<ray>();
 }
 
 std::shared_ptr<ray> phong_material::refract(const direction &i, const normal &n, const position &x,

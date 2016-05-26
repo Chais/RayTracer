@@ -5,6 +5,7 @@
 #ifndef RAY_TRACER_MESH_H
 #define RAY_TRACER_MESH_H
 
+#include <vector>
 #include "shape.h"
 #include "triangle.h"
 

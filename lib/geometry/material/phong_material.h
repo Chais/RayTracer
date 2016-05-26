@@ -7,6 +7,7 @@
 
 #include <ostream>
 #include "solid_material.h"
+#include "../../sampler/random_sampler.h"
 
 struct phong_material : public solid_material {
 protected:

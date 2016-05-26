@@ -5,6 +5,7 @@
 #ifndef RAY_TRACER_COLOR_H
 #define RAY_TRACER_COLOR_H
 
+#define _USE_MATH_DEFINES
 #include <cmath>
 #include <array>
 #include <cassert>
@@ -68,6 +69,8 @@ public:
  * @return    The resulting color
  */
 color operator+(const color &lhs, const color &rhs);
+
+color operator-(const color &lhs, const color &rhs);
 
 /**
  * @brief Addition assignment

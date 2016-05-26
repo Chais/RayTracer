@@ -68,6 +68,8 @@ public:
 	 */
 	std::shared_ptr<ray> reflect(const direction &i, const normal &n, const position &x) const;
 
+	std::shared_ptr<ray> scatter(const direction &i, const normal &n, const position &x) const;
+
 	/**
 	 * @copydoc material::refract()
 	 */

@@ -20,24 +20,27 @@ color whitted_rt::cast_ray(ray r, int step, bool internal) {
 			out += *is.object->shade(color(), direction(), *is.norm, -r.d, *is.local_pos, internal);
 			continue;
 		}
-		const std::shared_ptr<std::vector<direction>> dirs = l->get_directions(*is.pos, cam->shadow_rays);
-		for (direction light_dir : *dirs)
+		const std::shared_ptr<std::vector<intersection>> dirs = l->get_directions(*is.pos, cam->shadow_rays);
+		for (intersection d : *dirs) {
+			direction light_dir = (*is.pos - *d.pos) * 0.999;
 			if (!cast_shadow(*is.pos, -light_dir)) {
-				light_dir = normalise(light_dir);
-				lcol += *is.object->shade(*l->emit(light_dir), -light_dir, *is.norm, -r.d, *is.local_pos, internal);
+				//light_dir = normalise(light_dir);
+				lcol += *is.object->shade(*l->emit(light_dir, d), -normalise(light_dir), *is.norm, -r.d, *is.local_pos,
+										  internal);
 			}
+		}
 		if (dirs->size() > 0)
 			out += lcol * (1.0f / dirs->size());
 	}
 	//out = out * (1.0f / lights->size());
-	if (step < cam->max_bounces-1) {
+	if (step < cam->max_bounces - 1) {
 		std::shared_ptr<ray> refl_ray = internal ? nullptr : is.object->reflect(-r.d, *is.norm, *is.pos);
 		if (refl_ray) {
 			color refl_col = cast_ray(*refl_ray, step + 1, internal);
 			refl_col = refl_col * is.object->get_reflectance();
 			out += refl_col;
 		}
-		std::shared_ptr<ray> refr_ray(is.object->refract(-r.d, internal ? -*is.norm : *is.norm, *is.pos, internal));
+		std::shared_ptr<ray> refr_ray = is.object->refract(-r.d, internal ? -*is.norm : *is.norm, *is.pos, internal);
 		if (refr_ray) {
 			color refr_col = color();
 			refr_col += cast_ray(*refr_ray, step + 1,

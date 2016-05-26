@@ -19,6 +19,10 @@ std::shared_ptr<ray> solid_material::reflect(const direction &i, const normal &n
 	return std::shared_ptr<ray>();
 }
 
+std::shared_ptr<ray> solid_material::scatter(const direction &i, const normal &n, const position &x) const {
+	return std::shared_ptr<ray>();
+}
+
 std::shared_ptr<ray> solid_material::refract(const direction &i, const normal &n, const position &x,
 											 const bool &internal) const {
 	return std::shared_ptr<ray>();

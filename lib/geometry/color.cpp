@@ -35,6 +35,10 @@ color operator+(const color &lhs, const color &rhs) {
 	return color(lhs[0] + rhs[0], lhs[1] + rhs[1], lhs[2] + rhs[2]);
 }
 
+color operator-(const color &lhs, const color &rhs) {
+	return color(lhs[0] - rhs[0], lhs[1] - rhs[1], lhs[2] - rhs[2]);
+}
+
 color &operator+=(color &lhs, const color &rhs) {
 	lhs[0] += rhs[0];
 	lhs[1] += rhs[1];

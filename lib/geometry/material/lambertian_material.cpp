@@ -22,8 +22,8 @@ const std::shared_ptr<color> lambertian_material::shade(const color &lcol, const
 	if (l != direction()) {
 		// Directional light
 		if (!internal) {
-			float phi = std::max<float>(0.0, dot(n, l));
-			*out = phi > 0 ? scale(*col, lcol * (diffuse * phi)) : *out;
+			float cos_theta = std::max<float>(0.0, dot(n, l));
+			*out = cos_theta > 0 ? scale(*col, lcol * (diffuse * static_cast<float>(1 / M_PI) * cos_theta)) : *out;
 		}
 	} else
 		// Ambient light
@@ -34,6 +34,14 @@ const std::shared_ptr<color> lambertian_material::shade(const color &lcol, const
 
 std::shared_ptr<ray> lambertian_material::reflect(const direction &i, const normal &n, const position &x) const {
 	return std::shared_ptr<ray>();
+}
+
+std::shared_ptr<ray> lambertian_material::scatter(const direction &i, const normal &n, const position &x) const {
+	if (diffuse > 0) {
+		random_sampler s;
+		return std::shared_ptr<ray>(new ray(x, s.get_solid_angle_samples(n, static_cast<float>(M_PI / 2), 1)->at(0)));
+	} else
+		return std::shared_ptr<ray>();
 }
 
 std::shared_ptr<ray> lambertian_material::refract(const direction &i, const normal &n, const position &x,

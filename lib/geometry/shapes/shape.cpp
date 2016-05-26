@@ -40,6 +40,10 @@ std::shared_ptr<ray> shape::reflect(const direction &i, const normal &n, const p
 	return matrl->reflect(i, n, x);
 }
 
+std::shared_ptr<ray> shape::scatter(const direction &i, const normal &n, const position &x) const {
+	return matrl->scatter(i, n, x);
+}
+
 std::shared_ptr<ray> shape::refract(const direction &i, const normal &n, const position &x, const bool internal) const {
 	return matrl->refract(i, n, x, internal);
 }

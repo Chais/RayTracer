@@ -10,7 +10,7 @@
 
 class vpl : public renderer {
 protected:
-	//std::vector<std::vector<std::shared_ptr<hemisphere_light>>> vpls;
+	std::shared_ptr<std::vector<std::shared_ptr<hemisphere_light>>> vpls = std::shared_ptr<std::vector<std::shared_ptr<hemisphere_light>>>(new std::vector<std::shared_ptr<hemisphere_light>>(0));
 	virtual color cast_ray(ray r, int step, bool internal) override;
 	virtual void spread_light();
 

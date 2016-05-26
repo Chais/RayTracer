@@ -32,27 +32,32 @@ intersection sphere_light::intersect_self(const ray &r) const {
 	return out;
 }
 
-const std::shared_ptr<std::vector<direction>> sphere_light::get_directions(const position &pos,
-																		   const unsigned long &samples) const {
-	std::shared_ptr<std::vector<direction>> out(new std::vector<direction>());
+const std::shared_ptr<std::vector<intersection>> sphere_light::get_directions(const position &pos,
+																			  const unsigned long &samples) const {
+	std::shared_ptr<std::vector<intersection>> out(new std::vector<intersection>());
 	random_sampler s;
 	std::vector<vec2> c = *s.get_2d_samples(0, static_cast<float>(2 * M_PI), 0, 1, samples);
 	for (unsigned long i = 0; i < samples; i++) {
 		c[i][1] = std::acos(2 * c[i][1] - 1);
-		position lpos = object_to_world(
+		position p =
 				position(radius * std::cos(c[i][0]) * std::sin(c[i][1]), radius * std::sin(c[i][0]) * std::sin(c[i][1]),
-						 radius * std::cos(c[i][1])) + offset);
-		intersection closest = intersect_self(ray(lpos, pos - lpos));
-		if (closest.object)
-			out->push_back(pos - *closest.pos);
-		else
-			out->push_back(pos - lpos);
+						 radius * std::cos(c[i][1])) + offset;
+		std::shared_ptr<position> lpos = std::make_shared<position>(object_to_world(p));
+		intersection closest = intersect_self(ray(*lpos, pos - *lpos));
+		if (!closest.object) {
+			closest.pos = lpos;
+			closest.object = shared_from_this();
+			closest.local_pos = std::make_shared<vec2>(c[i]);
+			closest.norm = std::make_shared<normal>(object_to_world(normal(normalise(normal(p)))));
+		}
+		out->push_back(closest);
 	}
 	return out;
 }
 
-const std::shared_ptr<color> sphere_light::emit(const direction &dir) const {
-	return matrl->get_emit_col();
+const std::shared_ptr<color> sphere_light::emit(const direction &dir, const intersection &is) const {
+	return std::make_shared<color>(*matrl->get_emit_col() * dot(normalise(dir), *is.norm) *
+								   (1.0f / (static_cast<float>(M_PI) * std::pow(length(dir), 2))));
 }
 
 const std::shared_ptr<std::vector<ray>> sphere_light::shed(unsigned long samples) const {

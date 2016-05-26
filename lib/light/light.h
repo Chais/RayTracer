@@ -9,8 +9,10 @@
 #include "../geometry/position.h"
 #include "../geometry/color.h"
 #include "../geometry/ray.h"
+#include "../geometry/intersection.h"
 #include <memory>
 #include <ostream>
+#include <vector>
 
 /**
  * @brief Models generic lights
@@ -33,7 +35,7 @@ public:
 	 * @param pos The \ref position (in world coordinates) to shine light on
 	 * @return    The \ref direction the light is going to reach \p pos
 	 */
-	virtual const std::shared_ptr<std::vector<direction>> get_directions(const position &pos,
+	virtual const std::shared_ptr<std::vector<intersection>> get_directions(const position &pos,
 																		 const unsigned long &samples) const = 0;
 
 	/**
@@ -41,7 +43,7 @@ public:
 	 * @param dir The \ref direction to emit to
 	 * @return    The \ref color of the emitted light
 	 */
-	virtual const std::shared_ptr<color> emit(const direction &dir) const = 0;
+	virtual const std::shared_ptr<color> emit(const direction &dir, const intersection &is) const = 0;
 
 	virtual const std::shared_ptr<std::vector<ray>> shed(unsigned long samples) const = 0;
 };

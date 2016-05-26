@@ -6,6 +6,7 @@
 #define RAY_TRACER_HELPER_H
 
 #include <limits>
+#define _USE_MATH_DEFINES
 #include <cmath>
 
 class helper {
