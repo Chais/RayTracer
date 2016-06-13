@@ -2,13 +2,30 @@
 // Created by chais on 21/03/16.
 //
 
+#include <iostream>
 #include "mesh_light.h"
 
 mesh_light::mesh_light(const direction &offset, const std::shared_ptr<material> &matrl,
 					   const std::shared_ptr<std::vector<std::shared_ptr<triangle>>> &faces)
-		: light(direction()), mesh(offset, matrl, faces) { }
+		: light(direction()), mesh(offset, matrl, faces) {
+	for (std::shared_ptr<triangle> t : *faces) {
+		const std::array<position, 3> v = *t->get_vertices();
+		total_area += 0.5f * length(cross(object_to_world(v[1] - v[0]), object_to_world(v[2] - v[0])));
+		cr_areas.push_back(total_area);
+	}
+	for (unsigned long i = 0; i < cr_areas.size(); i++)
+		cr_areas[i] /= total_area;
+}
 
-mesh_light::mesh_light(const std::shared_ptr<mesh> &m) : light(direction()), mesh(*m) { }
+mesh_light::mesh_light(const std::shared_ptr<mesh> &m) : light(direction()), mesh(*m) {
+	for (std::shared_ptr<triangle> t : *faces) {
+		const std::array<position, 3> v = *t->get_vertices();
+		total_area += 0.5f * length(cross(object_to_world(v[1] - v[0]), object_to_world(v[2] - v[0])));
+		cr_areas.push_back(total_area);
+	}
+	for (unsigned long i = 0; i < cr_areas.size(); i++)
+		cr_areas[i] /= total_area;
+}
 
 intersection mesh_light::intersect_self(const ray &r) const {
 	intersection out = intersection();
@@ -21,7 +38,6 @@ intersection mesh_light::intersect_self(const ray &r) const {
 	for (std::shared_ptr<triangle> t : *faces) {
 		if (!t->intersect_quick(tr.o, inv_d))
 			continue;
-		std::shared_ptr<normal> n = t->get_avg_normal();
 		intersection cur = t->intersect_full(tr);
 		if (!cur.pos)
 			continue;
@@ -38,86 +54,67 @@ intersection mesh_light::intersect_self(const ray &r) const {
 
 const std::shared_ptr<std::vector<intersection>> mesh_light::get_directions(const position &pos,
 																			const unsigned long &samples) const {
-	std::vector<float> area = std::vector<float>(faces->size(), 0);
-	for (unsigned long i = 0; i < faces->size(); i++) {
-		const std::array<position, 3> v = *faces->at(i)->get_vertices();
-		float e1 = length(object_to_world(v[0] - v[1]));
-		float e2 = length(object_to_world(v[0] - v[2]));
-		float e3 = length(object_to_world(v[1] - v[2]));
-		float s = (e1 + e2 + e3) / 2;
-		area[i] = std::sqrt(s * (s - e1) * (s - e2) * (s - e3));
-	}
-	float m = area[std::distance(area.begin(), std::min_element(area.begin(), area.end()))];
-	for (unsigned long i = 0; i < area.size(); i++)
-		area[i] = std::ceil(area[i] / m);
-	std::vector<float> wheighted = std::vector<float>(
-			static_cast<unsigned long>(std::accumulate(area.begin(), area.end(), 0)), 0);
-	std::vector<float>::iterator it = wheighted.begin();
-	for (unsigned long i = 0; i < area.size(); i++)
-		for (unsigned long j = 0; j < area[i]; j++)
-			*it++ = i;
-	random_sampler s;
-	std::vector<unsigned long> f = *s.get_1d_samples(0, wheighted.size() - 1, samples);
-	std::vector<vec2> c = *s.get_2d_samples(0, 1, 0, 1, samples);
 	std::shared_ptr<std::vector<intersection>> out(new std::vector<intersection>());
-	for (unsigned long i = 0; i < samples; i++) {
-		std::shared_ptr<triangle> face = faces->at(static_cast<unsigned long>(wheighted[f[i]]));
-		std::shared_ptr<vec2> lcoord(new vec2(c[i][0] + c[i][1] > 1 ? 1 - c[i][1] : c[i][0],
-											  c[i][0] + c[i][1] > 1 ? 1 - c[i][0] : c[i][1]));
-		std::shared_ptr<position> lpos = std::make_shared<position>(object_to_world(
-				*face->get_barycentric_position(1 - (*lcoord)[0] - (*lcoord)[1], (*lcoord)[0], (*lcoord)[1]) + offset));
-		intersection closest = intersect_self(ray(*lpos, pos - *lpos));
-		if (!closest.object) {
-			closest.pos = lpos;
-			closest.object = face;
-			closest.local_pos = lcoord;
-			closest.norm = std::make_shared<normal>(object_to_world(
-					*face->get_barycentric_normal(1 - (*lcoord)[0] - (*lcoord)[1], (*lcoord)[0], (*lcoord)[1])));
+	random_sampler s;
+	std::vector<float> face_selector = *s.get_1d_samples(0.0f, 1.0f, samples);
+	std::vector<vec2> c = *s.get_2d_samples(0, 1, 0, 1, samples);
+	for (unsigned long i = 0; i < c.size(); i++) {
+		for (unsigned long f = 0; f < cr_areas.size(); f++) {
+			if (face_selector.at(i) < cr_areas[f]) {
+				std::shared_ptr<triangle> face = faces->at(f);
+				std::shared_ptr<vec2> lcoord(new vec2(c[i][0] + c[i][1] > 1 ? 1 - c[i][1] : c[i][0],
+													  c[i][0] + c[i][1] > 1 ? 1 - c[i][0] : c[i][1]));
+				std::shared_ptr<position> lpos = std::make_shared<position>(object_to_world(
+						*face->get_barycentric_position(1 - (*lcoord)[0] - (*lcoord)[1], (*lcoord)[0], (*lcoord)[1]) +
+						offset));
+				intersection closest = intersect_self(ray(*lpos, pos - *lpos));
+				if (!closest.object) {
+					closest.pos = lpos;
+					closest.object = face;
+					closest.local_pos = lcoord;
+					closest.norm = std::make_shared<normal>(object_to_world(
+							*face->get_barycentric_normal(1 - (*lcoord)[0] - (*lcoord)[1], (*lcoord)[0], (*lcoord)[1])
+					));
+				}
+				if (dot(*closest.norm, pos - *closest.pos) >= 0)
+					out->push_back(closest);
+				break;
+			}
 		}
-		if (dot(*closest.norm, normalise(pos - *closest.pos)) >= 0)
-			out->push_back(closest);
 	}
 	return out;
 }
 
 const std::shared_ptr<color> mesh_light::emit(const direction &dir, const intersection &is) const {
-	return std::make_shared<color>(*matrl->get_emit_col() * dot(normalise(dir), *is.norm) *
-								   (1.0f / std::pow(length(dir), 2)));
+	return std::make_shared<color>(*matrl->get_emittance() * dot(normalise(dir), *is.norm) *
+								   (1.0f / length(dir)));
 }
 
 const std::shared_ptr<std::vector<ray>> mesh_light::shed(unsigned long samples) const {
-	std::vector<float> area = std::vector<float>(faces->size(), 0);
-	std::vector<direction> n = std::vector<direction>();
-	for (unsigned long i = 0; i < faces->size(); i++) {
-		const std::array<position, 3> v = *faces->at(i)->get_vertices();
-		direction e1 = object_to_world(v[0] - v[1]);
-		direction e2 = object_to_world(v[0] - v[2]);
-		area[i] = 0.5f * dot(e1, e2);
-		n.push_back(normalise(cross(e1, e2)));
-	}
-	float m = area[std::distance(area.begin(), std::min_element(area.begin(), area.end()))];
-	for (unsigned long i = 0; i < area.size(); i++)
-		area[i] = std::ceil(area[i] / m);
-	std::vector<float> wheighted = std::vector<float>(
-			static_cast<unsigned long>(std::accumulate(area.begin(), area.end(), 0)), 0);
-	std::vector<float>::iterator it = wheighted.begin();
-	for (unsigned long i = 0; i < area.size(); i++)
-		for (unsigned long j = 0; j < area[i]; j++)
-			*it++ = i;
-	std::shared_ptr<std::vector<ray>> out(new std::vector<ray>());
 	random_sampler s;
-	std::vector<unsigned long> f = *s.get_1d_samples(0, wheighted.size() - 1, samples);
+	std::vector<float> face_selector = *s.get_1d_samples(0.0f, 1.0f, samples);
 	std::vector<vec2> c = *s.get_2d_samples(0, 1, 0, 1, samples);
-	for (unsigned long i = 0; i < samples; i++) {
-		std::shared_ptr<triangle> face = faces->at(static_cast<unsigned long>(wheighted[f[i]]));
-		std::shared_ptr<vec2> lcoord(new vec2(c[i][0] + c[i][1] > 1 ? 1 - c[i][1] : c[i][0],
-											  c[i][0] + c[i][1] > 1 ? 1 - c[i][0] : c[i][1]));
-		std::shared_ptr<position> lpos = std::make_shared<position>(object_to_world(
-				*face->get_barycentric_position(1 - (*lcoord)[0] - (*lcoord)[1], (*lcoord)[0], (*lcoord)[1]) + offset));
-		if (dot(n[static_cast<unsigned long>(wheighted[f[i]])], object_to_world(*face->get_avg_normal())) < 0)
-			n[static_cast<unsigned long>(wheighted[f[i]])] = -n[static_cast<unsigned long>(wheighted[f[i]])];
-		out->push_back(ray(*lpos, s.get_solid_angle_samples(n[static_cast<unsigned long>(wheighted[f[i]])],
-															static_cast<float>(M_PI / 2), 1)->at(0)));
+	std::shared_ptr<std::vector<ray>> out(new std::vector<ray>());
+	for (unsigned long i = 0; i < c.size(); i++) {
+		for (unsigned long f = 0; f < cr_areas.size(); f++) {
+			if (face_selector.at(i) < cr_areas[f]) {
+				std::shared_ptr<triangle> face = faces->at(f);
+				std::shared_ptr<vec2> lcoord(new vec2(c[i][0] + c[i][1] > 1 ? 1 - c[i][1] : c[i][0],
+													  c[i][0] + c[i][1] > 1 ? 1 - c[i][0] : c[i][1]));
+				std::shared_ptr<position> lpos = std::make_shared<position>(object_to_world(
+						*face->get_barycentric_position(1 - (*lcoord)[0] - (*lcoord)[1], (*lcoord)[0], (*lcoord)[1]) +
+						offset));
+				std::array<position, 3> & v = *face->get_vertices();
+				normal n = normalise(cross(object_to_world(v[1]-v[0]), object_to_world(v[2]-v[0])));
+				if (dot(n, object_to_world(*face->get_avg_normal())) < 0)
+					n = -n;
+				out->push_back(ray(*lpos, s.get_solid_angle_samples(n, static_cast<float>(M_PI / 2), 1)->at(0)));
+			}
+		}
 	}
 	return out;
+}
+
+const float mesh_light::get_total_area() const {
+	return total_area;
 }

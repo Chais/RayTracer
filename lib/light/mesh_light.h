@@ -11,6 +11,11 @@
 
 class mesh_light : public light, public mesh {
 protected:
+	std::vector<float> cr_areas = std::vector<float>();
+	float total_area = 0;
+public:
+	virtual const float get_total_area() const override;
+
 	virtual intersection intersect_self(const ray &r) const;
 
 public:

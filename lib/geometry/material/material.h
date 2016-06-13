@@ -20,10 +20,10 @@
  */
 class material {
 protected:
-	const std::shared_ptr<color> emit_col;
+	const std::shared_ptr<color> emittance;
 	const std::shared_ptr<color> col;
 
-	material(const std::shared_ptr<color> emit_col, const std::shared_ptr<color> col);
+	material(const std::shared_ptr<color> emittance, const std::shared_ptr<color> col);
 
 public:
 	/**
@@ -79,7 +79,7 @@ public:
 	 */
 	virtual const float get_transmittance() const = 0;
 
-	const std::shared_ptr<color> get_emit_col() const;
+	const std::shared_ptr<color> get_emittance() const;
 };
 
 #endif //RAY_TRACER_MATERIAL_H

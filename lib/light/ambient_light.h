@@ -14,7 +14,9 @@
  */
 class ambient_light : public light, public point {
 public:
-	/**
+	virtual const float get_total_area() const override;
+
+/**
 	 * @brief Constructor
 	 *
 	 * \p light::dir is set to [0, 0, 0, 0] as ambient light is omnidirectional.

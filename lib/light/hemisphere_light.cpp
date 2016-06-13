@@ -19,7 +19,7 @@ const std::shared_ptr<std::vector<intersection>> hemisphere_light::get_direction
 }
 
 const std::shared_ptr<color> hemisphere_light::emit(const direction &dir, const intersection &is) const {
-	return dot(emit_dir, dir) > 0 ? std::make_shared<color>(*matrl->get_emit_col() * (1.0f / std::pow(length(dir), 2)))
+	return dot(emit_dir, dir) > 0 ? std::make_shared<color>(*matrl->get_emittance() * (1.0f / std::pow(length(dir), 2)))
 								  : std::shared_ptr<color>(new color());
 }
 
@@ -62,4 +62,8 @@ const std::shared_ptr<std::vector<ray>> hemisphere_light::shed(unsigned long sam
 	for (direction d : *dirs)
 		out->push_back(object_to_world(ray(offset, d)));
 	return out;
+}
+
+const float hemisphere_light::get_total_area() const {
+	return 1;
 }

@@ -14,7 +14,9 @@
  */
 class parallel_light : public light, public point {
 public:
-	/**
+	virtual const float get_total_area() const override;
+
+/**
 	 * @copydoc light::light()
 	 */
 	parallel_light(const std::shared_ptr<color> emit_col, const direction &emit_dir);

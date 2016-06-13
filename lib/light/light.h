@@ -46,5 +46,7 @@ public:
 	virtual const std::shared_ptr<color> emit(const direction &dir, const intersection &is) const = 0;
 
 	virtual const std::shared_ptr<std::vector<ray>> shed(unsigned long samples) const = 0;
+
+	virtual const float get_total_area() const = 0;
 };
 #endif //RAY_TRACER_LIGHT_H

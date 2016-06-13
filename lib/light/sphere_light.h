@@ -11,6 +11,9 @@
 
 class sphere_light : public light, public sphere {
 protected:
+public:
+	virtual const float get_total_area() const override;
+
 	virtual intersection intersect_self(const ray &r) const;
 public:
 	sphere_light(const direction &emit_dir, const direction &offset, const std::shared_ptr<material> &matrl,

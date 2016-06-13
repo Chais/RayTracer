@@ -12,7 +12,7 @@ ambient_light::ambient_light(const std::shared_ptr<color> emit_col) : light(dire
 																														new color())))) { }
 
 std::ostream &operator<<(std::ostream &out, const ambient_light &a) {
-	out << "Ambient light: color [r, g, b]: " << a.matrl->get_emit_col();
+	out << "Ambient light: color [r, g, b]: " << a.matrl->get_emittance();
 	return out;
 }
 
@@ -26,9 +26,13 @@ const std::shared_ptr<std::vector<intersection>> ambient_light::get_directions(c
 }
 
 const std::shared_ptr<color> ambient_light::emit(const direction &dir, const intersection &is) const {
-	return matrl->get_emit_col();
+	return matrl->get_emittance();
 }
 
 const std::shared_ptr<std::vector<ray>> ambient_light::shed(unsigned long samples) const {
 	return std::shared_ptr<std::vector<ray>>(new std::vector<ray>());
+}
+
+const float ambient_light::get_total_area() const {
+	return 1;
 }

@@ -11,7 +11,6 @@ const std::shared_ptr<color> solid_material::shade(const color &lcol, const dire
 												   const direction &v,
 												   const vec2 &pos, const bool &internal) const {
 	std::shared_ptr<color> out = std::make_shared<color>(*col);
-	*out += *emit_col;
 	return out;
 }
 

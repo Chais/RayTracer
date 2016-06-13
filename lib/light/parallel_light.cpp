@@ -9,7 +9,7 @@ parallel_light::parallel_light(const std::shared_ptr<color> emit_col, const dire
 		new solid_material(emit_col, std::shared_ptr<color>(new color())))) { }
 
 std::ostream &operator<<(std::ostream &out, const parallel_light &a) {
-	out << "Parallel light: color [r, g, b]: " << a.matrl->get_emit_col() << ", direction: " << a.emit_dir;
+	out << "Parallel light: color [r, g, b]: " << a.matrl->get_emittance() << ", direction: " << a.emit_dir;
 	return out;
 }
 
@@ -26,7 +26,7 @@ const std::shared_ptr<std::vector<intersection>> parallel_light::get_directions(
 }
 
 const std::shared_ptr<color> parallel_light::emit(const direction &dir, const intersection &is) const {
-	return matrl->get_emit_col();
+	return matrl->get_emittance();
 }
 
 intersection parallel_light::intersect_full(const ray &r) const {
@@ -39,4 +39,8 @@ bool parallel_light::intersect_shadow(const position &o, const direction &d) con
 
 const std::shared_ptr<std::vector<ray>> parallel_light::shed(unsigned long samples) const {
 	return std::shared_ptr<std::vector<ray>>(new std::vector<ray>());
+}
+
+const float parallel_light::get_total_area() const {
+	return 1;
 }

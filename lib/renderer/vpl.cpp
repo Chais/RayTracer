@@ -14,7 +14,7 @@ color vpl::cast_ray(ray r, int step, bool internal) {
 	if (!is.object) // No intersection
 		return *background_color;
 	color out = color();
-	//random_sampler s;
+	random_sampler s;
 	//std::shared_ptr<light> l = lights->at(s.get_1d_samples(0, lights->size() - 1, 1)->at(0));
 	for (std::shared_ptr<light> l : *lights) {
 		color lcol = color();
@@ -27,17 +27,16 @@ color vpl::cast_ray(ray r, int step, bool internal) {
 				if (!cast_shadow(*is.pos, -light_dir)) {
 					//light_dir = normalise(light_dir);
 					lcol += *is.object->shade(*l->emit(light_dir, d), -normalise(light_dir), *is.norm, -r.d,
-											  *is.local_pos,
-											  internal);
+											  *is.local_pos, internal);
 				}
 			}
 			if (dirs->size() > 0)
 				out += lcol * (1.0f / dirs->size());
 		}
 	}
-	//l = vpls->at(s.get_1d_samples(0, vpls->size() - 1, 1)->at(0));
+	std::shared_ptr<light> l = vpls->at(s.get_1d_samples(0, vpls->size() - 1, 1)->at(0));
 	color dc = color();
-	for (std::shared_ptr<hemisphere_light> l : *vpls) {
+	//for (std::shared_ptr<hemisphere_light> l : *vpls) {
 		color lcol = color();
 		const std::shared_ptr<std::vector<intersection>> dirs = l->get_directions(*is.pos, cam->shadow_rays);
 		for (intersection d : *dirs) {
@@ -49,12 +48,12 @@ color vpl::cast_ray(ray r, int step, bool internal) {
 		}
 		if (dirs->size() > 0)
 			dc += lcol * (1.0f / dirs->size());
-	}
-	return out * (1.0f / lights->size()) + dc * (1.0f / vpls->size());
+	//}
+	return out * (1.0f / lights->size()) + dc;// * (1.0f / vpls->size());
 }
 
 void vpl::spread_light() {
-	unsigned long samples = 100;
+	unsigned long samples = 50;
 	if (samples == 0)
 		return;
 	random_sampler s;
@@ -85,12 +84,13 @@ void vpl::spread_light() {
 											 false);
 			list.push_back(std::shared_ptr<hemisphere_light>(
 					new hemisphere_light(std::make_shared<color>(lcol), *step.norm, direction())));
+			std::dynamic_pointer_cast<point>(list.back())->translate(*step.pos);
 			for (unsigned long j = 0; j < cam->max_bounces - 1; j++) {
 				direction ddir = next->d;
 				step = find_nearest(*next);
 				if (!step.object)
 					break;
-				next = step.object->scatter(-ddir, *step.norm, *step.pos);
+				next = step.object->scatter(ddir, *step.norm, *step.pos);
 				if (!next)
 					break;
 				//next = ray(*step.pos, s.get_solid_angle_samples(*step.norm, static_cast<float>(M_PI / 2), 1)->at(0));

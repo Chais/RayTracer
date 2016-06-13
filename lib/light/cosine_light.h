@@ -12,6 +12,8 @@
 
 class cosine_light: public light, public point {
 public:
+	virtual const float get_total_area() const override;
+
 	cosine_light(const std::shared_ptr<color> emit_col, const direction &emit_dir, const direction &offset);
 
 	virtual const std::shared_ptr<std::vector<intersection>> get_directions(const position &pos,

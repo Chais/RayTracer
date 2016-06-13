@@ -20,7 +20,7 @@ const std::shared_ptr<std::vector<intersection>> cosine_light::get_directions(co
 
 const std::shared_ptr<color> cosine_light::emit(const direction &dir, const intersection &is) const {
 	return std::make_shared<color>(
-			*matrl->get_emit_col() * std::max(dot(emit_dir, dir), 0.0f) * (1.0f / std::pow(length(dir), 2)));
+			*matrl->get_emittance() * std::max(dot(emit_dir, dir), 0.0f) * (1.0f / std::pow(length(dir), 2)));
 }
 
 intersection cosine_light::intersect_full(const ray &r) const {
@@ -62,4 +62,8 @@ const std::shared_ptr<std::vector<ray>> cosine_light::shed(unsigned long samples
 	for (direction d : *dirs)
 		out->push_back(object_to_world(ray(offset, d)));
 	return out;
+}
+
+const float cosine_light::get_total_area() const {
+	return 1;
 }

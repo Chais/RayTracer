@@ -4,8 +4,8 @@
 
 #include "lambertian_material.h"
 
-lambertian_material::lambertian_material(const std::shared_ptr<color> emit_col, const std::shared_ptr<color> col,
-										 const float &ambient, const float &diffuse) : solid_material(emit_col, col),
+lambertian_material::lambertian_material(const std::shared_ptr<color> emittance, const std::shared_ptr<color> col,
+										 const float &ambient, const float &diffuse) : solid_material(emittance, col),
 																					   ambient(ambient),
 																					   diffuse(diffuse) { }
 
@@ -28,7 +28,6 @@ const std::shared_ptr<color> lambertian_material::shade(const color &lcol, const
 	} else
 		// Ambient light
 		*out = scale(*col, lcol * ambient);
-	*out += *emit_col;
 	return out;
 }
 

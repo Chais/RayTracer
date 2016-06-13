@@ -46,6 +46,5 @@ const std::shared_ptr<color> textured_material::shade(const color &lcol, const d
 	} else
 		// Ambient light
 		*out = scale(*out, lcol * ambient);
-	*out += *emit_col;
 	return out;
 }

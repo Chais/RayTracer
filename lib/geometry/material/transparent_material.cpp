@@ -34,7 +34,6 @@ const std::shared_ptr<color> transparent_material::shade(const color &lcol, cons
 			// Ambient light
 			*out = scale(*col, lcol * ambient) * (1 - reflectance - transmittance);
 	}
-	*out += *emit_col;
 	return out;
 }
 

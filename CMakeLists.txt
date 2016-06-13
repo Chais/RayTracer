@@ -70,3 +70,6 @@ target_link_libraries(parser renderer pugixml ${CImg_SYSTEM_LIBS})
 
 add_executable(Ray_Tracer main.cpp)
 target_link_libraries(Ray_Tracer parser)
+
+add_executable(Test test.cpp)
+target_link_libraries(Test parser)

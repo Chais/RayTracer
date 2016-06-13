@@ -1,7 +1,7 @@
 <?xml version="1.0" standalone="no" ?>
 <!DOCTYPE scene SYSTEM "scene.dtd">
 
-<scene output_file="example7.png" renderer="vpl">
+<scene output_file="example7.png" renderer="pathtracer">
 	<background_color r="0.0" g="0.0" b="0.0"/>
 	<camera type="perspective">
 		<position x="0.0" y="0.0" z="5.0"/>
@@ -11,7 +11,7 @@
 		<resolution horizontal="512" vertical="512"/>
 		<max_bounces n="8"/>
 		<shadow_rays n="1"/>
-		<sampling type="none" n="8"/>
+		<sampling type="random" n="32"/>
 		<focus d="13"/>
 		<defocus d="0.002"/>
 		<aperture d="0.2"/>
@@ -22,8 +22,8 @@
 			<position x="0.0" y="4.5" z="-5.0"/>
 			<mesh name="plane_small.obj">
 				<material type="solid">
-					<emit r="80" g="80" b="80"/>
-					<color r="0.0" g="0.0" b="0.0"/>
+					<emit r="20" g="20" b="20"/>
+					<color r="1" g="1" b="1"/>
 				</material>
 				<transform>
 					<rotateX theta="90"/>

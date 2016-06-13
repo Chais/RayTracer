@@ -22,17 +22,16 @@ const std::shared_ptr<color> phong_material::shade(const color &lcol, const dire
 	if (l != direction()) {
 		// Directional light
 		if (!internal) {
-			float phi = std::max<float>(0.0, dot(n, l));
-			if (phi > 0) {
-				direction r = n * (2 * phi) - l;
-				*out = scale(*col, lcol * (diffuse * phi)) +
-					   lcol * (std::pow(std::max<float>(0.0, dot(v, r)), exponent) * specular);
+			float cos_theta = std::max<float>(0.0, dot(n, l));
+			if (cos_theta > 0) {
+				direction r = n * (2 * cos_theta) - l;
+				*out = scale(*col, lcol * (diffuse * static_cast<float>(1 / M_PI) * cos_theta)) +
+					   lcol * (std::pow(std::max<float>(0.0, dot(v, r)), exponent) * specular * ((exponent + 2)/(2*M_PI)));
 			}
 		}
 	} else
 		// Ambient light
 		*out = scale(*col, lcol * ambient);
-	*out += *emit_col;
 	return out;
 }
 

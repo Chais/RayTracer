@@ -35,7 +35,6 @@ const std::shared_ptr<color> specular_material::shade(const color &lcol, const d
 			// Ambient light
 			*out = scale(*col, lcol * ambient) * (1 - reflectance);
 	}
-	*out += *emit_col;
 	return out;
 }
 

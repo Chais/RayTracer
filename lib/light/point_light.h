@@ -15,7 +15,9 @@
  */
 class point_light : public light, public point {
 public:
-	/**
+	virtual const float get_total_area() const override;
+
+/**
 	 * @brief Explicit constructor
 	 * @param col The \ref color of the light
 	 * @param pos The \ref position "position" stored in \p position

@@ -22,7 +22,7 @@ const std::shared_ptr<std::vector<intersection>> point_light::get_directions(con
 }
 
 const std::shared_ptr<color> point_light::emit(const direction &dir, const intersection &is) const {
-	return matrl->get_emit_col();
+	return matrl->get_emittance();
 }
 
 intersection point_light::intersect_full(const ray &r) const {
@@ -64,4 +64,8 @@ const std::shared_ptr<std::vector<ray>> point_light::shed(unsigned long samples)
 	for (direction d : *dirs)
 		out->push_back(object_to_world(ray(offset, d)));
 	return out;
+}
+
+const float point_light::get_total_area() const {
+	return 1;
 }

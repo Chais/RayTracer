@@ -56,7 +56,7 @@ const std::shared_ptr<std::vector<intersection>> sphere_light::get_directions(co
 }
 
 const std::shared_ptr<color> sphere_light::emit(const direction &dir, const intersection &is) const {
-	return std::make_shared<color>(*matrl->get_emit_col() * dot(normalise(dir), *is.norm) *
+	return std::make_shared<color>(*matrl->get_emittance() * dot(normalise(dir), *is.norm) *
 								   (1.0f / (static_cast<float>(M_PI) * std::pow(length(dir), 2))));
 }
 
@@ -72,4 +72,8 @@ const std::shared_ptr<std::vector<ray>> sphere_light::shed(unsigned long samples
 		out->push_back(object_to_world(ray(p + offset, d)));
 	}
 	return out;
+}
+
+const float sphere_light::get_total_area() const {
+	return 1;
 }
